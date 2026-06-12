@@ -1,4 +1,5 @@
 using WheelOfFortune.Data;
+using WheelOfFortune.Interfaces;
 using Random = UnityEngine.Random;
 
 namespace WheelOfFortune.Services

@@ -1,6 +1,6 @@
 using WheelOfFortune.Data;
 
-namespace WheelOfFortune.Services
+namespace WheelOfFortune.Interfaces
 {
     public interface IWheelSpinStrategy
     {
