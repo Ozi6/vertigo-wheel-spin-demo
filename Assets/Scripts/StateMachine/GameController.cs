@@ -23,8 +23,7 @@ namespace WheelOfFortune.Controller
             IHudView hudView,
             IDialogView dialogView,
             ZoneConfigSO[] zoneConfigs,
-            IWheelSpinStrategy randomStrategy,
-            IWheelSpinStrategy weightedStrategy)
+            IWheelSpinStrategy randomStrategy)
         {
             _idleState = new IdleState();
             _spinCommand = new SpinCommand(_idleState, TransitionTo);
@@ -43,7 +42,6 @@ namespace WheelOfFortune.Controller
                 zoneConfigs,
                 TransitionTo,
                 randomStrategy,
-                weightedStrategy,
                 reviveCommand,
                 giveUpCommand);
 

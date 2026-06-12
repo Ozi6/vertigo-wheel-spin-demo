@@ -37,7 +37,6 @@ namespace WheelOfFortune.Tests.EditMode
             var hud = new StubHudView();
             var dialog = new StubDialogView();
             var randomStrategy = new StubSpinStrategy();
-            var weightedStrategy = new StubSpinStrategy();
             var revive = new ReviveCommand(CaptureTransition, () => true);
             var giveUp = new GiveUpCommand(zone2, reward, CaptureTransition);
 
@@ -45,15 +44,13 @@ namespace WheelOfFortune.Tests.EditMode
                 zone2, new StubSpinService(), reward,
                 new StubWheelView(), hud, dialog,
                 null, CaptureTransition,
-                randomStrategy, weightedStrategy,
+                randomStrategy,
                 revive, giveUp);
 
             var idle = new IdleState();
             idle.Enter(ctx);
             return idle;
         }
-
-        // ── SpinCommand ───────────────────────────────────────────────────────
 
         [Test]
         public void SpinCommand_Execute_TransitionsToSpinningState()
@@ -89,8 +86,6 @@ namespace WheelOfFortune.Tests.EditMode
 
             Assert.AreEqual(1, _transitionCount);
         }
-
-        // ── CollectCommand ────────────────────────────────────────────────────
 
         [Test]
         public void CollectCommand_Execute_WhenCanLeave_TransitionsToCollectState()
@@ -141,8 +136,6 @@ namespace WheelOfFortune.Tests.EditMode
             Assert.AreEqual(0, _transitionCount);
         }
 
-        // ── ReviveCommand ─────────────────────────────────────────────────────
-
         [Test]
         public void ReviveCommand_Execute_WhenCanAfford_TransitionsToIdle()
         {
@@ -187,8 +180,6 @@ namespace WheelOfFortune.Tests.EditMode
             Assert.AreEqual(1, _transitionCount);
         }
 
-        // ── GiveUpCommand ─────────────────────────────────────────────────────
-
         [Test]
         public void GiveUpCommand_Execute_TransitionsToIdle()
         {
@@ -230,8 +221,6 @@ namespace WheelOfFortune.Tests.EditMode
             Assert.AreEqual(2, _transitionCount);
             Assert.AreEqual(2, _zone.ResetCallCount);
         }
-
-        // ── Cross-command guard isolation ─────────────────────────────────────
 
         [Test]
         public void SpinAndCollect_GuardsAreIndependent()

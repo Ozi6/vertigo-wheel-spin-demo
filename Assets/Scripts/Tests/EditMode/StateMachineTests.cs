@@ -50,7 +50,6 @@ namespace WheelOfFortune.Tests.EditMode
                 null,
                 TransitionTo,
                 _randomStrategy,
-                _weightedStrategy,
                 _reviveCommand,
                 _giveUpCommand);
         }

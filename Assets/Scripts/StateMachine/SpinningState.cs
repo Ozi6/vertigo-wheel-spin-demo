@@ -11,7 +11,7 @@ namespace WheelOfFortune.StateMachine
         {
             var zoneType = ctx.ZoneService.GetCurrentZoneType();
             var config = GetConfigForZone(ctx, zoneType);
-            var strategy = zoneType == ZoneType.Super ? ctx.WeightedStrategy : ctx.RandomStrategy;
+            var strategy = ctx.RandomStrategy;
 
             ctx.SpinService.SetStrategy(strategy);
             _pendingResult = ctx.SpinService.Spin(config);
