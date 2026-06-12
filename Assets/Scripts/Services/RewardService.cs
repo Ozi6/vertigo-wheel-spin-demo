@@ -27,6 +27,10 @@ namespace WheelOfFortune.Services
             _rewards.Clear();
             _eventBus.Publish(new OnBombHit());
         }
+        public void Reset()
+        {
+            //_rewards.Clear();
+        }
 
         public CollectedRewards GetCurrentRewards()
         {

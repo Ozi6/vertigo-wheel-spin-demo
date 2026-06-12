@@ -7,6 +7,7 @@ namespace WheelOfFortune.Interfaces
         ZoneType GetCurrentZoneType();
         int GetCurrentZoneNumber();
         ZoneProgressModel Advance();
+        void Reset();
         bool CanPlayerLeave();
     }
 }

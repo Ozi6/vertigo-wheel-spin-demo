@@ -16,7 +16,6 @@ namespace WheelOfFortune.StateMachine
         public readonly ZoneConfigSO[] ZoneConfigs;
         public readonly Action<IGameState> TransitionTo;
         public readonly IWheelSpinStrategy RandomStrategy;
-        public readonly IWheelSpinStrategy WeightedStrategy;
 
         public GameContext(
             IZoneService zoneService,
@@ -27,8 +26,7 @@ namespace WheelOfFortune.StateMachine
             IDialogView dialogView,
             ZoneConfigSO[] zoneConfigs,
             Action<IGameState> transitionTo,
-            IWheelSpinStrategy randomStrategy,
-            IWheelSpinStrategy weightedStrategy)
+            IWheelSpinStrategy randomStrategy)
         {
             ZoneService = zoneService;
             SpinService = spinService;
@@ -39,7 +37,6 @@ namespace WheelOfFortune.StateMachine
             ZoneConfigs = zoneConfigs;
             TransitionTo = transitionTo;
             RandomStrategy = randomStrategy;
-            WeightedStrategy = weightedStrategy;
         }
     }
 }

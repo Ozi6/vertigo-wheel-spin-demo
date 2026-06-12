@@ -7,6 +7,7 @@ namespace WheelOfFortune.Interfaces
     {
         void Collect(RewardItemSO item);
         void ClearAll();
+        void Reset();
         CollectedRewards GetCurrentRewards();
     }
 }
