@@ -1,30 +1,29 @@
+using WheelOfFortune.Commands;
+
 namespace WheelOfFortune.StateMachine
 {
     public sealed class BombState : IGameState
     {
+        private readonly ReviveCommand _reviveCommand;
+        private readonly GiveUpCommand _giveUpCommand;
+
+        public BombState(ReviveCommand reviveCommand, GiveUpCommand giveUpCommand)
+        {
+            _reviveCommand = reviveCommand;
+            _giveUpCommand = giveUpCommand;
+        }
+
         public void Enter(GameContext ctx)
         {
             ctx.RewardService.ClearAll();
             ctx.DialogView.ShowBombScreen(
-                onRevive: () => OnRevive(ctx),
-                onGiveUp: () => OnGiveUp(ctx));
+                onRevive: () => _reviveCommand.Execute(),
+                onGiveUp: () => _giveUpCommand.Execute());
         }
 
         public void Exit(GameContext ctx)
         {
             ctx.DialogView.Hide();
-        }
-
-        private void OnRevive(GameContext ctx)
-        {
-            ctx.TransitionTo(new IdleState());
-        }
-
-        private void OnGiveUp(GameContext ctx)
-        {
-            ctx.ZoneService.Reset();
-            ctx.RewardService.Reset();
-            ctx.TransitionTo(new IdleState());
         }
     }
 }

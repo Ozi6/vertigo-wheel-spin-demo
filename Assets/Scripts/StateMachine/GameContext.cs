@@ -1,7 +1,7 @@
 using System;
+using WheelOfFortune.Commands;
 using WheelOfFortune.Data;
 using WheelOfFortune.Interfaces;
-using WheelOfFortune.Services;
 
 namespace WheelOfFortune.StateMachine
 {
@@ -16,6 +16,9 @@ namespace WheelOfFortune.StateMachine
         public readonly ZoneConfigSO[] ZoneConfigs;
         public readonly Action<IGameState> TransitionTo;
         public readonly IWheelSpinStrategy RandomStrategy;
+        public readonly IWheelSpinStrategy WeightedStrategy;
+        public readonly ReviveCommand ReviveCommand;
+        public readonly GiveUpCommand GiveUpCommand;
 
         public GameContext(
             IZoneService zoneService,
@@ -26,7 +29,10 @@ namespace WheelOfFortune.StateMachine
             IDialogView dialogView,
             ZoneConfigSO[] zoneConfigs,
             Action<IGameState> transitionTo,
-            IWheelSpinStrategy randomStrategy)
+            IWheelSpinStrategy randomStrategy,
+            IWheelSpinStrategy weightedStrategy,
+            ReviveCommand reviveCommand,
+            GiveUpCommand giveUpCommand)
         {
             ZoneService = zoneService;
             SpinService = spinService;
@@ -37,6 +43,9 @@ namespace WheelOfFortune.StateMachine
             ZoneConfigs = zoneConfigs;
             TransitionTo = transitionTo;
             RandomStrategy = randomStrategy;
+            WeightedStrategy = weightedStrategy;
+            ReviveCommand = reviveCommand;
+            GiveUpCommand = giveUpCommand;
         }
     }
 }

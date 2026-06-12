@@ -2,8 +2,9 @@ using UnityEngine;
 using WheelOfFortune.Commands;
 using WheelOfFortune.Data;
 using WheelOfFortune.Interfaces;
+using WheelOfFortune.StateMachine;
 
-namespace WheelOfFortune.StateMachine
+namespace WheelOfFortune.Controller
 {
     public sealed class GameController : MonoBehaviour
     {
@@ -22,8 +23,16 @@ namespace WheelOfFortune.StateMachine
             IHudView hudView,
             IDialogView dialogView,
             ZoneConfigSO[] zoneConfigs,
-            IWheelSpinStrategy randomStrategy)
+            IWheelSpinStrategy randomStrategy,
+            IWheelSpinStrategy weightedStrategy)
         {
+            _idleState = new IdleState();
+            _spinCommand = new SpinCommand(_idleState, TransitionTo);
+            _collectCommand = new CollectCommand(_idleState, TransitionTo);
+
+            var reviveCommand = new ReviveCommand(TransitionTo, () => true);
+            var giveUpCommand = new GiveUpCommand(zoneService, rewardService, TransitionTo);
+
             _ctx = new GameContext(
                 zoneService,
                 spinService,
@@ -33,11 +42,10 @@ namespace WheelOfFortune.StateMachine
                 dialogView,
                 zoneConfigs,
                 TransitionTo,
-                randomStrategy);
-
-            _idleState = new IdleState();
-            _spinCommand = new SpinCommand(_idleState, TransitionTo);
-            _collectCommand = new CollectCommand(_idleState, TransitionTo);
+                randomStrategy,
+                weightedStrategy,
+                reviveCommand,
+                giveUpCommand);
 
             TransitionTo(_idleState);
         }
