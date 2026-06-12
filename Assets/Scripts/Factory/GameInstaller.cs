@@ -1,0 +1,59 @@
+using UnityEngine;
+using WheelOfFortune.Controller;
+using WheelOfFortune.Data;
+using WheelOfFortune.Events;
+using WheelOfFortune.Factory;
+using WheelOfFortune.Interfaces;
+using WheelOfFortune.Services;
+using WheelOfFortune.Views;
+
+namespace WheelOfFortune.Installer
+{
+    [DefaultExecutionOrder(-100)]
+    public sealed class GameInstaller : MonoBehaviour
+    {
+        [SerializeField] private GameSettingsSO _gameSettings;
+        [SerializeField] private ZoneConfigSO[] _zoneConfigs;
+        [SerializeField] private WheelSlice _slicePrefab;
+        [SerializeField] private Transform _sliceParent;
+        [SerializeField] private GameController _gameController;
+
+        private void Awake()
+        {
+            var eventBus = new EventBus();
+
+            var zoneService = new ZoneService(_gameSettings, eventBus);
+            var randomStrategy = new RandomSpinStrategy();
+            var spinService = new SpinService(randomStrategy, eventBus);
+            var rewardService = new RewardService(eventBus);
+
+            var sliceFactory = new SliceFactory(_slicePrefab);
+            var wheelFactory = new WheelFactory(_zoneConfigs, sliceFactory, _sliceParent);
+
+            var wheelView = GetComponentInChildren<IWheelView>(true);
+            var hudView = GetComponentInChildren<IHudView>(true);
+            var dialogView = GetComponentInChildren<IDialogView>(true);
+
+            ValidateDependencies(wheelView, hudView, dialogView);
+
+            wheelFactory.BuildWheel(zoneService.GetCurrentZoneType(), wheelView);
+
+            _gameController.Init(
+                zoneService,
+                spinService,
+                rewardService,
+                wheelView,
+                hudView,
+                dialogView,
+                _zoneConfigs,
+                randomStrategy);
+        }
+
+        private void ValidateDependencies(IWheelView wheelView, IHudView hudView, IDialogView dialogView)
+        {
+            if (wheelView == null) Debug.LogError("[GameInstaller] IWheelView not found in scene.");
+            if (hudView == null) Debug.LogError("[GameInstaller] IHudView not found in scene.");
+            if (dialogView == null) Debug.LogError("[GameInstaller] IDialogView not found in scene.");
+        }
+    }
+}
