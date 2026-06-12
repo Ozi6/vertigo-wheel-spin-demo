@@ -23,6 +23,11 @@ namespace WheelOfFortune.Services
             return DeriveZoneType(_currentZone);
         }
 
+        public int GetCurrentZoneNumber()
+        {
+            return _currentZone;
+        }
+
         public ZoneProgressModel Advance()
         {
             _currentZone++;

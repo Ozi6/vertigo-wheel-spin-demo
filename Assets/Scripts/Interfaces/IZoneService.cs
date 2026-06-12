@@ -5,6 +5,7 @@ namespace WheelOfFortune.Interfaces
     public interface IZoneService
     {
         ZoneType GetCurrentZoneType();
+        int GetCurrentZoneNumber();
         ZoneProgressModel Advance();
         bool CanPlayerLeave();
     }
