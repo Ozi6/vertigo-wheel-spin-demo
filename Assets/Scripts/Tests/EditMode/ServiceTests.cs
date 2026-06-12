@@ -5,6 +5,7 @@ using UnityEngine;
 using WheelOfFortune.Data;
 using WheelOfFortune.Domain;
 using WheelOfFortune.Events;
+using WheelOfFortune.Interfaces;
 using WheelOfFortune.Services;
 
 namespace WheelOfFortune.Tests.EditMode
