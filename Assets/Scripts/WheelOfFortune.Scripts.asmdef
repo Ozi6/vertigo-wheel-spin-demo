@@ -1,6 +1,8 @@
 {
     "name": "WheelOfFortune.Scripts",
-    "references": [],
+    "references": [
+        "Unity.TextMeshPro"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
