@@ -54,8 +54,15 @@ namespace WheelOfFortune.Views
             }
 
             float sliceAngle = 360f / _currentSlices.Length;
-            float targetAngle = -(targetSliceIndex * sliceAngle);
-            float totalRotation = targetAngle - (360f * _extraSpins);
+            float targetAngle = targetSliceIndex * sliceAngle;
+
+            float currentZ = _wheelRoot.localEulerAngles.z;
+            float normalizedZ = currentZ > 180f ? currentZ - 360f : currentZ;
+
+            float delta = targetAngle - normalizedZ;
+            if (delta < 0f) delta += 360f;
+
+            float totalRotation = normalizedZ + delta + (360f * _extraSpins);
 
             _wheelRoot.DORotate(
                     new Vector3(0, 0, totalRotation),
