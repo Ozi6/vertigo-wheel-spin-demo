@@ -2,10 +2,11 @@ using UnityEngine;
 using WheelOfFortune.Data;
 using WheelOfFortune.Domain;
 using WheelOfFortune.Interfaces;
+using WheelOfFortune.Views;
 
 namespace WheelOfFortune.Factory
 {
-    public sealed class WheelFactory
+    public sealed class WheelFactory : IWheelFactory
     {
         private readonly ZoneConfigSO[] _zoneConfigs;
         private readonly SliceFactory _sliceFactory;
@@ -18,18 +19,69 @@ namespace WheelOfFortune.Factory
             _sliceParent = sliceParent;
         }
 
-        public void BuildWheel(ZoneType zoneType, IWheelView wheelView)
+        public RuntimeWheelData BuildWheel(ZoneType zoneType, int zoneNumber, IWheelView wheelView)
         {
             var config = GetConfig(zoneType);
             if (config == null)
             {
                 Debug.LogError($"[WheelFactory] No WheelConfigSO found for ZoneType {zoneType}");
-                return;
+                return default;
             }
 
+            var slices = DrawSlices(config, zoneNumber);
+            int bombSlotIndex = -1;
+
+            if (config.HasBomb)
+                bombSlotIndex = InjectBomb(slices);
+
             ClearExistingSlices();
-            _sliceFactory.CreateSlices(config.Slices, _sliceParent);
-            wheelView.SetupSlices(config.Slices);
+            _sliceFactory.CreateSlices(slices, _sliceParent);
+            wheelView.SetupSlices(slices);
+
+            return new RuntimeWheelData(slices, bombSlotIndex, config.HasBomb);
+        }
+
+        private SliceDefinition[] DrawSlices(WheelConfigSO config, int zoneNumber)
+        {
+            var pool = config.RewardPool;
+            int count = config.SliceCount;
+            var slices = new SliceDefinition[count];
+
+            float totalWeight = 0f;
+            foreach (var entry in pool)
+                totalWeight += entry.Weight;
+
+            for (int i = 0; i < count; i++)
+            {
+                float roll = Random.Range(0f, totalWeight);
+                float accumulated = 0f;
+                RewardPoolEntry chosen = pool[pool.Length - 1];
+
+                foreach (var entry in pool)
+                {
+                    accumulated += entry.Weight;
+                    if (roll < accumulated)
+                    {
+                        chosen = entry;
+                        break;
+                    }
+                }
+
+                float scaledValue = chosen.RewardItem != null
+                    ? chosen.RewardItem.Value * (1f + (zoneNumber - 1) * chosen.ZoneValueMultiplier)
+                    : 0f;
+
+                slices[i] = new SliceDefinition(chosen.RewardItem, chosen.Weight, scaledValue);
+            }
+
+            return slices;
+        }
+
+        private int InjectBomb(SliceDefinition[] slices)
+        {
+            int bombIndex = Random.Range(0, slices.Length);
+            slices[bombIndex] = new SliceDefinition(null, 1f, 0f);
+            return bombIndex;
         }
 
         private WheelConfigSO GetConfig(ZoneType zoneType)

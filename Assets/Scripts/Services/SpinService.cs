@@ -1,4 +1,3 @@
-using WheelOfFortune.Data;
 using WheelOfFortune.Domain;
 using WheelOfFortune.Events;
 using WheelOfFortune.Interfaces;
@@ -16,16 +15,13 @@ namespace WheelOfFortune.Services
             _eventBus = eventBus;
         }
 
-        public void SetStrategy(IWheelSpinStrategy strategy)
-        {
-            _strategy = strategy;
-        }
+        public void SetStrategy(IWheelSpinStrategy strategy) => _strategy = strategy;
 
-        public SpinResult Spin(WheelConfigSO config)
+        public SpinResult Spin(RuntimeWheelData wheelData)
         {
-            int index = _strategy.GetWinningIndex(config);
-            bool isBomb = config.HasBomb && index == config.BombSlotIndex;
-            SpinResult result = new SpinResult(config.Slices[index].RewardItem, isBomb, index);
+            int index = _strategy.GetWinningIndex(wheelData);
+            bool isBomb = wheelData.HasBomb && index == wheelData.BombSlotIndex;
+            var result = new SpinResult(wheelData.Slices[index].RewardItem, isBomb, index);
             _eventBus.Publish(new OnSpinCompleted(result));
             return result;
         }

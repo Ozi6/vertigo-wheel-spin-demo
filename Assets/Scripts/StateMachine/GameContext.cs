@@ -1,6 +1,6 @@
 using System;
 using WheelOfFortune.Commands;
-using WheelOfFortune.Data;
+using WheelOfFortune.Factory;
 using WheelOfFortune.Interfaces;
 
 namespace WheelOfFortune.StateMachine
@@ -13,7 +13,7 @@ namespace WheelOfFortune.StateMachine
         public readonly IWheelView WheelView;
         public readonly IHudView HudView;
         public readonly IDialogView DialogView;
-        public readonly ZoneConfigSO[] ZoneConfigs;
+        public readonly IWheelFactory WheelFactory;
         public readonly Action<IGameState> TransitionTo;
         public readonly IWheelSpinStrategy RandomStrategy;
         public readonly ReviveCommand ReviveCommand;
@@ -26,7 +26,7 @@ namespace WheelOfFortune.StateMachine
             IWheelView wheelView,
             IHudView hudView,
             IDialogView dialogView,
-            ZoneConfigSO[] zoneConfigs,
+            IWheelFactory wheelFactory,
             Action<IGameState> transitionTo,
             IWheelSpinStrategy randomStrategy,
             ReviveCommand reviveCommand,
@@ -38,7 +38,7 @@ namespace WheelOfFortune.StateMachine
             WheelView = wheelView;
             HudView = hudView;
             DialogView = dialogView;
-            ZoneConfigs = zoneConfigs;
+            WheelFactory = wheelFactory;
             TransitionTo = transitionTo;
             RandomStrategy = randomStrategy;
             ReviveCommand = reviveCommand;

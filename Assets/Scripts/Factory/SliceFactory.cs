@@ -24,7 +24,9 @@ namespace WheelOfFortune.Factory
 
                 var reward = slices[i].RewardItem;
                 var icon = reward != null ? reward.Icon : null;
-                var label = reward != null ? reward.Value.ToString("F0") : string.Empty;
+                var label = slices[i].ScaledValue > 0f
+                    ? slices[i].ScaledValue.ToString("F0")
+                    : string.Empty;
 
                 instance.Setup(icon, label);
                 instances[i] = instance;

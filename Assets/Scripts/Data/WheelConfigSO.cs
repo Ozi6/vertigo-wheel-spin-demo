@@ -5,11 +5,12 @@ namespace WheelOfFortune.Data
     [CreateAssetMenu(fileName = "WheelConfig", menuName = "WheelOfFortune/Wheel Config")]
     public class WheelConfigSO : ScriptableObject
     {
-        [SerializeField] private SliceDefinition[] _slices;
-        [SerializeField] private int _bombSlotIndex = -1;
+        [SerializeField] private RewardPoolEntry[] _rewardPool;
+        [SerializeField] private int _sliceCount = 8;
+        [SerializeField] private bool _hasBomb = true;
 
-        public SliceDefinition[] Slices => _slices;
-        public int BombSlotIndex => _bombSlotIndex;
-        public bool HasBomb => _bombSlotIndex >= 0 && _bombSlotIndex < _slices.Length;
+        public RewardPoolEntry[] RewardPool => _rewardPool;
+        public int SliceCount => _sliceCount;
+        public bool HasBomb => _hasBomb;
     }
 }

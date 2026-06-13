@@ -1,6 +1,6 @@
 using UnityEngine;
 using WheelOfFortune.Commands;
-using WheelOfFortune.Data;
+using WheelOfFortune.Factory;
 using WheelOfFortune.Interfaces;
 using WheelOfFortune.StateMachine;
 
@@ -22,7 +22,7 @@ namespace WheelOfFortune.Controller
             IWheelView wheelView,
             IHudView hudView,
             IDialogView dialogView,
-            ZoneConfigSO[] zoneConfigs,
+            IWheelFactory wheelFactory,
             IWheelSpinStrategy randomStrategy)
         {
             _idleState = new IdleState();
@@ -39,7 +39,7 @@ namespace WheelOfFortune.Controller
                 wheelView,
                 hudView,
                 dialogView,
-                zoneConfigs,
+                wheelFactory,
                 TransitionTo,
                 randomStrategy,
                 reviveCommand,

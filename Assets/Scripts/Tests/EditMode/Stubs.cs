@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using WheelOfFortune.Data;
 using WheelOfFortune.Domain;
+using WheelOfFortune.Factory;
 using WheelOfFortune.Interfaces;
 
 namespace WheelOfFortune.Tests.EditMode.Stubs
@@ -39,7 +40,7 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         public IWheelSpinStrategy LastStrategySet;
         public int SpinCallCount;
 
-        public SpinResult Spin(WheelConfigSO config)
+        public SpinResult Spin(RuntimeWheelData wheelData)
         {
             SpinCallCount++;
             return ResultToReturn;
@@ -145,10 +146,26 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         public int IndexToReturn;
         public int CallCount;
 
-        public int GetWinningIndex(WheelConfigSO config)
+        public int GetWinningIndex(RuntimeWheelData wheelData)
         {
             CallCount++;
             return IndexToReturn;
+        }
+    }
+
+    internal sealed class StubWheelFactory : IWheelFactory
+    {
+        public RuntimeWheelData DataToReturn;
+        public int BuildCallCount;
+        public ZoneType LastZoneType;
+        public int LastZoneNumber;
+
+        public RuntimeWheelData BuildWheel(ZoneType zoneType, int zoneNumber, IWheelView wheelView)
+        {
+            BuildCallCount++;
+            LastZoneType = zoneType;
+            LastZoneNumber = zoneNumber;
+            return DataToReturn;
         }
     }
 }

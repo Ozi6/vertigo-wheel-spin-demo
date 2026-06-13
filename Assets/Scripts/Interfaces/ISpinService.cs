@@ -5,7 +5,7 @@ namespace WheelOfFortune.Interfaces
 {
     public interface ISpinService
     {
-        SpinResult Spin(WheelConfigSO config);
+        SpinResult Spin(RuntimeWheelData wheelData);
         void SetStrategy(IWheelSpinStrategy strategy);
     }
 }

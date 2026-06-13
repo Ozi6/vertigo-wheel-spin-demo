@@ -37,7 +37,7 @@ namespace WheelOfFortune.Installer
 
             ValidateDependencies(wheelView, hudView, dialogView);
 
-            wheelFactory.BuildWheel(zoneService.GetCurrentZoneType(), wheelView);
+            wheelFactory.BuildWheel(zoneService.GetCurrentZoneType(), zoneService.GetCurrentZoneNumber(), wheelView);
 
             _gameController.Init(
                 zoneService,
@@ -46,7 +46,7 @@ namespace WheelOfFortune.Installer
                 wheelView,
                 hudView,
                 dialogView,
-                _zoneConfigs,
+                wheelFactory,
                 randomStrategy);
         }
 
