@@ -12,6 +12,9 @@ namespace WheelOfFortune.Factory
             for (int i = 0; i < slotCount; i++)
             {
                 var slotTransform = slotParent.GetChild(i);
+                Vector3 directionFromCenter = slotTransform.position - slotParent.position;
+                if (directionFromCenter != Vector3.zero)
+                    slotTransform.up = directionFromCenter.normalized;
                 slots[i] = new SlotDefinition(i, slotTransform);
             }
 
