@@ -14,7 +14,7 @@ namespace WheelOfFortune.Factory
                 var slotTransform = slotParent.GetChild(i);
                 Vector3 directionFromCenter = slotTransform.position - slotParent.position;
                 if (directionFromCenter != Vector3.zero)
-                    slotTransform.up = directionFromCenter.normalized;
+                    slotTransform.rotation = Quaternion.LookRotation(slotParent.forward, directionFromCenter);
                 slots[i] = new SlotDefinition(i, slotTransform);
             }
 
