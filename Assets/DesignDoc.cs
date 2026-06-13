@@ -109,7 +109,7 @@ Stage 6: Views and Presenters
 Implement WheelPresenter with DOTween spin animation. Implement HudPresenter and DialogPresenter. Apply all UI naming and component configuration rules. Verify each view in isolation by calling its interface methods directly.
 
 Stage 7: Zone Variants
-Wire the three wheel types: normal silver wheel with bomb, safe silver wheel without bomb, golden super wheel with weighted rewards. Enforce the leave restriction in CanPlayerLeave so the collect button only appears in Safe and Super zones.
+Wire the three wheel types: normal bronze wheel with bomb, safe silver wheel without bomb, golden super wheel with weighted rewards. Enforce the leave restriction in CanPlayerLeave so the collect button only appears in Safe and Super zones.
 
 Stage 8: Polish and Delivery
 Set up Sprite Atlas. Audit all anchors and pivots against 20:9, 16:9, and 4:3. Add the optional revive currency system if time allows. Build the APK and publish to GitHub as a release.
