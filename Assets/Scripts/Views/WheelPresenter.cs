@@ -17,10 +17,16 @@ namespace WheelOfFortune.Views
         [SerializeField] private Ease _spinEase = Ease.OutQuart;
 
         private SliceDefinition[] _currentSlices;
+        private WheelSlice[] _liveSlices;
 
         public void SetupSlices(SliceDefinition[] slices)
         {
             _currentSlices = slices;
+        }
+
+        public void SetLiveSlices(WheelSlice[] slices)
+        {
+            _liveSlices = slices;
         }
 
         public void SetZoneVisuals(Sprite wheelSprite, Sprite arrowSprite)
@@ -32,9 +38,11 @@ namespace WheelOfFortune.Views
                 _arrowImage_value.sprite = arrowSprite;
         }
 
-        public void ResetRotation()
+        public void RotateToOrigin(float duration)
         {
-            _wheelRoot.localEulerAngles = Vector3.zero;
+            _wheelRoot
+                .DORotate(Vector3.zero, duration, RotateMode.Fast)
+                .SetEase(Ease.InOutSine);
         }
 
         public void SpinTo(int targetSliceIndex, Action onComplete)
@@ -55,6 +63,37 @@ namespace WheelOfFortune.Views
                     RotateMode.FastBeyond360)
                 .SetEase(_spinEase)
                 .OnComplete(() => onComplete?.Invoke());
+        }
+
+        public void PlayWinEffect(int winningSliceIndex, Action onComplete)
+        {
+            if (_liveSlices == null || _liveSlices.Length == 0 ||
+                winningSliceIndex < 0 || winningSliceIndex >= _liveSlices.Length)
+            {
+                onComplete?.Invoke();
+                return;
+            }
+
+            var winningSlice = _liveSlices[winningSliceIndex];
+            if (winningSlice == null)
+            {
+                onComplete?.Invoke();
+                return;
+            }
+
+            var effectRoot = _wheelRoot.parent != null ? _wheelRoot.parent : _wheelRoot;
+
+            SlotZoomEffect.Play(
+                effectRoot,
+                winningSlice,
+                _liveSlices,
+                winningSliceIndex,
+                onComplete);
+        }
+
+        public void SnapSlicesToFullAlpha()
+        {
+            SlotZoomEffect.ResetSliceAlphas(_liveSlices);
         }
     }
 }

@@ -48,8 +48,9 @@ namespace WheelOfFortune.Factory
                 bombSlotIndex = InjectBomb(slices);
 
             ClearExistingSlices();
-            _sliceFactory.CreateSlices(slices, _slots);
+            var sliceInstances = _sliceFactory.CreateSlices(slices, _slots);
             wheelView.SetupSlices(slices);
+            wheelView.SetLiveSlices(sliceInstances);
 
             return new RuntimeWheelData(slices, bombSlotIndex, config.HasBomb);
         }

@@ -5,6 +5,7 @@ using WheelOfFortune.Data;
 using WheelOfFortune.Domain;
 using WheelOfFortune.Factory;
 using WheelOfFortune.Interfaces;
+using WheelOfFortune.Views;
 
 namespace WheelOfFortune.Tests.EditMode.Stubs
 {
@@ -105,7 +106,17 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
             throw new NotImplementedException();
         }
 
-        void IWheelView.ResetRotation()
+        void IWheelView.RotateToOrigin(float duration)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IWheelView.PlayWinEffect(int winningSliceIndex, Action onComplete)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IWheelView.SetLiveSlices(WheelSlice[] slices)
         {
             throw new NotImplementedException();
         }
