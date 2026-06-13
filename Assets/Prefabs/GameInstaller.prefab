@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9981cd3674447c4680265f915aaae3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gameSettings: {fileID: 0}
+  _gameSettings: {fileID: 11400000, guid: bdddc4bdbf17293429e641b74a87dcb7, type: 2}
   _zoneConfigs: []
   _slicePrefab: {fileID: 0}
   _sliceParent: {fileID: 0}

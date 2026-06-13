@@ -17,6 +17,7 @@ namespace WheelOfFortune.Installer
         [SerializeField] private WheelSlice _slicePrefab;
         [SerializeField] private Transform _sliceParent;
         [SerializeField] private GameController _gameController;
+        [SerializeField] private Transform _uiRoot;
 
         private void Awake()
         {
@@ -30,9 +31,9 @@ namespace WheelOfFortune.Installer
             var sliceFactory = new SliceFactory(_slicePrefab);
             var wheelFactory = new WheelFactory(_zoneConfigs, sliceFactory, _sliceParent);
 
-            var wheelView = GetComponentInChildren<IWheelView>(true);
-            var hudView = GetComponentInChildren<IHudView>(true);
-            var dialogView = GetComponentInChildren<IDialogView>(true);
+            var wheelView = _uiRoot.GetComponentInChildren<IWheelView>(true);
+            var hudView = _uiRoot.GetComponentInChildren<IHudView>(true);
+            var dialogView = _uiRoot.GetComponentInChildren<IDialogView>(true);
 
             ValidateDependencies(wheelView, hudView, dialogView);
 
