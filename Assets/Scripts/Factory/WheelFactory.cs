@@ -2,7 +2,6 @@ using UnityEngine;
 using WheelOfFortune.Data;
 using WheelOfFortune.Domain;
 using WheelOfFortune.Interfaces;
-using WheelOfFortune.Views;
 
 namespace WheelOfFortune.Factory
 {
@@ -21,18 +20,26 @@ namespace WheelOfFortune.Factory
         {
             _zoneConfigs = zoneConfigs;
             _sliceFactory = sliceFactory;
-
             _slots = slotFactory.CreateSlots(slotParent, slotCount);
         }
 
         public RuntimeWheelData BuildWheel(ZoneType zoneType, int zoneNumber, IWheelView wheelView)
         {
-            var config = GetConfig(zoneType);
-            if (config == null)
+            var zoneConfig = GetZoneConfig(zoneType);
+            if (zoneConfig == null)
             {
-                Debug.LogError($"[WheelFactory] No WheelConfigSO found for ZoneType {zoneType}");
+                Debug.LogError($"[WheelFactory] No ZoneConfigSO found for ZoneType {zoneType}");
                 return default;
             }
+
+            var config = zoneConfig.WheelConfig;
+            if (config == null)
+            {
+                Debug.LogError($"[WheelFactory] ZoneConfigSO for {zoneType} has no WheelConfig assigned.");
+                return default;
+            }
+
+            wheelView.SetZoneVisuals(zoneConfig.WheelSprite, zoneConfig.ArrowSprite);
 
             var slices = DrawSlices(config, zoneNumber);
             int bombSlotIndex = -1;
@@ -90,12 +97,12 @@ namespace WheelOfFortune.Factory
             return bombIndex;
         }
 
-        private WheelConfigSO GetConfig(ZoneType zoneType)
+        private ZoneConfigSO GetZoneConfig(ZoneType zoneType)
         {
             foreach (var zoneConfig in _zoneConfigs)
             {
                 if (zoneConfig.ZoneType == zoneType)
-                    return zoneConfig.WheelConfig;
+                    return zoneConfig;
             }
             return null;
         }
@@ -105,9 +112,7 @@ namespace WheelOfFortune.Factory
             foreach (var slot in _slots)
             {
                 for (int i = slot.Position.childCount - 1; i >= 0; i--)
-                {
                     Object.Destroy(slot.Position.GetChild(i).gameObject);
-                }
             }
         }
     }

@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _zoneType: 0
   _wheelConfig: {fileID: 11400000, guid: da19ba68744ce854f9a1e1cc99bfc030, type: 2}
+  _wheelSprite: {fileID: 21300000, guid: 7ba9ceedb1a8a754b820ed0c4cc16676, type: 3}
+  _arrowSprite: {fileID: 21300000, guid: 562a50a5166d48f478938915f883b70d, type: 3}

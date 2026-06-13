@@ -47,6 +47,7 @@ namespace WheelOfFortune.Tests.EditMode
                 _wheel,
                 _hud,
                 _dialog,
+                new StubButtonView(),
                 null,
                 TransitionTo,
                 _randomStrategy,
@@ -65,8 +66,6 @@ namespace WheelOfFortune.Tests.EditMode
         {
             TransitionTo(new IdleState());
         }
-
-        // ── IdleState ─────────────────────────────────────────────────────────
 
         [Test]
         public void IdleState_Enter_UpdatesHudWithCurrentZone()
@@ -132,8 +131,6 @@ namespace WheelOfFortune.Tests.EditMode
 
             Assert.IsFalse(idle.CanCollect());
         }
-
-        // ── Happy path: Idle → Spinning → Reward → Idle ───────────────────────
 
         [Test]
         public void HappyPath_SpinReward_AdvancesZone()
@@ -215,8 +212,6 @@ namespace WheelOfFortune.Tests.EditMode
 
             Assert.AreEqual(3, _reward.CollectedItems.Count);
         }
-
-        // ── Bomb path: Idle → Spinning → Bomb → (revive or give up) ──────────
 
         [Test]
         public void BombPath_Spin_ShowsBombScreen()
@@ -316,8 +311,6 @@ namespace WheelOfFortune.Tests.EditMode
             Assert.IsTrue(_dialog.HideCallCount);
         }
 
-        // ── Collect path ──────────────────────────────────────────────────────
-
         [Test]
         public void CollectPath_Enter_ShowsConfirmScreen()
         {
@@ -364,8 +357,6 @@ namespace WheelOfFortune.Tests.EditMode
 
             Assert.IsTrue(_dialog.HideCallCount);
         }
-
-        // ── SpinningState deferred callback ───────────────────────────────────
 
         [Test]
         public void SpinningState_DeferredCallback_StillTransitionsCorrectly()

@@ -8,6 +8,9 @@ namespace WheelOfFortune.StateMachine
 
         public void Enter(GameContext ctx)
         {
+            ctx.ButtonView.SetSpinInteractable(false);
+            ctx.ButtonView.SetCollectVisible(false);
+
             var zoneType = ctx.ZoneService.GetCurrentZoneType();
             var zoneNumber = ctx.ZoneService.GetCurrentZoneNumber();
             var strategy = ctx.RandomStrategy;

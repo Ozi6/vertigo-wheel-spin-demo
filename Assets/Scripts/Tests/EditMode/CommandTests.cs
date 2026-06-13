@@ -43,6 +43,7 @@ namespace WheelOfFortune.Tests.EditMode
             var ctx = new GameContext(
                 zone2, new StubSpinService(), reward,
                 new StubWheelView(), hud, dialog,
+                new StubButtonView(),
                 null, CaptureTransition,
                 randomStrategy,
                 revive, giveUp);

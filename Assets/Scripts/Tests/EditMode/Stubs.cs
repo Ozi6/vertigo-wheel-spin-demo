@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 using WheelOfFortune.Data;
 using WheelOfFortune.Domain;
 using WheelOfFortune.Factory;
@@ -98,6 +99,11 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         }
 
         public void InvokeCallback() => _pendingCallback?.Invoke();
+
+        void IWheelView.SetZoneVisuals(Sprite wheelSprite, Sprite arrowSprite)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     internal sealed class StubHudView : IHudView
@@ -139,6 +145,15 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         public void SimulateGiveUp() => _onGiveUp?.Invoke();
         public void SimulateConfirmCollect() => _onConfirm?.Invoke();
         public void SimulateCancelCollect() => _onCancel?.Invoke();
+    }
+
+    internal sealed class StubButtonView : IButtonView
+    {
+        public bool LastSpinInteractable;
+        public bool LastCollectVisible;
+
+        public void SetSpinInteractable(bool interactable) => LastSpinInteractable = interactable;
+        public void SetCollectVisible(bool visible) => LastCollectVisible = visible;
     }
 
     internal sealed class StubSpinStrategy : IWheelSpinStrategy

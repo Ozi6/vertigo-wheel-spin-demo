@@ -13,6 +13,7 @@ namespace WheelOfFortune.StateMachine
         public readonly IWheelView WheelView;
         public readonly IHudView HudView;
         public readonly IDialogView DialogView;
+        public readonly IButtonView ButtonView;
         public readonly IWheelFactory WheelFactory;
         public readonly Action<IGameState> TransitionTo;
         public readonly IWheelSpinStrategy RandomStrategy;
@@ -26,6 +27,7 @@ namespace WheelOfFortune.StateMachine
             IWheelView wheelView,
             IHudView hudView,
             IDialogView dialogView,
+            IButtonView buttonView,
             IWheelFactory wheelFactory,
             Action<IGameState> transitionTo,
             IWheelSpinStrategy randomStrategy,
@@ -38,6 +40,7 @@ namespace WheelOfFortune.StateMachine
             WheelView = wheelView;
             HudView = hudView;
             DialogView = dialogView;
+            ButtonView = buttonView;
             WheelFactory = wheelFactory;
             TransitionTo = transitionTo;
             RandomStrategy = randomStrategy;

@@ -22,6 +22,7 @@ namespace WheelOfFortune.Controller
             IWheelView wheelView,
             IHudView hudView,
             IDialogView dialogView,
+            IButtonView buttonView,
             IWheelFactory wheelFactory,
             IWheelSpinStrategy randomStrategy)
         {
@@ -39,6 +40,7 @@ namespace WheelOfFortune.Controller
                 wheelView,
                 hudView,
                 dialogView,
+                buttonView,
                 wheelFactory,
                 TransitionTo,
                 randomStrategy,

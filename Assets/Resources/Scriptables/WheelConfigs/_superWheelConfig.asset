@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be57c4428dd9f7141a3f6ea0c8ff3db6, type: 3}
   m_Name: _superWheelConfig
   m_EditorClassIdentifier: 
-  _slices:
+  _rewardPool:
   - _rewardItem: {fileID: 11400000, guid: cbdb23541cec49c49bc6176d2361823a, type: 2}
-    _weight: 1
-  _bombSlotIndex: -1
+    _weight: 0
+    _zoneValueMultiplier: 0
+  _sliceCount: 8
+  _hasBomb: 1

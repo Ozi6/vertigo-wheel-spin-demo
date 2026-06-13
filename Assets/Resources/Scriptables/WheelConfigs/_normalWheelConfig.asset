@@ -16,8 +16,5 @@ MonoBehaviour:
   - _rewardItem: {fileID: 11400000, guid: cbdb23541cec49c49bc6176d2361823a, type: 2}
     _weight: 0
     _zoneValueMultiplier: 0
-  - _rewardItem: {fileID: 11400000, guid: cbdb23541cec49c49bc6176d2361823a, type: 2}
-    _weight: 0
-    _zoneValueMultiplier: 0
   _sliceCount: 8
   _hasBomb: 1
