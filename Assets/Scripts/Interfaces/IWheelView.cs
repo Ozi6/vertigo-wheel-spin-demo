@@ -9,5 +9,6 @@ namespace WheelOfFortune.Interfaces
         void SetupSlices(SliceDefinition[] slices);
         void SpinTo(int targetSliceIndex, Action onComplete);
         void SetZoneVisuals(Sprite wheelSprite, Sprite arrowSprite);
+        void ResetRotation();
     }
 }

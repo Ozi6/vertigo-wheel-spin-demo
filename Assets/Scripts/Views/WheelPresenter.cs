@@ -32,6 +32,11 @@ namespace WheelOfFortune.Views
                 _arrowImage_value.sprite = arrowSprite;
         }
 
+        public void ResetRotation()
+        {
+            _wheelRoot.localEulerAngles = Vector3.zero;
+        }
+
         public void SpinTo(int targetSliceIndex, Action onComplete)
         {
             if (_currentSlices == null || _currentSlices.Length == 0)

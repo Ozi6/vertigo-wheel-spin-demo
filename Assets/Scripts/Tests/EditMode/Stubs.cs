@@ -104,6 +104,11 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         {
             throw new NotImplementedException();
         }
+
+        void IWheelView.ResetRotation()
+        {
+            throw new NotImplementedException();
+        }
     }
 
     internal sealed class StubHudView : IHudView
