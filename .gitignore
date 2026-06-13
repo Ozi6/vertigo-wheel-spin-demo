@@ -74,6 +74,8 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 /[Aa]ssets/TextMesh Pro
+/[Aa]ssets/[Pp]lugins/Demigiant
 
 .vsconfig
 Assets/TextMesh Pro.meta
+Assets/Plugins/Demigiant.meta

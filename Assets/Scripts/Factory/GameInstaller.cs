@@ -36,8 +36,9 @@ namespace WheelOfFortune.Installer
             var wheelView = _uiRoot.GetComponentInChildren<IWheelView>(true);
             var hudView = _uiRoot.GetComponentInChildren<IHudView>(true);
             var dialogView = _uiRoot.GetComponentInChildren<IDialogView>(true);
+            var buttonPresenter = _uiRoot.GetComponentInChildren<ButtonPresenter>(true);
 
-            ValidateDependencies(wheelView, hudView, dialogView);
+            ValidateDependencies(wheelView, hudView, dialogView, buttonPresenter);
 
             wheelFactory.BuildWheel(zoneService.GetCurrentZoneType(), zoneService.GetCurrentZoneNumber(), wheelView);
 
@@ -50,13 +51,16 @@ namespace WheelOfFortune.Installer
                 dialogView,
                 wheelFactory,
                 randomStrategy);
+
+            buttonPresenter.Init(_gameController);
         }
 
-        private void ValidateDependencies(IWheelView wheelView, IHudView hudView, IDialogView dialogView)
+        private void ValidateDependencies(IWheelView wheelView, IHudView hudView, IDialogView dialogView, ButtonPresenter buttonPresenter)
         {
             if (wheelView == null) Debug.LogError("[GameInstaller] IWheelView not found in scene.");
             if (hudView == null) Debug.LogError("[GameInstaller] IHudView not found in scene.");
             if (dialogView == null) Debug.LogError("[GameInstaller] IDialogView not found in scene.");
+            if (buttonPresenter == null) Debug.LogError("[GameInstaller] ButtonPresenter not found in scene.");
         }
     }
 }
