@@ -10,13 +10,19 @@ namespace WheelOfFortune.Factory
     {
         private readonly ZoneConfigSO[] _zoneConfigs;
         private readonly SliceFactory _sliceFactory;
-        private readonly Transform _sliceParent;
+        private readonly SlotDefinition[] _slots;
 
-        public WheelFactory(ZoneConfigSO[] zoneConfigs, SliceFactory sliceFactory, Transform sliceParent)
+        public WheelFactory(
+            ZoneConfigSO[] zoneConfigs,
+            SliceFactory sliceFactory,
+            ISlotFactory slotFactory,
+            Transform slotParent,
+            int slotCount)
         {
             _zoneConfigs = zoneConfigs;
             _sliceFactory = sliceFactory;
-            _sliceParent = sliceParent;
+
+            _slots = slotFactory.CreateSlots(slotParent, slotCount);
         }
 
         public RuntimeWheelData BuildWheel(ZoneType zoneType, int zoneNumber, IWheelView wheelView)
@@ -35,7 +41,7 @@ namespace WheelOfFortune.Factory
                 bombSlotIndex = InjectBomb(slices);
 
             ClearExistingSlices();
-            _sliceFactory.CreateSlices(slices, _sliceParent);
+            _sliceFactory.CreateSlices(slices, _slots);
             wheelView.SetupSlices(slices);
 
             return new RuntimeWheelData(slices, bombSlotIndex, config.HasBomb);
@@ -96,8 +102,13 @@ namespace WheelOfFortune.Factory
 
         private void ClearExistingSlices()
         {
-            for (int i = _sliceParent.childCount - 1; i >= 0; i--)
-                Object.Destroy(_sliceParent.GetChild(i).gameObject);
+            foreach (var slot in _slots)
+            {
+                for (int i = slot.Position.childCount - 1; i >= 0; i--)
+                {
+                    Object.Destroy(slot.Position.GetChild(i).gameObject);
+                }
+            }
         }
     }
 }

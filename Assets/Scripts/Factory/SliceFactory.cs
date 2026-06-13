@@ -13,13 +13,15 @@ namespace WheelOfFortune.Factory
             _slicePrefab = slicePrefab;
         }
 
-        public WheelSlice[] CreateSlices(SliceDefinition[] slices, Transform parent)
+        public WheelSlice[] CreateSlices(SliceDefinition[] slices, SlotDefinition[] slots)
         {
             var instances = new WheelSlice[slices.Length];
 
             for (int i = 0; i < slices.Length; i++)
             {
-                var instance = Object.Instantiate(_slicePrefab, parent);
+                var slotTransform = slots[i].Position;
+                var instance = Object.Instantiate(_slicePrefab, slotTransform);
+
                 instance.name = $"ui_slice_{i:D2}_value";
 
                 var reward = slices[i].RewardItem;
