@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using WheelOfFortune.Data;
 
@@ -5,25 +6,37 @@ namespace WheelOfFortune.Domain
 {
     public sealed class CollectedRewards
     {
-        private readonly List<RewardItemSO> _items = new List<RewardItemSO>();
-
-        public IReadOnlyList<RewardItemSO> Items => _items;
-
-        public void Add(RewardItemSO item)
+        public readonly struct Entry
         {
-            _items.Add(item);
+            public readonly RewardItemSO Item;
+            public readonly int Multiplier;
+
+            public Entry(RewardItemSO item, int multiplier)
+            {
+                Item = item;
+                Multiplier = multiplier;
+            }
+        }
+
+        private readonly List<Entry> _entries = new List<Entry>();
+
+        public IReadOnlyList<Entry> Entries => _entries;
+
+        public void Add(RewardItemSO item, int multiplier)
+        {
+            _entries.Add(new Entry(item, multiplier));
         }
 
         public void Clear()
         {
-            _items.Clear();
+            _entries.Clear();
         }
 
         public CollectedRewards Clone()
         {
-            CollectedRewards clone = new CollectedRewards();
-            foreach (RewardItemSO item in _items)
-                clone._items.Add(item);
+            var clone = new CollectedRewards();
+            foreach (var e in _entries)
+                clone._entries.Add(e);
             return clone;
         }
     }

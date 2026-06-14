@@ -41,7 +41,7 @@ namespace WheelOfFortune.Factory
 
             wheelView.SetZoneVisuals(zoneConfig.WheelSprite, zoneConfig.ArrowSprite);
 
-            var slices = DrawSlices(config, zoneNumber);
+            var slices = DrawSlices(config);
             int bombSlotIndex = -1;
 
             if (config.HasBomb)
@@ -55,7 +55,7 @@ namespace WheelOfFortune.Factory
             return new RuntimeWheelData(slices, bombSlotIndex, config.HasBomb);
         }
 
-        private SliceDefinition[] DrawSlices(WheelConfigSO config, int zoneNumber)
+        private SliceDefinition[] DrawSlices(WheelConfigSO config)
         {
             var pool = config.RewardPool;
             int count = config.SliceCount;
@@ -81,11 +81,8 @@ namespace WheelOfFortune.Factory
                     }
                 }
 
-                float scaledValue = chosen.RewardItem != null
-                    ? chosen.RewardItem.Value * (1f + (zoneNumber - 1) * chosen.ZoneValueMultiplier)
-                    : 0f;
-
-                slices[i] = new SliceDefinition(chosen.RewardItem, chosen.Weight, scaledValue);
+                int multiplier = Random.Range(config.MinMultiplier, config.MaxMultiplier + 1);
+                slices[i] = new SliceDefinition(chosen.RewardItem, multiplier);
             }
 
             return slices;
@@ -94,7 +91,7 @@ namespace WheelOfFortune.Factory
         private int InjectBomb(SliceDefinition[] slices)
         {
             int bombIndex = Random.Range(0, slices.Length);
-            slices[bombIndex] = new SliceDefinition(null, 1f, 0f);
+            slices[bombIndex] = new SliceDefinition(null, 0);
             return bombIndex;
         }
 

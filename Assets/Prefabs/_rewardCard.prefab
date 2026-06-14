@@ -228,9 +228,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _icon_value: {fileID: 566121079717257251}
-  _totalLabel_value: {fileID: 566121078681981496}
-  _countBadge: {fileID: 4652971887948353294}
-  _countLabel_value: {fileID: 2167912873541917102}
+  _multiplierLabel_value: {fileID: 2167912873541917102}
 --- !u!1 &566121079717257261
 GameObject:
   m_ObjectHideFlags: 0

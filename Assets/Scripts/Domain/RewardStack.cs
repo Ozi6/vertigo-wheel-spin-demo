@@ -5,14 +5,12 @@ namespace WheelOfFortune.Domain
     public readonly struct RewardStack
     {
         public readonly RewardItemSO Item;
-        public readonly int Count;
-        public readonly float TotalValue;
+        public readonly int TotalMultiplier;
 
-        public RewardStack(RewardItemSO item, int count, float totalValue)
+        public RewardStack(RewardItemSO item, int totalMultiplier)
         {
             Item = item;
-            Count = count;
-            TotalValue = totalValue;
+            TotalMultiplier = totalMultiplier;
         }
     }
 }

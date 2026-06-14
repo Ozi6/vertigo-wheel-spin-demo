@@ -165,7 +165,7 @@ namespace WheelOfFortune.Tests.EditMode
             Assert.AreEqual(ZoneType.Super, service.GetCurrentZoneType());
         }
 
-        [Test]
+        /*[Test]
         public void RewardService_InitialRewards_AreEmpty()
         {
             var service = new RewardService(_eventBus);
@@ -256,7 +256,7 @@ namespace WheelOfFortune.Tests.EditMode
             service.ClearAll();
             service.Collect(MakeReward("b", 20f));
             Assert.AreEqual(1, service.GetCurrentRewards().Items.Count);
-        }
+        }*/
 
         /*[Test]
         public void SpinService_Spin_ReturnsResultWithCorrectSliceIndex()

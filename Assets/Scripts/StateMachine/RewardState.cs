@@ -16,7 +16,7 @@ namespace WheelOfFortune.StateMachine
 
         public void Enter(GameContext ctx)
         {
-            ctx.RewardService.Collect(_result.RewardItem);
+            ctx.RewardService.Collect(_result.RewardItem, _result.Multiplier);
             ctx.ZoneService.Advance();
 
             ctx.WheelView.PlayWinEffect(

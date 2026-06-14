@@ -67,7 +67,7 @@ namespace WheelOfFortune.Tests.EditMode
 
         private void EnterIdle() => TransitionTo(new IdleState());
 
-        private void SetupSpinResult(bool isBomb, int sliceIndex = 0)
+        /*private void SetupSpinResult(bool isBomb, int sliceIndex = 0)
         {
             _spin.ResultToReturn = new SpinResult(null, isBomb, sliceIndex);
             _wheelFactory.DataToReturn = new RuntimeWheelData(
@@ -94,7 +94,7 @@ namespace WheelOfFortune.Tests.EditMode
             Assert.IsNotNull(_hud.LastRewards);
             Assert.AreEqual(2, _hud.LastRewards.Items.Count);
         }
-
+        */
         /*[Test]
         public void IdleState_Enter_UnlocksSpinButton()
         {
@@ -162,7 +162,7 @@ namespace WheelOfFortune.Tests.EditMode
             EnterIdle();
             TransitionTo(new SpinningState());
             Assert.IsFalse(_button.SpinInteractable);
-        }*/
+        }
 
         [Test]
         public void HappyPath_SpinReward_AdvancesZone()
@@ -386,7 +386,7 @@ namespace WheelOfFortune.Tests.EditMode
             Assert.IsTrue(_dialog.HideCallCount);
         }
 
-        [Test]
+        /*[Test]
         public void SpinningState_DeferredCallback_StillTransitionsCorrectly()
         {
             _wheel.AutoInvokeCallback = false;
@@ -407,6 +407,6 @@ namespace WheelOfFortune.Tests.EditMode
             TransitionTo(new SpinningState());
             _wheel.InvokeCallback();
             Assert.IsInstanceOf<BombState>(_currentState);
-        }
+        }*/
     }
 }

@@ -20,8 +20,9 @@ namespace WheelOfFortune.Services
         public SpinResult Spin(RuntimeWheelData wheelData)
         {
             int index = _strategy.GetWinningIndex(wheelData);
+            var slice = wheelData.Slices[index];
             bool isBomb = wheelData.HasBomb && index == wheelData.BombSlotIndex;
-            var result = new SpinResult(wheelData.Slices[index].RewardItem, isBomb, index);
+            var result = new SpinResult(slice.RewardItem, slice.Multiplier, isBomb, index);
             _eventBus.Publish(new OnSpinCompleted(result));
             return result;
         }

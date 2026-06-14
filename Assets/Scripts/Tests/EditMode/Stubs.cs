@@ -78,8 +78,13 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         {
             var r = new CollectedRewards();
             foreach (var item in CollectedItems)
-                r.Add(item);
+                r.Add(item, 5);
             return r;
+        }
+
+        void IRewardService.Collect(RewardItemSO item, int multiplier)
+        {
+            throw new NotImplementedException();
         }
     }
 

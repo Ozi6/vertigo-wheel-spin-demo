@@ -21,14 +21,11 @@ namespace WheelOfFortune.Factory
             {
                 var slotTransform = slots[i].Position;
                 var instance = Object.Instantiate(_slicePrefab, slotTransform);
-
                 instance.name = $"ui_slice_{i:D2}_value";
 
                 var reward = slices[i].RewardItem;
                 var icon = reward != null ? reward.Icon : null;
-                var label = slices[i].ScaledValue > 0f
-                    ? slices[i].ScaledValue.ToString("F0")
-                    : string.Empty;
+                var label = reward != null ? $"x{slices[i].Multiplier}" : string.Empty;
 
                 instance.Setup(icon, label);
                 instances[i] = instance;

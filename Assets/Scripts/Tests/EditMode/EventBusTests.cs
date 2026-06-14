@@ -119,7 +119,7 @@ namespace WheelOfFortune.Tests.EditMode
         public void Publish_SpinCompletedWithBombResult_PayloadIntact()
         {
             SpinResult received = default;
-            var expected = new SpinResult(null, true, 3);
+            var expected = new SpinResult(null, 0, true, 3);
 
             _eventBus.Subscribe<OnSpinCompleted>(e => received = e.Result);
             _eventBus.Publish(new OnSpinCompleted(expected));

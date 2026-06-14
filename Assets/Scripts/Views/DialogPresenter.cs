@@ -56,7 +56,7 @@ namespace WheelOfFortune.Views
             ClearGrid(cards);
             if (grid == null || _rewardCardPrefab_value == null) return;
 
-            var stacks = RewardStackBuilder.Build(rewards.Items);
+            var stacks = RewardStackBuilder.Build(rewards.Entries);
             foreach (var stack in stacks)
             {
                 var card = Instantiate(_rewardCardPrefab_value, grid);

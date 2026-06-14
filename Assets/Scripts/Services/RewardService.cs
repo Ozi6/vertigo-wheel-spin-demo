@@ -16,9 +16,9 @@ namespace WheelOfFortune.Services
             _rewards = new CollectedRewards();
         }
 
-        public void Collect(RewardItemSO item)
+        public void Collect(RewardItemSO item, int multiplier)
         {
-            _rewards.Add(item);
+            _rewards.Add(item, multiplier);
             _eventBus.Publish(new OnRewardCollected(_rewards.Clone()));
         }
 
@@ -27,14 +27,9 @@ namespace WheelOfFortune.Services
             _rewards.Clear();
             _eventBus.Publish(new OnBombHit());
         }
-        public void Reset()
-        {
-            //_rewards.Clear();
-        }
 
-        public CollectedRewards GetCurrentRewards()
-        {
-            return _rewards;
-        }
+        public void Reset() => _rewards.Clear();
+
+        public CollectedRewards GetCurrentRewards() => _rewards;
     }
 }

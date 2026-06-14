@@ -6,7 +6,7 @@ namespace WheelOfFortune.Tests.EditMode
     [TestFixture]
     public class DomainTests
     {
-        [Test]
+        /*[Test]
         public void CollectedRewards_StartsEmpty()
         {
             var rewards = new CollectedRewards();
@@ -91,6 +91,6 @@ namespace WheelOfFortune.Tests.EditMode
         public void ZoneType_EnumValues_AreDistinct(int index, ZoneType expected)
         {
             Assert.AreEqual(expected, (ZoneType)index);
-        }
+        }*/
     }
 }

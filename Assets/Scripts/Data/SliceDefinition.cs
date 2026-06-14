@@ -7,18 +7,16 @@ namespace WheelOfFortune.Data
     public struct SliceDefinition
     {
         [SerializeField] private RewardItemSO _rewardItem;
-        [SerializeField] private float _weight;
-        [SerializeField] private float _scaledValue;
+        [SerializeField] private int _multiplier;
 
         public RewardItemSO RewardItem => _rewardItem;
-        public float Weight => _weight;
-        public float ScaledValue => _scaledValue;
+        public int Multiplier => _multiplier;
+        public bool IsBomb => _rewardItem == null;
 
-        public SliceDefinition(RewardItemSO rewardItem, float weight, float scaledValue)
+        public SliceDefinition(RewardItemSO rewardItem, int multiplier)
         {
             _rewardItem = rewardItem;
-            _weight = weight;
-            _scaledValue = scaledValue;
+            _multiplier = multiplier;
         }
     }
 }
