@@ -14,7 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rewardPool:
   - _rewardItem: {fileID: 11400000, guid: cbdb23541cec49c49bc6176d2361823a, type: 2}
-    _weight: 0
+    _weight: 1
+    _zoneValueMultiplier: 0
+  - _rewardItem: {fileID: 11400000, guid: 10f5789f43c3fe24091992a96f122b06, type: 2}
+    _weight: 1
+    _zoneValueMultiplier: 0
+  - _rewardItem: {fileID: 11400000, guid: 470ed3fb075edaa4ab2d06230a3ce7bd, type: 2}
+    _weight: 1
+    _zoneValueMultiplier: 0
+  - _rewardItem: {fileID: 11400000, guid: 68318b3c25c64174f9aaf4c6e7d4ca85, type: 2}
+    _weight: 1
     _zoneValueMultiplier: 0
   _sliceCount: 8
   _hasBomb: 1

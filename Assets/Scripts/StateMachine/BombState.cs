@@ -15,8 +15,11 @@ namespace WheelOfFortune.StateMachine
 
         public void Enter(GameContext ctx)
         {
+            var lostRewards = ctx.RewardService.GetCurrentRewards().Clone();
             ctx.RewardService.ClearAll();
+
             ctx.DialogView.ShowBombScreen(
+                lostRewards,
                 onRevive: () => _reviveCommand.Execute(),
                 onGiveUp: () => _giveUpCommand.Execute());
         }

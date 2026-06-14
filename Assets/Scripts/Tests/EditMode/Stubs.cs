@@ -137,6 +137,7 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
     internal sealed class StubDialogView : IDialogView
     {
         public bool BombScreenShown;
+        public CollectedRewards LastLostRewards;
         public bool CollectScreenShown;
         public bool HideCallCount;
         public CollectedRewards LastRewardsPassedToCollect;
@@ -145,9 +146,10 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         private Action _onConfirm;
         private Action _onCancel;
 
-        public void ShowBombScreen(Action onRevive, Action onGiveUp)
+        public void ShowBombScreen(CollectedRewards lostRewards, Action onRevive, Action onGiveUp)
         {
             BombScreenShown = true;
+            LastLostRewards = lostRewards;
             _onRevive = onRevive;
             _onGiveUp = onGiveUp;
         }

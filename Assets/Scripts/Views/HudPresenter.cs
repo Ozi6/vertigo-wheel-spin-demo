@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using WheelOfFortune.Domain;
 using WheelOfFortune.Interfaces;
+using WheelOfFortune.Utility;
 
 namespace WheelOfFortune.Views
 {
@@ -55,13 +56,12 @@ namespace WheelOfFortune.Views
 
             if (_rewardCardPrefab_value == null || _rewardsContainer_value == null) return;
 
-            foreach (var item in rewards.Items)
+            var stacks = RewardStackBuilder.Build(rewards.Items);
+            foreach (var stack in stacks)
             {
                 var card = Instantiate(_rewardCardPrefab_value, _rewardsContainer_value);
-                card.name = "ui_card_reward_value";
-                var icon = item != null ? item.Icon : null;
-                var label = item != null ? item.Value.ToString("F0") : string.Empty;
-                card.Setup(icon, label);
+                card.name = $"ui_card_reward_{stack.Item.Id}_value";
+                card.Setup(stack);
                 _rewardCards.Add(card);
             }
         }
