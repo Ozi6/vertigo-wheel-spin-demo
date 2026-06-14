@@ -12,6 +12,7 @@ namespace WheelOfFortune.Views
         [SerializeField] private RectTransform _zoneStrip_value;
         [SerializeField] private TextMeshProUGUI _zoneCellPrefab_value;
         [SerializeField] private Transform _rewardsContainer_value;
+        [SerializeField] private RewardCard _rewardCardPrefab_value;
 
         [SerializeField] private int _safeZoneInterval = 5;
         [SerializeField] private int _superZoneInterval = 30;
@@ -26,6 +27,7 @@ namespace WheelOfFortune.Views
         [SerializeField] private Color _colorCurrent = new Color(0.20f, 0.85f, 0.25f);
 
         private readonly List<TextMeshProUGUI> _cells = new List<TextMeshProUGUI>();
+        private readonly List<RewardCard> _rewardCards = new List<RewardCard>();
         private Tweener _scrollTween;
 
         private void Start()
@@ -45,7 +47,24 @@ namespace WheelOfFortune.Views
             AnimateStripTo(progress.ZoneNumber);
         }
 
-        public void UpdateRewardsDisplay(CollectedRewards rewards) { }
+        public void UpdateRewardsDisplay(CollectedRewards rewards)
+        {
+            foreach (var card in _rewardCards)
+                if (card != null) Destroy(card.gameObject);
+            _rewardCards.Clear();
+
+            if (_rewardCardPrefab_value == null || _rewardsContainer_value == null) return;
+
+            foreach (var item in rewards.Items)
+            {
+                var card = Instantiate(_rewardCardPrefab_value, _rewardsContainer_value);
+                card.name = "ui_card_reward_value";
+                var icon = item != null ? item.Icon : null;
+                var label = item != null ? item.Value.ToString("F0") : string.Empty;
+                card.Setup(icon, label);
+                _rewardCards.Add(card);
+            }
+        }
 
         private void BuildStrip()
         {

@@ -86,10 +86,18 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
     internal sealed class StubWheelView : IWheelView
     {
         public int LastTargetIndex = -1;
+        public Sprite LastWheelSprite;
+        public Sprite LastArrowSprite;
         private Action _pendingCallback;
         public bool AutoInvokeCallback = true;
 
         public void SetupSlices(SliceDefinition[] slices) { }
+
+        public void SetZoneVisuals(Sprite wheelSprite, Sprite arrowSprite)
+        {
+            LastWheelSprite = wheelSprite;
+            LastArrowSprite = arrowSprite;
+        }
 
         public void SpinTo(int targetSliceIndex, Action onComplete)
         {
@@ -101,22 +109,17 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
 
         public void InvokeCallback() => _pendingCallback?.Invoke();
 
-        void IWheelView.SetZoneVisuals(Sprite wheelSprite, Sprite arrowSprite)
-        {
-            throw new NotImplementedException();
-        }
-
         void IWheelView.RotateToOrigin(float duration)
         {
             throw new NotImplementedException();
         }
 
-        void IWheelView.PlayWinEffect(int winningSliceIndex, Action onComplete)
+        void IWheelView.SetLiveSlices(WheelSlice[] slices)
         {
             throw new NotImplementedException();
         }
 
-        void IWheelView.SetLiveSlices(WheelSlice[] slices)
+        void IWheelView.PlayWinEffect(int winningSliceIndex, Action onComplete)
         {
             throw new NotImplementedException();
         }
@@ -136,6 +139,7 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         public bool BombScreenShown;
         public bool CollectScreenShown;
         public bool HideCallCount;
+        public CollectedRewards LastRewardsPassedToCollect;
         private Action _onRevive;
         private Action _onGiveUp;
         private Action _onConfirm;
@@ -148,9 +152,10 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
             _onGiveUp = onGiveUp;
         }
 
-        public void ShowCollectConfirmScreen(Action onConfirm, Action onCancel)
+        public void ShowCollectConfirmScreen(CollectedRewards rewards, Action onConfirm, Action onCancel)
         {
             CollectScreenShown = true;
+            LastRewardsPassedToCollect = rewards;
             _onConfirm = onConfirm;
             _onCancel = onCancel;
         }
@@ -165,11 +170,22 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
 
     internal sealed class StubButtonView : IButtonView
     {
-        public bool LastSpinInteractable;
-        public bool LastCollectVisible;
+        public bool SpinInteractable = true;
+        public bool CollectVisible = false;
+        public int SetSpinInteractableCallCount;
+        public int SetCollectVisibleCallCount;
 
-        public void SetSpinInteractable(bool interactable) => LastSpinInteractable = interactable;
-        public void SetCollectVisible(bool visible) => LastCollectVisible = visible;
+        public void SetSpinInteractable(bool interactable)
+        {
+            SpinInteractable = interactable;
+            SetSpinInteractableCallCount++;
+        }
+
+        public void SetCollectVisible(bool visible)
+        {
+            CollectVisible = visible;
+            SetCollectVisibleCallCount++;
+        }
     }
 
     internal sealed class StubSpinStrategy : IWheelSpinStrategy

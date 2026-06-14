@@ -26,10 +26,6 @@ namespace WheelOfFortune.Controller
             IWheelFactory wheelFactory,
             IWheelSpinStrategy randomStrategy)
         {
-            _idleState = new IdleState();
-            _spinCommand = new SpinCommand(_idleState, TransitionTo);
-            _collectCommand = new CollectCommand(_idleState, TransitionTo);
-
             var reviveCommand = new ReviveCommand(TransitionTo, () => true);
             var giveUpCommand = new GiveUpCommand(zoneService, rewardService, TransitionTo);
 
@@ -46,6 +42,10 @@ namespace WheelOfFortune.Controller
                 randomStrategy,
                 reviveCommand,
                 giveUpCommand);
+
+            _idleState = new IdleState();
+            _spinCommand = new SpinCommand(_idleState, TransitionTo);
+            _collectCommand = new CollectCommand(_idleState, TransitionTo);
 
             TransitionTo(_idleState);
         }

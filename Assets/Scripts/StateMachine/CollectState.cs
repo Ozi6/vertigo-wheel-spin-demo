@@ -8,7 +8,8 @@ namespace WheelOfFortune.StateMachine
         {
             var finalRewards = ctx.RewardService.GetCurrentRewards().Clone();
             ctx.DialogView.ShowCollectConfirmScreen(
-                onConfirm: () => OnConfirm(ctx, finalRewards),
+                finalRewards,
+                onConfirm: () => OnConfirm(ctx),
                 onCancel: () => OnCancel(ctx));
         }
 
@@ -17,7 +18,7 @@ namespace WheelOfFortune.StateMachine
             ctx.DialogView.Hide();
         }
 
-        private void OnConfirm(GameContext ctx, WheelOfFortune.Domain.CollectedRewards finalRewards)
+        private void OnConfirm(GameContext ctx)
         {
             ctx.ZoneService.Reset();
             ctx.RewardService.Reset();

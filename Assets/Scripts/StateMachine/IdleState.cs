@@ -21,10 +21,7 @@ namespace WheelOfFortune.StateMachine
             ctx.ButtonView.SetCollectVisible(ctx.ZoneService.CanPlayerLeave());
         }
 
-        public void Exit(GameContext ctx)
-        {
-            _ctx = null;
-        }
+        public void Exit(GameContext ctx) { }
 
         public bool CanSpin() => true;
 
