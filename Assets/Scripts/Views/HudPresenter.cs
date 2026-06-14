@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using WheelOfFortune.Domain;
@@ -7,17 +9,102 @@ namespace WheelOfFortune.Views
 {
     public sealed class HudPresenter : MonoBehaviour, IHudView
     {
-        [SerializeField] private TextMeshProUGUI _zoneLabel_value;
+        [SerializeField] private RectTransform _zoneStrip_value;
+        [SerializeField] private TextMeshProUGUI _zoneCellPrefab_value;
         [SerializeField] private Transform _rewardsContainer_value;
+
+        [SerializeField] private int _safeZoneInterval = 5;
+        [SerializeField] private int _superZoneInterval = 30;
+        [SerializeField] private int _totalZones = 30;
+        [SerializeField] private float _cellWidth = 64f;
+        [SerializeField] private float _scrollDuration = 0.4f;
+        [SerializeField] private Ease _scrollEase = Ease.OutCubic;
+
+        [SerializeField] private Color _colorNormal = new Color(0.72f, 0.45f, 0.20f);
+        [SerializeField] private Color _colorSafe = new Color(0.75f, 0.75f, 0.75f);
+        [SerializeField] private Color _colorSuper = new Color(1.00f, 0.84f, 0.20f);
+        [SerializeField] private Color _colorCurrent = new Color(0.20f, 0.85f, 0.25f);
+
+        private readonly List<TextMeshProUGUI> _cells = new List<TextMeshProUGUI>();
+        private Tweener _scrollTween;
+
+        private void Start()
+        {
+            _zoneStrip_value.anchorMin = new Vector2(0.5f, 0.5f);
+            _zoneStrip_value.anchorMax = new Vector2(0.5f, 0.5f);
+            _zoneStrip_value.pivot = new Vector2(0.5f, 0.5f);
+
+            BuildStrip();
+            SnapStripTo(1);
+            RefreshColors(1);
+        }
 
         public void UpdateZoneDisplay(ZoneProgressModel progress)
         {
-            if (_zoneLabel_value != null)
-                _zoneLabel_value.text = $"Zone {progress.ZoneNumber}";
+            RefreshColors(progress.ZoneNumber);
+            AnimateStripTo(progress.ZoneNumber);
         }
 
-        public void UpdateRewardsDisplay(CollectedRewards rewards)
+        public void UpdateRewardsDisplay(CollectedRewards rewards) { }
+
+        private void BuildStrip()
         {
+            foreach (Transform child in _zoneStrip_value)
+                Destroy(child.gameObject);
+            _cells.Clear();
+
+            for (int i = 1; i <= _totalZones; i++)
+            {
+                var cell = Instantiate(_zoneCellPrefab_value, _zoneStrip_value);
+                cell.name = $"ui_text_zone_{i:D3}_value";
+                cell.text = i.ToString();
+                cell.enableWordWrapping = false;
+                cell.overflowMode = TextOverflowModes.Overflow;
+
+                var rt = cell.GetComponent<RectTransform>();
+                rt.anchorMin = new Vector2(0.5f, 0.5f);
+                rt.anchorMax = new Vector2(0.5f, 0.5f);
+                rt.pivot = new Vector2(0.5f, 0.5f);
+                rt.anchoredPosition = new Vector2((i - 1) * _cellWidth - 32.5f, 0f);
+                rt.sizeDelta = new Vector2(_cellWidth, _cellWidth);
+
+                _cells.Add(cell);
+            }
+        }
+
+        private void SnapStripTo(int zone)
+        {
+            _zoneStrip_value.anchoredPosition = new Vector2(TargetX(zone), 0f);
+        }
+
+        private void AnimateStripTo(int zone)
+        {
+            _scrollTween?.Kill();
+            float endX = TargetX(zone);
+            _scrollTween = DOTween.To(
+                () => _zoneStrip_value.anchoredPosition.x,
+                x => _zoneStrip_value.anchoredPosition = new Vector2(x, _zoneStrip_value.anchoredPosition.y),
+                endX,
+                _scrollDuration
+            ).SetEase(_scrollEase);
+        }
+
+        private float TargetX(int zone) => -(zone - 1) * _cellWidth;
+
+        private void RefreshColors(int currentZone)
+        {
+            for (int i = 0; i < _cells.Count; i++)
+            {
+                int zoneNumber = i + 1;
+                _cells[i].color = zoneNumber == currentZone ? _colorCurrent : GetZoneColor(zoneNumber);
+            }
+        }
+
+        private Color GetZoneColor(int zoneNumber)
+        {
+            if (_superZoneInterval > 0 && zoneNumber % _superZoneInterval == 0) return _colorSuper;
+            if (_safeZoneInterval > 0 && zoneNumber % _safeZoneInterval == 0) return _colorSafe;
+            return _colorNormal;
         }
     }
 }
