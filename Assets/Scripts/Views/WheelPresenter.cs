@@ -72,11 +72,12 @@ namespace WheelOfFortune.Views
                 .OnComplete(() => onComplete?.Invoke());
         }
 
-        public void PlayWinEffect(int winningSliceIndex, Action onComplete)
+        public void PlayWinEffect(int winningSliceIndex, Action onReelBack, Action onComplete)
         {
             if (_liveSlices == null || _liveSlices.Length == 0 ||
                 winningSliceIndex < 0 || winningSliceIndex >= _liveSlices.Length)
             {
+                onReelBack?.Invoke();
                 onComplete?.Invoke();
                 return;
             }
@@ -84,6 +85,7 @@ namespace WheelOfFortune.Views
             var winningSlice = _liveSlices[winningSliceIndex];
             if (winningSlice == null)
             {
+                onReelBack?.Invoke();
                 onComplete?.Invoke();
                 return;
             }
@@ -95,6 +97,7 @@ namespace WheelOfFortune.Views
                 winningSlice,
                 _liveSlices,
                 winningSliceIndex,
+                onReelBack,
                 onComplete);
         }
 

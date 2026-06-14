@@ -13,6 +13,6 @@ namespace WheelOfFortune.Interfaces
         void RotateToOrigin(float duration);
 
         void SetLiveSlices(WheelSlice[] slices);
-        void PlayWinEffect(int winningSliceIndex, Action onComplete);
+        void PlayWinEffect(int winningSliceIndex, Action onReelBack, Action onComplete);
     }
 }

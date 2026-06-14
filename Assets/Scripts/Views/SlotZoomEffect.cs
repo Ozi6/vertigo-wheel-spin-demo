@@ -6,19 +6,17 @@ using UnityEngine.UI;
 
 namespace WheelOfFortune.Views
 {
-
     public sealed class SlotZoomEffect : MonoBehaviour
     {
-
         private const float ZoomDuration = 1.1f;
         private const float FadeDuration = 0.6f;
-        private const float FadeDelay = 0.15f;
         private const float ZoomScalePeak = 4.5f;
         private const Ease ZoomEase = Ease.InCubic;
         private const Ease FadeEase = Ease.OutQuad;
+        private const float ReelBackTriggerFraction = 0.25f;
 
         private GameObject _clone;
-        private List<CanvasGroup> _siblingGroups = new List<CanvasGroup>();
+        private List<CanvasGroup> _allFadeGroups = new List<CanvasGroup>();
         private Action _onComplete;
 
         public static SlotZoomEffect Play(
@@ -26,13 +24,14 @@ namespace WheelOfFortune.Views
             WheelSlice winningSlice,
             WheelSlice[] allSlices,
             int winningIndex,
+            Action onReelBack,
             Action onComplete)
         {
             var go = new GameObject("SlotZoomEffect");
             go.transform.SetParent(uiRoot, false);
 
             var effect = go.AddComponent<SlotZoomEffect>();
-            effect.Begin(winningSlice, allSlices, winningIndex, onComplete);
+            effect.Begin(winningSlice, allSlices, winningIndex, onReelBack, onComplete);
             return effect;
         }
 
@@ -40,15 +39,16 @@ namespace WheelOfFortune.Views
             WheelSlice winningSlice,
             WheelSlice[] allSlices,
             int winningIndex,
+            Action onReelBack,
             Action onComplete)
         {
             _onComplete = onComplete;
 
             for (int i = 0; i < allSlices.Length; i++)
             {
-                if (i == winningIndex || allSlices[i] == null) continue;
+                if (allSlices[i] == null) continue;
                 var cg = GetOrAddCanvasGroup(allSlices[i].gameObject);
-                _siblingGroups.Add(cg);
+                _allFadeGroups.Add(cg);
             }
 
             _clone = Instantiate(winningSlice.gameObject, transform);
@@ -68,6 +68,8 @@ namespace WheelOfFortune.Views
             var cloneCG = GetOrAddCanvasGroup(_clone);
             cloneCG.alpha = 1f;
 
+            float reelBackAt = ZoomDuration * ReelBackTriggerFraction;
+
             var seq = DOTween.Sequence();
 
             seq.Append(
@@ -75,15 +77,17 @@ namespace WheelOfFortune.Views
                     .DOScale(Vector3.one * ZoomScalePeak, ZoomDuration)
                     .SetEase(ZoomEase));
 
-            seq.Insert(FadeDelay, BuildSiblingFade());
+            seq.InsertCallback(reelBackAt, () => onReelBack?.Invoke());
+
+            seq.Insert(reelBackAt, BuildFade());
 
             seq.OnComplete(OnSequenceComplete);
         }
 
-        private Tween BuildSiblingFade()
+        private Tween BuildFade()
         {
             var fadeSeq = DOTween.Sequence();
-            foreach (var cg in _siblingGroups)
+            foreach (var cg in _allFadeGroups)
             {
                 var target = cg;
                 fadeSeq.Join(
@@ -95,7 +99,6 @@ namespace WheelOfFortune.Views
 
         private void OnSequenceComplete()
         {
-
             if (_clone != null)
                 Destroy(_clone);
 
