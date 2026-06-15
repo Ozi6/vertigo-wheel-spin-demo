@@ -14,6 +14,7 @@ namespace WheelOfFortune.Tests.EditMode
         private StubZoneService _zone;
         private StubSpinService _spin;
         private StubRewardService _reward;
+        private StubCurrencyService _currency;
         private StubWheelView _wheel;
         private StubHudView _hud;
         private StubDialogView _dialog;
@@ -33,6 +34,7 @@ namespace WheelOfFortune.Tests.EditMode
             _zone = new StubZoneService();
             _spin = new StubSpinService();
             _reward = new StubRewardService();
+            _currency = new StubCurrencyService(10000);
             _wheel = new StubWheelView();
             _hud = new StubHudView();
             _dialog = new StubDialogView();
@@ -40,13 +42,22 @@ namespace WheelOfFortune.Tests.EditMode
             _randomStrategy = new StubSpinStrategy();
             _wheelFactory = new StubWheelFactory();
 
-            _reviveCommand = new ReviveCommand(TransitionTo, () => true);
+            _reviveCommand = new ReviveCommand(CreateGameContext());
             _giveUpCommand = new GiveUpCommand(_zone, _reward, TransitionTo);
 
-            _ctx = new GameContext(
+            _ctx = CreateGameContext();
+        }
+
+        private GameContext CreateGameContext()
+        {
+            var revive = new ReviveCommand(null);
+            var giveUp = new GiveUpCommand(_zone, _reward, TransitionTo);
+
+            return new GameContext(
                 _zone,
                 _spin,
                 _reward,
+                _currency,
                 _wheel,
                 _hud,
                 _dialog,
@@ -54,8 +65,8 @@ namespace WheelOfFortune.Tests.EditMode
                 _wheelFactory,
                 TransitionTo,
                 _randomStrategy,
-                _reviveCommand,
-                _giveUpCommand,
+                revive,
+                giveUp,
                 null);
         }
 
@@ -67,57 +78,6 @@ namespace WheelOfFortune.Tests.EditMode
         }
 
         private void EnterIdle() => TransitionTo(new IdleState());
-
-        /*private void SetupSpinResult(bool isBomb, int sliceIndex = 0)
-        {
-            _spin.ResultToReturn = new SpinResult(null, isBomb, sliceIndex);
-            _wheelFactory.DataToReturn = new RuntimeWheelData(
-                new WheelOfFortune.Data.SliceDefinition[8], isBomb ? 0 : -1, isBomb);
-        }
-
-        [Test]
-        public void IdleState_Enter_UpdatesHudWithCurrentZone()
-        {
-            _zone.CurrentZone = 3;
-            _zone.ZoneTypeToReturn = ZoneType.Normal;
-            EnterIdle();
-            Assert.IsNotNull(_hud.LastZoneProgress);
-            Assert.AreEqual(3, _hud.LastZoneProgress.ZoneNumber);
-            Assert.AreEqual(ZoneType.Normal, _hud.LastZoneProgress.ZoneType);
-        }
-
-        [Test]
-        public void IdleState_Enter_UpdatesHudWithCurrentRewards()
-        {
-            _reward.Collect(null);
-            _reward.Collect(null);
-            EnterIdle();
-            Assert.IsNotNull(_hud.LastRewards);
-            Assert.AreEqual(2, _hud.LastRewards.Items.Count);
-        }
-        */
-        /*[Test]
-        public void IdleState_Enter_UnlocksSpinButton()
-        {
-            EnterIdle();
-            Assert.IsTrue(_button.SpinInteractable);
-        }
-
-        [Test]
-        public void IdleState_Enter_HidesCollectWhenCannotLeave()
-        {
-            _zone.CanLeave = false;
-            EnterIdle();
-            Assert.IsFalse(_button.CollectVisible);
-        }
-
-        [Test]
-        public void IdleState_Enter_ShowsCollectWhenCanLeave()
-        {
-            _zone.CanLeave = true;
-            EnterIdle();
-            Assert.IsTrue(_button.CollectVisible);
-        }*/
 
         [Test]
         public void IdleState_CanSpin_AlwaysTrue()
@@ -155,202 +115,12 @@ namespace WheelOfFortune.Tests.EditMode
             Assert.IsFalse(idle.CanCollect());
         }
 
-        /*[Test]
-        public void HappyPath_SpinReward_LocksSpinDuringSpin()
-        {
-            SetupSpinResult(false);
-            _wheel.AutoInvokeCallback = false;
-            EnterIdle();
-            TransitionTo(new SpinningState());
-            Assert.IsFalse(_button.SpinInteractable);
-        }
-
-        [Test]
-        public void HappyPath_SpinReward_AdvancesZone()
-        {
-            SetupSpinResult(false, 2);
-            EnterIdle();
-            TransitionTo(new SpinningState());
-            Assert.AreEqual(1, _zone.AdvanceCallCount);
-        }
-
-        [Test]
-        public void HappyPath_SpinReward_CollectsItem()
-        {
-            SetupSpinResult(false, 2);
-            EnterIdle();
-            TransitionTo(new SpinningState());
-            Assert.AreEqual(1, _reward.CollectedItems.Count);
-        }
-
-        [Test]
-        public void HappyPath_SpinReward_EndsInIdleState()
-        {
-            SetupSpinResult(false, 2);
-            EnterIdle();
-            TransitionTo(new SpinningState());
-            Assert.IsInstanceOf<IdleState>(_currentState);
-        }
-
-        [Test]
-        public void HappyPath_SpinReward_WheelSpinsToCorrectIndex()
-        {
-            SetupSpinResult(false, 5);
-            _spin.ResultToReturn = new SpinResult(null, false, 5);
-            EnterIdle();
-            TransitionTo(new SpinningState());
-            Assert.AreEqual(5, _wheel.LastTargetIndex);
-        }
-
-        [Test]
-        public void HappyPath_SpinReward_SetsRandomStrategyForNormalZone()
-        {
-            _zone.ZoneTypeToReturn = ZoneType.Normal;
-            SetupSpinResult(false);
-            EnterIdle();
-            TransitionTo(new SpinningState());
-            Assert.AreSame(_randomStrategy, _spin.LastStrategySet);
-        }
-
-        [Test]
-        public void HappyPath_SpinReward_SetsWeightedStrategyForSuperZone()
-        {
-            _zone.ZoneTypeToReturn = ZoneType.Super;
-            SetupSpinResult(false);
-            EnterIdle();
-            TransitionTo(new SpinningState());
-            Assert.AreSame(_weightedStrategy, _spin.LastStrategySet);
-        }
-
-        [Test]
-        public void HappyPath_WheelFactory_CalledWithCorrectZoneType()
-        {
-            _zone.ZoneTypeToReturn = ZoneType.Safe;
-            SetupSpinResult(false);
-            EnterIdle();
-            TransitionTo(new SpinningState());
-            Assert.AreEqual(ZoneType.Safe, _wheelFactory.LastZoneType);
-        }
-
-        [Test]
-        public void HappyPath_WheelFactory_CalledWithCorrectZoneNumber()
-        {
-            _zone.CurrentZone = 10;
-            SetupSpinResult(false);
-            EnterIdle();
-            TransitionTo(new SpinningState());
-            Assert.AreEqual(10, _wheelFactory.LastZoneNumber);
-        }
-
-        [Test]
-        public void HappyPath_MultipleSpins_AccumulatesRewards()
-        {
-            SetupSpinResult(false);
-            EnterIdle();
-            TransitionTo(new SpinningState());
-            TransitionTo(new SpinningState());
-            TransitionTo(new SpinningState());
-            Assert.AreEqual(3, _reward.CollectedItems.Count);
-        }
-
-        [Test]
-        public void BombPath_Spin_ShowsBombScreen()
-        {
-            SetupSpinResult(true);
-            EnterIdle();
-            TransitionTo(new SpinningState());
-            Assert.IsTrue(_dialog.BombScreenShown);
-        }
-
-        [Test]
-        public void BombPath_Spin_ClearsAllRewards()
-        {
-            _reward.Collect(null);
-            _reward.Collect(null);
-            SetupSpinResult(true);
-            EnterIdle();
-            TransitionTo(new SpinningState());
-            Assert.AreEqual(1, _reward.ClearAllCallCount);
-            Assert.AreEqual(0, _reward.CollectedItems.Count);
-        }
-
-        [Test]
-        public void BombPath_Spin_EndsInBombState()
-        {
-            SetupSpinResult(true);
-            EnterIdle();
-            TransitionTo(new SpinningState());
-            Assert.IsInstanceOf<BombState>(_currentState);
-        }
-
-        [Test]
-        public void BombPath_Revive_TransitionsToIdle()
-        {
-            SetupSpinResult(true);
-            EnterIdle();
-            TransitionTo(new SpinningState());
-            _dialog.SimulateRevive();
-            Assert.IsInstanceOf<IdleState>(_currentState);
-        }
-
-        [Test]
-        public void BombPath_Revive_DoesNotResetZone()
-        {
-            _zone.CurrentZone = 7;
-            SetupSpinResult(true);
-            EnterIdle();
-            TransitionTo(new SpinningState());
-            _dialog.SimulateRevive();
-            Assert.AreEqual(0, _zone.ResetCallCount);
-        }
-
-        [Test]
-        public void BombPath_GiveUp_TransitionsToIdle()
-        {
-            SetupSpinResult(true);
-            EnterIdle();
-            TransitionTo(new SpinningState());
-            _dialog.SimulateGiveUp();
-            Assert.IsInstanceOf<IdleState>(_currentState);
-        }
-
-        [Test]
-        public void BombPath_GiveUp_ResetsZoneAndRewards()
-        {
-            SetupSpinResult(true);
-            EnterIdle();
-            TransitionTo(new SpinningState());
-            _dialog.SimulateGiveUp();
-            Assert.AreEqual(1, _zone.ResetCallCount);
-            Assert.AreEqual(1, _reward.ResetCallCount);
-        }
-
-        [Test]
-        public void BombPath_ExitBombState_HidesDialog()
-        {
-            SetupSpinResult(true);
-            EnterIdle();
-            TransitionTo(new SpinningState());
-            _dialog.SimulateGiveUp();
-            Assert.IsTrue(_dialog.HideCallCount);
-        }
-
         [Test]
         public void CollectPath_Enter_ShowsConfirmScreen()
         {
             TransitionTo(new CollectState());
             Assert.IsTrue(_dialog.CollectScreenShown);
         }
-
-        /*[Test]
-        public void CollectPath_Enter_PassesRewardsToDialog()
-        {
-            _reward.Collect(null);
-            _reward.Collect(null);
-            TransitionTo(new CollectState());
-            Assert.IsNotNull(_dialog.LastRewardsPassedToCollect);
-            Assert.AreEqual(2, _dialog.LastRewardsPassedToCollect.Items.Count);
-        }*/
 
         [Test]
         public void CollectPath_Confirm_ResetsZoneAndRewards()
@@ -387,27 +157,58 @@ namespace WheelOfFortune.Tests.EditMode
             Assert.IsTrue(_dialog.HideCallCount);
         }
 
-        /*[Test]
-        public void SpinningState_DeferredCallback_StillTransitionsCorrectly()
+        [Test]
+        public void ReviveCommand_TransitionsToIdle()
         {
-            _wheel.AutoInvokeCallback = false;
-            SetupSpinResult(false, 1);
-            EnterIdle();
-            TransitionTo(new SpinningState());
-            Assert.IsInstanceOf<SpinningState>(_currentState);
-            _wheel.InvokeCallback();
+            _reviveCommand.Execute();
             Assert.IsInstanceOf<IdleState>(_currentState);
         }
 
         [Test]
-        public void SpinningState_DeferredBombCallback_TransitionsToBomb()
+        public void ReviveCommand_DeductsCurrencyOnSuccess()
         {
-            _wheel.AutoInvokeCallback = false;
-            SetupSpinResult(true);
-            EnterIdle();
-            TransitionTo(new SpinningState());
-            _wheel.InvokeCallback();
-            Assert.IsInstanceOf<BombState>(_currentState);
-        }*/
+            var initialBalance = _currency.GetBalance();
+            _reviveCommand.Execute();
+            Assert.AreEqual(initialBalance - 25, _currency.GetBalance());
+        }
+
+        [Test]
+        public void ReviveCommand_DoesNotTransitionWhenInsufficientFunds()
+        {
+            _currency = new StubCurrencyService(10);
+            _reviveCommand = new ReviveCommand(CreateGameContext());
+            var previousState = _currentState;
+
+            _reviveCommand.Execute();
+
+            Assert.AreEqual(previousState, _currentState);
+        }
+
+        [Test]
+        public void ReviveCommand_DoesNotDeductWhenInsufficientFunds()
+        {
+            _currency = new StubCurrencyService(10);
+            _reviveCommand = new ReviveCommand(CreateGameContext());
+            var initialBalance = _currency.GetBalance();
+
+            _reviveCommand.Execute();
+
+            Assert.AreEqual(initialBalance, _currency.GetBalance());
+        }
+
+        [Test]
+        public void GiveUpCommand_Execute_TransitionsToIdle()
+        {
+            _giveUpCommand.Execute();
+            Assert.IsInstanceOf<IdleState>(_currentState);
+        }
+
+        [Test]
+        public void GiveUpCommand_Execute_ResetsZoneAndRewards()
+        {
+            _giveUpCommand.Execute();
+            Assert.AreEqual(1, _zone.ResetCallCount);
+            Assert.AreEqual(1, _reward.ResetCallCount);
+        }
     }
 }

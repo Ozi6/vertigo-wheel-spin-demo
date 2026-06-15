@@ -134,9 +134,11 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
     {
         public ZoneProgressModel LastZoneProgress;
         public CollectedRewards LastRewards;
+        public int LastCurrencyBalance;
 
         public void UpdateZoneDisplay(ZoneProgressModel progress) => LastZoneProgress = progress;
         public void UpdateRewardsDisplay(CollectedRewards rewards) => LastRewards = rewards;
+        public void UpdateCurrencyDisplay(int balance) => LastCurrencyBalance = balance;
 
         Transform IHudView.GetRewardsPanelTarget()
         {
@@ -199,8 +201,12 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
     {
         public bool SpinInteractable = true;
         public bool CollectVisible = false;
+        public bool ReviveInteractable = true;
+        public int LastReviveCost;
         public int SetSpinInteractableCallCount;
         public int SetCollectVisibleCallCount;
+        public int SetReviveInteractableCallCount;
+        public int UpdateReviveCostCallCount;
 
         public void SetSpinInteractable(bool interactable)
         {
@@ -212,6 +218,18 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         {
             CollectVisible = visible;
             SetCollectVisibleCallCount++;
+        }
+
+        public void SetReviveInteractable(bool interactable)
+        {
+            ReviveInteractable = interactable;
+            SetReviveInteractableCallCount++;
+        }
+
+        public void UpdateReviveCost(int cost)
+        {
+            LastReviveCost = cost;
+            UpdateReviveCostCallCount++;
         }
     }
 
@@ -240,6 +258,33 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
             LastZoneType = zoneType;
             LastZoneNumber = zoneNumber;
             return DataToReturn;
+        }
+    }
+
+    internal sealed class StubCurrencyService : ICurrencyService
+    {
+        private int _balance;
+        public event System.Action<int> OnBalanceChanged;
+
+        public StubCurrencyService(int initialBalance = 10000)
+        {
+            _balance = initialBalance;
+        }
+
+        public int GetBalance() => _balance;
+
+        public bool TryDeduct(int amount)
+        {
+            if (_balance < amount) return false;
+            _balance -= amount;
+            OnBalanceChanged?.Invoke(_balance);
+            return true;
+        }
+
+        public void Add(int amount)
+        {
+            _balance += amount;
+            OnBalanceChanged?.Invoke(_balance);
         }
     }
 }

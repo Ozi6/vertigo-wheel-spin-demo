@@ -6,57 +6,57 @@ namespace WheelOfFortune.Tests.EditMode
     [TestFixture]
     public class DomainTests
     {
-        /*[Test]
+        [Test]
         public void CollectedRewards_StartsEmpty()
         {
             var rewards = new CollectedRewards();
-            Assert.AreEqual(0, rewards.Items.Count);
+            Assert.AreEqual(0, rewards.Entries.Count);
         }
 
         [Test]
         public void CollectedRewards_Add_IncreasesCount()
         {
             var rewards = new CollectedRewards();
-            rewards.Add(null);
-            rewards.Add(null);
+            rewards.Add(null, 1);
+            rewards.Add(null, 1);
 
-            Assert.AreEqual(2, rewards.Items.Count);
+            Assert.AreEqual(2, rewards.Entries.Count);
         }
 
         [Test]
         public void CollectedRewards_Clear_EmptiesInventory()
         {
             var rewards = new CollectedRewards();
-            rewards.Add(null);
-            rewards.Add(null);
+            rewards.Add(null, 1);
+            rewards.Add(null, 1);
             rewards.Clear();
 
-            Assert.AreEqual(0, rewards.Items.Count);
+            Assert.AreEqual(0, rewards.Entries.Count);
         }
 
         [Test]
         public void CollectedRewards_Clone_IsIndependent()
         {
             var original = new CollectedRewards();
-            original.Add(null);
+            original.Add(null, 1);
 
             var clone = original.Clone();
-            clone.Add(null);
+            clone.Add(null, 1);
 
-            Assert.AreEqual(1, original.Items.Count);
-            Assert.AreEqual(2, clone.Items.Count);
+            Assert.AreEqual(1, original.Entries.Count);
+            Assert.AreEqual(2, clone.Entries.Count);
         }
 
         [Test]
         public void CollectedRewards_Clone_ContainsSameItems()
         {
             var original = new CollectedRewards();
-            original.Add(null);
-            original.Add(null);
+            original.Add(null, 1);
+            original.Add(null, 1);
 
             var clone = original.Clone();
 
-            Assert.AreEqual(original.Items.Count, clone.Items.Count);
+            Assert.AreEqual(original.Entries.Count, clone.Entries.Count);
         }
 
         [Test]
@@ -71,8 +71,8 @@ namespace WheelOfFortune.Tests.EditMode
         [Test]
         public void SpinResult_IsBombFlag_ReflectsCorrectly()
         {
-            var bombResult = new SpinResult(null, true, 2);
-            var rewardResult = new SpinResult(null, false, 4);
+            var bombResult = new SpinResult(null, 1, true, 2);
+            var rewardResult = new SpinResult(null, 1, false, 4);
 
             Assert.IsTrue(bombResult.IsBomb);
             Assert.IsFalse(rewardResult.IsBomb);
@@ -81,7 +81,7 @@ namespace WheelOfFortune.Tests.EditMode
         [Test]
         public void SpinResult_SliceIndex_StoredCorrectly()
         {
-            var result = new SpinResult(null, false, 7);
+            var result = new SpinResult(null, 1, false, 7);
             Assert.AreEqual(7, result.SliceIndex);
         }
 
@@ -91,6 +91,6 @@ namespace WheelOfFortune.Tests.EditMode
         public void ZoneType_EnumValues_AreDistinct(int index, ZoneType expected)
         {
             Assert.AreEqual(expected, (ZoneType)index);
-        }*/
+        }
     }
 }

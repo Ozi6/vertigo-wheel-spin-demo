@@ -39,20 +39,14 @@ namespace WheelOfFortune.Tests.EditMode
                   .SetValue(target, value);
         }
 
-        private static WheelConfigSO MakeConfig(SliceDefinition[] slices, int bombSlotIndex)
+        private static RuntimeWheelData MakeWheelData(SliceDefinition[] slices, int bombSlotIndex, bool hasBomb)
         {
-            var config = ScriptableObject.CreateInstance<WheelConfigSO>();
-            SetField(config, "_slices", slices);
-            SetField(config, "_bombSlotIndex", bombSlotIndex);
-            return config;
+            return new RuntimeWheelData(slices, bombSlotIndex, hasBomb);
         }
 
-        private static SliceDefinition MakeSlice(RewardItemSO item, float weight)
+        private static SliceDefinition MakeSlice(RewardItemSO item, int multiplier)
         {
-            var slice = new SliceDefinition();
-            SetField(slice, "_rewardItem", item);
-            SetField(slice, "_weight", weight);
-            return slice;
+            return new SliceDefinition(item, multiplier);
         }
 
         private static RewardItemSO MakeReward(string id, float value)
@@ -165,11 +159,11 @@ namespace WheelOfFortune.Tests.EditMode
             Assert.AreEqual(ZoneType.Super, service.GetCurrentZoneType());
         }
 
-        /*[Test]
+        [Test]
         public void RewardService_InitialRewards_AreEmpty()
         {
             var service = new RewardService(_eventBus);
-            Assert.AreEqual(0, service.GetCurrentRewards().Items.Count);
+            Assert.AreEqual(0, service.GetCurrentRewards().Entries.Count);
         }
 
         [Test]
@@ -177,8 +171,8 @@ namespace WheelOfFortune.Tests.EditMode
         {
             var service = new RewardService(_eventBus);
             var item = MakeReward("gold", 100f);
-            service.Collect(item);
-            Assert.AreEqual(1, service.GetCurrentRewards().Items.Count);
+            service.Collect(item, 1);
+            Assert.AreEqual(1, service.GetCurrentRewards().Entries.Count);
         }
 
         [Test]
@@ -186,8 +180,8 @@ namespace WheelOfFortune.Tests.EditMode
         {
             var service = new RewardService(_eventBus);
             var item = MakeReward("gold", 100f);
-            service.Collect(item);
-            Assert.AreSame(item, service.GetCurrentRewards().Items[0]);
+            service.Collect(item, 1);
+            Assert.AreSame(item, service.GetCurrentRewards().Entries[0].Item);
         }
 
         [Test]
@@ -197,10 +191,10 @@ namespace WheelOfFortune.Tests.EditMode
             CollectedRewards received = null;
             _eventBus.Subscribe<OnRewardCollected>(e => received = e.Snapshot);
 
-            service.Collect(MakeReward("gold", 100f));
+            service.Collect(MakeReward("gold", 100f), 1);
 
             Assert.IsNotNull(received);
-            Assert.AreEqual(1, received.Items.Count);
+            Assert.AreEqual(1, received.Entries.Count);
         }
 
         [Test]
@@ -210,20 +204,20 @@ namespace WheelOfFortune.Tests.EditMode
             CollectedRewards received = null;
             _eventBus.Subscribe<OnRewardCollected>(e => received = e.Snapshot);
 
-            service.Collect(MakeReward("gold", 100f));
-            service.Collect(MakeReward("silver", 50f));
+            service.Collect(MakeReward("gold", 100f), 1);
+            service.Collect(MakeReward("silver", 50f), 1);
 
-            Assert.AreEqual(1, received.Items.Count);
+            Assert.AreEqual(1, received.Entries.Count);
         }
 
         [Test]
         public void RewardService_ClearAll_EmptiesRewards()
         {
             var service = new RewardService(_eventBus);
-            service.Collect(MakeReward("gold", 100f));
-            service.Collect(MakeReward("silver", 50f));
+            service.Collect(MakeReward("gold", 100f), 1);
+            service.Collect(MakeReward("silver", 50f), 1);
             service.ClearAll();
-            Assert.AreEqual(0, service.GetCurrentRewards().Items.Count);
+            Assert.AreEqual(0, service.GetCurrentRewards().Entries.Count);
         }
 
         [Test]
@@ -242,36 +236,36 @@ namespace WheelOfFortune.Tests.EditMode
         public void RewardService_MultipleCollects_AccumulateCorrectly()
         {
             var service = new RewardService(_eventBus);
-            service.Collect(MakeReward("a", 10f));
-            service.Collect(MakeReward("b", 20f));
-            service.Collect(MakeReward("c", 30f));
-            Assert.AreEqual(3, service.GetCurrentRewards().Items.Count);
+            service.Collect(MakeReward("a", 10f), 1);
+            service.Collect(MakeReward("b", 20f), 1);
+            service.Collect(MakeReward("c", 30f), 1);
+            Assert.AreEqual(3, service.GetCurrentRewards().Entries.Count);
         }
 
         [Test]
         public void RewardService_ClearThenCollect_WorksCorrectly()
         {
             var service = new RewardService(_eventBus);
-            service.Collect(MakeReward("a", 10f));
+            service.Collect(MakeReward("a", 10f), 1);
             service.ClearAll();
-            service.Collect(MakeReward("b", 20f));
-            Assert.AreEqual(1, service.GetCurrentRewards().Items.Count);
-        }*/
+            service.Collect(MakeReward("b", 20f), 1);
+            Assert.AreEqual(1, service.GetCurrentRewards().Entries.Count);
+        }
 
-        /*[Test]
+        [Test]
         public void SpinService_Spin_ReturnsResultWithCorrectSliceIndex()
         {
             var strategy = new FixedIndexStrategy(2);
             var service = new SpinService(strategy, _eventBus);
             var reward = MakeReward("item", 10f);
-            var config = MakeConfig(new[]
+            var wheelData = MakeWheelData(new[]
             {
-                MakeSlice(reward, 1f),
-                MakeSlice(reward, 1f),
-                MakeSlice(reward, 1f)
-            }, -1);
+                MakeSlice(reward, 1),
+                MakeSlice(reward, 1),
+                MakeSlice(reward, 1)
+            }, -1, false);
 
-            SpinResult result = service.Spin(config);
+            SpinResult result = service.Spin(wheelData);
 
             Assert.AreEqual(2, result.SliceIndex);
         }
@@ -282,9 +276,9 @@ namespace WheelOfFortune.Tests.EditMode
             var strategy = new FixedIndexStrategy(0);
             var service = new SpinService(strategy, _eventBus);
             var reward = MakeReward("item", 10f);
-            var config = MakeConfig(new[] { MakeSlice(reward, 1f) }, -1);
+            var wheelData = MakeWheelData(new[] { MakeSlice(reward, 1) }, -1, false);
 
-            SpinResult result = service.Spin(config);
+            SpinResult result = service.Spin(wheelData);
 
             Assert.IsFalse(result.IsBomb);
         }
@@ -295,13 +289,13 @@ namespace WheelOfFortune.Tests.EditMode
             var strategy = new FixedIndexStrategy(1);
             var service = new SpinService(strategy, _eventBus);
             var reward = MakeReward("item", 10f);
-            var config = MakeConfig(new[]
+            var wheelData = MakeWheelData(new[]
             {
-                MakeSlice(reward, 1f),
-                MakeSlice(reward, 1f)
-            }, 1);
+                MakeSlice(reward, 1),
+                MakeSlice(reward, 1)
+            }, 1, true);
 
-            SpinResult result = service.Spin(config);
+            SpinResult result = service.Spin(wheelData);
 
             Assert.IsTrue(result.IsBomb);
         }
@@ -312,13 +306,13 @@ namespace WheelOfFortune.Tests.EditMode
             var strategy = new FixedIndexStrategy(0);
             var service = new SpinService(strategy, _eventBus);
             var reward = MakeReward("item", 10f);
-            var config = MakeConfig(new[]
+            var wheelData = MakeWheelData(new[]
             {
-                MakeSlice(reward, 1f),
-                MakeSlice(reward, 1f)
-            }, 1);
+                MakeSlice(reward, 1),
+                MakeSlice(reward, 1)
+            }, 1, true);
 
-            SpinResult result = service.Spin(config);
+            SpinResult result = service.Spin(wheelData);
 
             Assert.IsFalse(result.IsBomb);
         }
@@ -331,9 +325,9 @@ namespace WheelOfFortune.Tests.EditMode
             SpinResult received = default;
             _eventBus.Subscribe<OnSpinCompleted>(e => received = e.Result);
             var reward = MakeReward("item", 10f);
-            var config = MakeConfig(new[] { MakeSlice(reward, 1f) }, -1);
+            var wheelData = MakeWheelData(new[] { MakeSlice(reward, 1) }, -1, false);
 
-            service.Spin(config);
+            service.Spin(wheelData);
 
             Assert.AreEqual(0, received.SliceIndex);
         }
@@ -345,13 +339,13 @@ namespace WheelOfFortune.Tests.EditMode
             var service = new SpinService(strategy, _eventBus);
             var rewardA = MakeReward("a", 10f);
             var rewardB = MakeReward("b", 20f);
-            var config = MakeConfig(new[]
+            var wheelData = MakeWheelData(new[]
             {
-                MakeSlice(rewardA, 1f),
-                MakeSlice(rewardB, 1f)
-            }, -1);
+                MakeSlice(rewardA, 1),
+                MakeSlice(rewardB, 1)
+            }, -1, false);
 
-            SpinResult result = service.Spin(config);
+            SpinResult result = service.Spin(wheelData);
 
             Assert.AreSame(rewardB, result.RewardItem);
         }
@@ -361,14 +355,14 @@ namespace WheelOfFortune.Tests.EditMode
         {
             var service = new SpinService(new FixedIndexStrategy(0), _eventBus);
             var reward = MakeReward("item", 10f);
-            var config = MakeConfig(new[]
+            var wheelData = MakeWheelData(new[]
             {
-                MakeSlice(reward, 1f),
-                MakeSlice(reward, 1f)
-            }, -1);
+                MakeSlice(reward, 1),
+                MakeSlice(reward, 1)
+            }, -1, false);
 
             service.SetStrategy(new FixedIndexStrategy(1));
-            SpinResult result = service.Spin(config);
+            SpinResult result = service.Spin(wheelData);
 
             Assert.AreEqual(1, result.SliceIndex);
         }
@@ -378,17 +372,17 @@ namespace WheelOfFortune.Tests.EditMode
         {
             var strategy = new RandomSpinStrategy();
             var reward = MakeReward("item", 10f);
-            var config = MakeConfig(new[]
+            var wheelData = MakeWheelData(new[]
             {
-                MakeSlice(reward, 1f),
-                MakeSlice(reward, 1f),
-                MakeSlice(reward, 1f)
-            }, -1);
+                MakeSlice(reward, 1),
+                MakeSlice(reward, 1),
+                MakeSlice(reward, 1)
+            }, -1, false);
 
             for (int i = 0; i < 100; i++)
             {
-                int index = strategy.GetWinningIndex(config);
-                Assert.IsTrue(index >= 0 && index < config.Slices.Length);
+                int index = strategy.GetWinningIndex(wheelData);
+                Assert.IsTrue(index >= 0 && index < wheelData.Slices.Length);
             }
         }
 
@@ -397,10 +391,10 @@ namespace WheelOfFortune.Tests.EditMode
         {
             var strategy = new RandomSpinStrategy();
             var reward = MakeReward("item", 10f);
-            var config = MakeConfig(new[] { MakeSlice(reward, 1f) }, -1);
+            var wheelData = MakeWheelData(new[] { MakeSlice(reward, 1) }, -1, false);
 
             for (int i = 0; i < 20; i++)
-                Assert.AreEqual(0, strategy.GetWinningIndex(config));
+                Assert.AreEqual(0, strategy.GetWinningIndex(wheelData));
         }
 
         [Test]
@@ -408,16 +402,16 @@ namespace WheelOfFortune.Tests.EditMode
         {
             var strategy = new RandomSpinStrategy();
             var reward = MakeReward("item", 10f);
-            var config = MakeConfig(new[]
+            var wheelData = MakeWheelData(new[]
             {
-                MakeSlice(reward, 1f),
-                MakeSlice(reward, 1f),
-                MakeSlice(reward, 1f)
-            }, -1);
+                MakeSlice(reward, 1),
+                MakeSlice(reward, 1),
+                MakeSlice(reward, 1)
+            }, -1, false);
 
             var hit = new bool[3];
             for (int i = 0; i < 500; i++)
-                hit[strategy.GetWinningIndex(config)] = true;
+                hit[strategy.GetWinningIndex(wheelData)] = true;
 
             Assert.IsTrue(hit[0] && hit[1] && hit[2]);
         }
@@ -426,7 +420,7 @@ namespace WheelOfFortune.Tests.EditMode
         {
             private readonly int _index;
             public FixedIndexStrategy(int index) => _index = index;
-            public int GetWinningIndex(WheelConfigSO config) => _index;
-        }*/
+            public int GetWinningIndex(RuntimeWheelData wheelData) => _index;
+        }
     }
 }
