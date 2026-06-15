@@ -46,7 +46,7 @@ namespace WheelOfFortune.Tests.EditMode
                 new StubButtonView(),
                 null, CaptureTransition,
                 randomStrategy,
-                revive, giveUp);
+                revive, giveUp, null);
 
             var idle = new IdleState();
             idle.Enter(ctx);

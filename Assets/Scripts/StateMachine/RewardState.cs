@@ -1,4 +1,3 @@
-using DG.Tweening;
 using UnityEngine;
 using WheelOfFortune.Domain;
 
@@ -20,31 +19,27 @@ namespace WheelOfFortune.StateMachine
             ctx.RewardService.Collect(_result.RewardItem, _result.Multiplier);
             ctx.ZoneService.Advance();
 
-            Sprite icon = _result.RewardItem != null ? _result.RewardItem.Icon : null;
+            Sprite itemIcon = _result.RewardItem != null ? _result.RewardItem.Icon : null;
             Transform panel = ctx.HudView.GetRewardsPanelTarget();
 
             ctx.WheelView.PlayWinEffect(
                 _result.SliceIndex,
                 _result.Multiplier,
-                icon,
+                itemIcon,
                 panel,
-                onReelBack: () => StartReelBack(ctx),
+                ctx.WinEffectConfig,
+                onReelBack: () => ctx.WheelView.RotateToOrigin(ReelBackDuration),
                 onComplete: () => RebuildAndIdle(ctx));
         }
 
         public void Exit(GameContext ctx) { }
 
-        private static void StartReelBack(GameContext ctx)
-        {
-            ctx.WheelView.RotateToOrigin(ReelBackDuration);
-        }
-
         private static void RebuildAndIdle(GameContext ctx)
         {
-            var zoneType = ctx.ZoneService.GetCurrentZoneType();
-            var zoneNumber = ctx.ZoneService.GetCurrentZoneNumber();
-
-            ctx.WheelFactory.BuildWheel(zoneType, zoneNumber, ctx.WheelView);
+            ctx.WheelFactory.BuildWheel(
+                ctx.ZoneService.GetCurrentZoneType(),
+                ctx.ZoneService.GetCurrentZoneNumber(),
+                ctx.WheelView);
             ctx.TransitionTo(new IdleState());
         }
     }

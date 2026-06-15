@@ -19,15 +19,8 @@ namespace WheelOfFortune.Views
         private SliceDefinition[] _currentSlices;
         private WheelSlice[] _liveSlices;
 
-        public void SetupSlices(SliceDefinition[] slices)
-        {
-            _currentSlices = slices;
-        }
-
-        public void SetLiveSlices(WheelSlice[] slices)
-        {
-            _liveSlices = slices;
-        }
+        public void SetupSlices(SliceDefinition[] slices) => _currentSlices = slices;
+        public void SetLiveSlices(WheelSlice[] slices) => _liveSlices = slices;
 
         public void SetZoneVisuals(Sprite wheelSprite, Sprite arrowSprite)
         {
@@ -55,17 +48,13 @@ namespace WheelOfFortune.Views
 
             float sliceAngle = 360f / _currentSlices.Length;
             float targetAngle = targetSliceIndex * sliceAngle;
-
             float currentZ = _wheelRoot.localEulerAngles.z;
             float normalizedZ = currentZ > 180f ? currentZ - 360f : currentZ;
-
             float delta = targetAngle - normalizedZ;
             if (delta < 0f) delta += 360f;
 
-            float totalRotation = normalizedZ + delta + (360f * _extraSpins);
-
             _wheelRoot.DORotate(
-                    new Vector3(0, 0, totalRotation),
+                    new Vector3(0, 0, normalizedZ + delta + 360f * _extraSpins),
                     _spinDuration,
                     RotateMode.FastBeyond360)
                 .SetEase(_spinEase)
@@ -77,6 +66,7 @@ namespace WheelOfFortune.Views
             int multiplier,
             Sprite itemIcon,
             Transform rewardsPanelTarget,
+            WinEffectConfig cfg,
             Action onReelBack,
             Action onComplete)
         {
@@ -106,13 +96,11 @@ namespace WheelOfFortune.Views
                 multiplier,
                 rewardsPanelTarget,
                 itemIcon,
+                cfg,
                 onReelBack,
                 onComplete);
         }
 
-        public void SnapSlicesToFullAlpha()
-        {
-            SlotZoomEffect.ResetSliceAlphas(_liveSlices);
-        }
+        public void SnapSlicesToFullAlpha() => SlotZoomEffect.ResetSliceAlphas(_liveSlices);
     }
 }

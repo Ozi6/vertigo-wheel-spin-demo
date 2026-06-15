@@ -124,7 +124,7 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
             throw new NotImplementedException();
         }
 
-        void IWheelView.PlayWinEffect(int winningSliceIndex, int multiplier, Sprite itemIcon, Transform rewardsPanelTarget, Action onReelBack, Action onComplete)
+        void IWheelView.PlayWinEffect(int winningSliceIndex, int multiplier, Sprite itemIcon, Transform rewardsPanelTarget, WinEffectConfig cfg, Action onReelBack, Action onComplete)
         {
             throw new NotImplementedException();
         }

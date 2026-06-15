@@ -1,5 +1,6 @@
 using System;
 using WheelOfFortune.Commands;
+using WheelOfFortune.Data;
 using WheelOfFortune.Factory;
 using WheelOfFortune.Interfaces;
 
@@ -19,6 +20,7 @@ namespace WheelOfFortune.StateMachine
         public readonly IWheelSpinStrategy RandomStrategy;
         public readonly ReviveCommand ReviveCommand;
         public readonly GiveUpCommand GiveUpCommand;
+        public readonly WinEffectConfig WinEffectConfig;
 
         public GameContext(
             IZoneService zoneService,
@@ -32,7 +34,8 @@ namespace WheelOfFortune.StateMachine
             Action<IGameState> transitionTo,
             IWheelSpinStrategy randomStrategy,
             ReviveCommand reviveCommand,
-            GiveUpCommand giveUpCommand)
+            GiveUpCommand giveUpCommand,
+            WinEffectConfig winEffectConfig)
         {
             ZoneService = zoneService;
             SpinService = spinService;
@@ -46,6 +49,7 @@ namespace WheelOfFortune.StateMachine
             RandomStrategy = randomStrategy;
             ReviveCommand = reviveCommand;
             GiveUpCommand = giveUpCommand;
+            WinEffectConfig = winEffectConfig;
         }
     }
 }

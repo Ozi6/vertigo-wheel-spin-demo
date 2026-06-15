@@ -18,6 +18,7 @@ namespace WheelOfFortune.Interfaces
             int multiplier,
             Sprite itemIcon,
             Transform rewardsPanelTarget,
+            WinEffectConfig cfg,
             Action onReelBack,
             Action onComplete);
     }

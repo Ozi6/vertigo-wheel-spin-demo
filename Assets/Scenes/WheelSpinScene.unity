@@ -372,6 +372,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7468370809698052951, guid: fa75f17e52e918a4a8649231ba6c41fa, type: 3}
+      propertyPath: _winEffectConfig_value
+      value: 
+      objectReference: {fileID: 11400000, guid: 64590d1002e7c5740821e95f93b6928b, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fa75f17e52e918a4a8649231ba6c41fa, type: 3}
 --- !u!114 &266735274 stripped
@@ -1981,7 +1985,7 @@ MonoBehaviour:
   _safeZoneInterval: 5
   _superZoneInterval: 30
   _totalZones: 200
-  _cellWidth: 64
+  _cellWidth: 128
   _scrollDuration: 0.4
   _scrollEase: 9
   _colorNormal: {r: 0.72, g: 0.45, b: 0.2, a: 1}

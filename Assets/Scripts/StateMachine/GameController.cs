@@ -1,5 +1,6 @@
 using UnityEngine;
 using WheelOfFortune.Commands;
+using WheelOfFortune.Data;
 using WheelOfFortune.Factory;
 using WheelOfFortune.Interfaces;
 using WheelOfFortune.StateMachine;
@@ -8,9 +9,10 @@ namespace WheelOfFortune.Controller
 {
     public sealed class GameController : MonoBehaviour
     {
+        [SerializeField] private WinEffectConfig _winEffectConfig_value;
+
         private GameContext _ctx;
         private IGameState _currentState;
-
         private IdleState _idleState;
         private SpinCommand _spinCommand;
         private CollectCommand _collectCommand;
@@ -41,7 +43,8 @@ namespace WheelOfFortune.Controller
                 TransitionTo,
                 randomStrategy,
                 reviveCommand,
-                giveUpCommand);
+                giveUpCommand,
+                _winEffectConfig_value);
 
             _idleState = new IdleState();
             _spinCommand = new SpinCommand(_idleState, TransitionTo);
@@ -51,7 +54,6 @@ namespace WheelOfFortune.Controller
         }
 
         public void ExecuteSpin() => _spinCommand?.Execute();
-
         public void ExecuteCollect() => _collectCommand?.Execute();
 
         private void TransitionTo(IGameState next)

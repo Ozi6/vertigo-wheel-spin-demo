@@ -89,7 +89,7 @@ namespace WheelOfFortune.Views
                 rt.anchorMin = new Vector2(0.5f, 0.5f);
                 rt.anchorMax = new Vector2(0.5f, 0.5f);
                 rt.pivot = new Vector2(0.5f, 0.5f);
-                rt.anchoredPosition = new Vector2((i - 1) * _cellWidth - 32.5f, 0f);
+                rt.anchoredPosition = new Vector2((i - 1) * _cellWidth - 8f, 0f);
                 rt.sizeDelta = new Vector2(_cellWidth, _cellWidth);
 
                 _cells.Add(cell);

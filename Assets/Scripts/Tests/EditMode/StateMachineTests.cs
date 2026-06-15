@@ -55,7 +55,8 @@ namespace WheelOfFortune.Tests.EditMode
                 TransitionTo,
                 _randomStrategy,
                 _reviveCommand,
-                _giveUpCommand);
+                _giveUpCommand,
+                null);
         }
 
         private void TransitionTo(IGameState next)
