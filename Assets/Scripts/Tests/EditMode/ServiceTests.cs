@@ -201,13 +201,19 @@ namespace WheelOfFortune.Tests.EditMode
         public void RewardService_Collect_PublishedSnapshotIsClone()
         {
             var service = new RewardService(_eventBus);
-            CollectedRewards received = null;
-            _eventBus.Subscribe<OnRewardCollected>(e => received = e.Snapshot);
+            CollectedRewards firstSnapshot = null;
+
+            _eventBus.Subscribe<OnRewardCollected>(e =>
+            {
+                if (firstSnapshot == null)
+                    firstSnapshot = e.Snapshot;
+            });
 
             service.Collect(MakeReward("gold", 100f), 1);
             service.Collect(MakeReward("silver", 50f), 1);
 
-            Assert.AreEqual(1, received.Entries.Count);
+            Assert.IsNotNull(firstSnapshot);
+            Assert.AreEqual(1, firstSnapshot.Entries.Count);
         }
 
         [Test]
