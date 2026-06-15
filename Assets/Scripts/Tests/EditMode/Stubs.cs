@@ -124,7 +124,7 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
             throw new NotImplementedException();
         }
 
-        void IWheelView.PlayWinEffect(int winningSliceIndex, int multiplier, Sprite itemIcon, Transform rewardsPanelTarget, WinEffectConfig cfg, Action onReelBack, Action onComplete)
+        void IWheelView.PlayWinEffect(int winningSliceIndex, int multiplier, Sprite itemIcon, Transform rewardsPanelTarget, WinEffectConfig cfg, Action onReelBack, Action onComplete, Action<int> onIconArrived)
         {
             throw new NotImplementedException();
         }
@@ -139,6 +139,16 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         public void UpdateRewardsDisplay(CollectedRewards rewards) => LastRewards = rewards;
 
         Transform IHudView.GetRewardsPanelTarget()
+        {
+            throw new NotImplementedException();
+        }
+
+        void IHudView.InitializeNewRewardCard(CollectedRewards rewards, string newItemId)
+        {
+            throw new NotImplementedException();
+        }
+
+        Action<int> IHudView.BuildIconArrivedCallback(string itemId, int previousMultiplier, int rewardMultiplier)
         {
             throw new NotImplementedException();
         }

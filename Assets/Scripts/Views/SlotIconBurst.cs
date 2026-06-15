@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,25 +14,26 @@ namespace WheelOfFortune.Views
             int count,
             Sprite icon,
             Transform panelTarget,
-            WinEffectConfig cfg)
+            WinEffectConfig cfg,
+            Action<int> onIconArrived = null)
         {
             var go = new GameObject("ui_icon_burst_value");
             go.transform.SetParent(parent, false);
 
             var comp = go.AddComponent<SlotIconBurst>();
-            comp.Begin(fromWorld, Mathf.Max(1, count), icon, panelTarget, cfg);
+            comp.Begin(fromWorld, Mathf.Max(1, count), icon, panelTarget, cfg, onIconArrived);
             return comp;
         }
 
-        private void Begin(Vector3 fromWorld, int count, Sprite icon, Transform panelTarget, WinEffectConfig cfg)
+        private void Begin(Vector3 fromWorld, int count, Sprite icon, Transform panelTarget, WinEffectConfig cfg, Action<int> onIconArrived)
         {
             Vector3 targetWorld = panelTarget != null ? panelTarget.position : fromWorld;
 
             for (int i = 0; i < count; i++)
-                SpawnOne(i, count, fromWorld, targetWorld, icon, cfg);
+                SpawnOne(i, count, fromWorld, targetWorld, icon, cfg, onIconArrived);
         }
 
-        private void SpawnOne(int index, int total, Vector3 from, Vector3 to, Sprite icon, WinEffectConfig cfg)
+        private void SpawnOne(int index, int total, Vector3 from, Vector3 to, Sprite icon, WinEffectConfig cfg, Action<int> onIconArrived)
         {
             var go = new GameObject($"ui_fly_icon_{index}_value");
             go.transform.SetParent(transform, false);
@@ -53,17 +55,22 @@ namespace WheelOfFortune.Views
 
             Vector3 mid = Vector3.Lerp(from + burstOffset, to, 0.5f)
                           + new Vector3(
-                              Random.Range(-cfg.FlyArcStrength, cfg.FlyArcStrength),
+                              UnityEngine.Random.Range(-cfg.FlyArcStrength, cfg.FlyArcStrength),
                               cfg.FlyArcStrength * 0.6f, 0f);
 
             var captured = go;
-            var seq = DOTween.Sequence();
+            int arrivalIndex = index + 1;
 
+            var seq = DOTween.Sequence();
             seq.AppendInterval(index * cfg.FlyStagger);
             seq.Append(rt.DOScale(Vector3.one, cfg.PopDuration).SetEase(Ease.OutBack));
             seq.Append(rt.DOMove(from + burstOffset, cfg.BurstMoveDuration).SetEase(Ease.OutCubic));
             seq.Append(BezierFly(captured.transform, from + burstOffset, mid, to, cfg));
-            seq.AppendCallback(() => { if (captured != null) Destroy(captured); });
+            seq.AppendCallback(() =>
+            {
+                onIconArrived?.Invoke(arrivalIndex);
+                if (captured != null) Destroy(captured);
+            });
             seq.OnComplete(() => { if (index == total - 1) Destroy(gameObject); });
         }
 

@@ -15,6 +15,7 @@ namespace WheelOfFortune.Views
         [SerializeField] private float _spinDuration = 3f;
         [SerializeField] private int _extraSpins = 5;
         [SerializeField] private Ease _spinEase = Ease.OutQuart;
+        [SerializeField] private HudPresenter _hudPresenter;
 
         private SliceDefinition[] _currentSlices;
         private WheelSlice[] _liveSlices;
@@ -68,7 +69,8 @@ namespace WheelOfFortune.Views
             Transform rewardsPanelTarget,
             WinEffectConfig cfg,
             Action onReelBack,
-            Action onComplete)
+            Action onComplete,
+            Action<int> onIconArrived)
         {
             if (_liveSlices == null || _liveSlices.Length == 0 ||
                 winningSliceIndex < 0 || winningSliceIndex >= _liveSlices.Length)
@@ -98,7 +100,8 @@ namespace WheelOfFortune.Views
                 itemIcon,
                 cfg,
                 onReelBack,
-                onComplete);
+                onComplete,
+                onIconArrived);
         }
 
         public void SnapSlicesToFullAlpha() => SlotZoomEffect.ResetSliceAlphas(_liveSlices);

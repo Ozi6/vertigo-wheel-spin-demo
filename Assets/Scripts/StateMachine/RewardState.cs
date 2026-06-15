@@ -16,10 +16,36 @@ namespace WheelOfFortune.StateMachine
 
         public void Enter(GameContext ctx)
         {
+            int previousMultiplier = 0;
+
+            foreach (var entry in ctx.RewardService.GetCurrentRewards().Entries)
+            {
+                if (entry.Item != null &&
+                    entry.Item.Id == _result.RewardItem.Id)
+                {
+                    previousMultiplier += entry.Multiplier;
+                }
+            }
+
             ctx.RewardService.Collect(_result.RewardItem, _result.Multiplier);
             ctx.ZoneService.Advance();
 
-            Sprite itemIcon = _result.RewardItem != null ? _result.RewardItem.Icon : null;
+            string itemId = _result.RewardItem.Id;
+
+            ctx.HudView.InitializeNewRewardCard(
+                ctx.RewardService.GetCurrentRewards(),
+                itemId);
+
+            var onIconArrived =
+                ctx.HudView.BuildIconArrivedCallback(
+                    itemId,
+                    previousMultiplier,
+                    _result.Multiplier);
+
+            Sprite itemIcon = _result.RewardItem != null
+                ? _result.RewardItem.Icon
+                : null;
+
             Transform panel = ctx.HudView.GetRewardsPanelTarget();
 
             ctx.WheelView.PlayWinEffect(
@@ -29,7 +55,8 @@ namespace WheelOfFortune.StateMachine
                 panel,
                 ctx.WinEffectConfig,
                 onReelBack: () => ctx.WheelView.RotateToOrigin(ReelBackDuration),
-                onComplete: () => RebuildAndIdle(ctx));
+                onComplete: () => RebuildAndIdle(ctx),
+                onIconArrived: onIconArrived);
         }
 
         public void Exit(GameContext ctx) { }

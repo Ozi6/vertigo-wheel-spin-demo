@@ -20,6 +20,7 @@ namespace WheelOfFortune.Interfaces
             Transform rewardsPanelTarget,
             WinEffectConfig cfg,
             Action onReelBack,
-            Action onComplete);
+            Action onComplete,
+            Action<int> onIconArrived);
     }
 }

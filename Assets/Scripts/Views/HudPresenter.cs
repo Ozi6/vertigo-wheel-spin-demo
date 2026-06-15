@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using TMPro;
@@ -29,6 +30,7 @@ namespace WheelOfFortune.Views
 
         private readonly List<TextMeshProUGUI> _cells = new List<TextMeshProUGUI>();
         private readonly List<RewardCard> _rewardCards = new List<RewardCard>();
+        private readonly Dictionary<string, RewardCard> _cardById = new Dictionary<string, RewardCard>();
         private Tweener _scrollTween;
 
         private void Start()
@@ -58,6 +60,7 @@ namespace WheelOfFortune.Views
             foreach (var card in _rewardCards)
                 if (card != null) Destroy(card.gameObject);
             _rewardCards.Clear();
+            _cardById.Clear();
 
             if (_rewardCardPrefab_value == null || _rewardsContainer_value == null) return;
 
@@ -68,7 +71,41 @@ namespace WheelOfFortune.Views
                 card.name = $"ui_card_reward_{stack.Item.Id}_value";
                 card.Setup(stack);
                 _rewardCards.Add(card);
+                _cardById[stack.Item.Id] = card;
             }
+        }
+
+        public void InitializeNewRewardCard(CollectedRewards rewards, string newItemId)
+        {
+            if (_rewardCardPrefab_value == null || _rewardsContainer_value == null) return;
+
+            var stacks = RewardStackBuilder.Build(rewards.Entries);
+            foreach (var stack in stacks)
+            {
+                if (stack.Item == null || stack.Item.Id != newItemId) continue;
+                if (_cardById.ContainsKey(newItemId)) continue;
+
+                var card = Instantiate(_rewardCardPrefab_value, _rewardsContainer_value);
+                card.name = $"ui_card_reward_{stack.Item.Id}_value";
+                card.InitializeEmpty(stack);
+                _rewardCards.Add(card);
+                _cardById[newItemId] = card;
+                break;
+            }
+        }
+
+        public Action<int> BuildIconArrivedCallback(
+            string itemId,
+            int previousMultiplier,
+            int rewardMultiplier)
+        {
+            return arrived =>
+            {
+                if (!_cardById.TryGetValue(itemId, out var card) || card == null)
+                    return;
+
+                card.SetMultiplier(previousMultiplier + arrived);
+            };
         }
 
         private void BuildStrip()

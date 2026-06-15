@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using WheelOfFortune.Domain;
 
@@ -8,5 +9,7 @@ namespace WheelOfFortune.Interfaces
         void UpdateZoneDisplay(ZoneProgressModel progress);
         void UpdateRewardsDisplay(CollectedRewards rewards);
         Transform GetRewardsPanelTarget();
+        void InitializeNewRewardCard(CollectedRewards rewards, string newItemId);
+        Action<int> BuildIconArrivedCallback(string itemId, int previousMultiplier, int rewardMultiplier);
     }
 }
