@@ -30,8 +30,8 @@ MonoBehaviour:
   _iconSize: 200
   _burstRadius: 60
   _popDuration: 0.15
-  _burstMoveDuration: 0.12
-  _flyDuration: 0.55
+  _burstMoveDuration: 0.2
+  _flyDuration: 0.8
   _flyStagger: 0.07
   _flyArcStrength: 180
   _flyEase: 26

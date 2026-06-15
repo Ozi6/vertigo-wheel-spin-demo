@@ -9,6 +9,8 @@ namespace WheelOfFortune.Views
 {
     public sealed class SlotZoomEffect : MonoBehaviour
     {
+        private const int MaxFlyingMultipliers = 50;
+
         private GameObject _clone;
         private SlotSpinBackground _spinBg;
         private List<CanvasGroup> _allFadeGroups = new List<CanvasGroup>();
@@ -66,6 +68,7 @@ namespace WheelOfFortune.Views
             _clone = BuildClone(winningSlice, srcRect, worldCenter);
 
             float reelBackAt = cfg.ZoomDuration * cfg.ReelBackTriggerFraction;
+            int cappedMultiplier = Mathf.Min(multiplier, MaxFlyingMultipliers);
 
             DOTween.Sequence()
                 .Append(ZoomToPeak())
@@ -77,9 +80,9 @@ namespace WheelOfFortune.Views
                     _spinBg.FadeOutAndDestroy();
                     _spinBg = null;
                     DestroyClone();
-                    SlotIconBurst.Play(transform, worldCenter, multiplier, itemIcon, rewardsPanelTarget, cfg);
+                    SlotIconBurst.Play(transform, worldCenter, cappedMultiplier, itemIcon, rewardsPanelTarget, cfg);
                 })
-                .AppendInterval(cfg.TotalBurstDuration(multiplier))
+                .AppendInterval(cfg.TotalBurstDuration(cappedMultiplier))
                 .OnComplete(OnSequenceComplete);
         }
 
