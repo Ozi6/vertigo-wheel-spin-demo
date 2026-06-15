@@ -1,19 +1,10 @@
-using WheelOfFortune.Commands;
 using WheelOfFortune.Domain;
 
 namespace WheelOfFortune.StateMachine
 {
     public sealed class BombState : IGameState
     {
-        private readonly ReviveCommand _reviveCommand;
-        private readonly GiveUpCommand _giveUpCommand;
         private CollectedRewards _lostRewards;
-
-        public BombState(ReviveCommand reviveCommand, GiveUpCommand giveUpCommand)
-        {
-            _reviveCommand = reviveCommand;
-            _giveUpCommand = giveUpCommand;
-        }
 
         public void Enter(GameContext ctx)
         {
@@ -23,7 +14,7 @@ namespace WheelOfFortune.StateMachine
             ctx.DialogView.ShowBombScreen(
                 _lostRewards,
                 onRevive: () => OnRevive(ctx),
-                onGiveUp: () => _giveUpCommand.Execute());
+                onGiveUp: () => ctx.GiveUpCommand.Execute());
         }
 
         public void Exit(GameContext ctx)
@@ -35,7 +26,7 @@ namespace WheelOfFortune.StateMachine
         {
             foreach (var entry in _lostRewards.Entries)
                 ctx.RewardService.Collect(entry.Item, entry.Multiplier);
-            _reviveCommand.Execute();
+            ctx.ReviveCommand.Execute();
         }
     }
 }

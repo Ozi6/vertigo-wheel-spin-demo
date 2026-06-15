@@ -29,6 +29,7 @@ namespace WheelOfFortune.Installer
             var randomStrategy = new RandomSpinStrategy();
             var spinService = new SpinService(randomStrategy, eventBus);
             var rewardService = new RewardService(eventBus);
+            var currencyService = new CurrencyService(_gameSettings.StartingCurrencyBalance);
 
             var sliceFactory = new SliceFactory(_slicePrefab, _bombIcon);
             var slotFactory = new SlotFactory();
@@ -48,12 +49,14 @@ namespace WheelOfFortune.Installer
                 zoneService,
                 spinService,
                 rewardService,
+                currencyService,
                 wheelView,
                 hudView,
                 dialogView,
                 buttonView,
                 wheelFactory,
-                randomStrategy);
+                randomStrategy,
+                _gameSettings);
 
             buttonPresenter.Init(_gameController);
         }

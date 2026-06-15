@@ -8,10 +8,10 @@ namespace WheelOfFortune.Commands
         private readonly GameContext _ctx;
         private int _nextCost;
 
-        public ReviveCommand(GameContext ctx)
+        public ReviveCommand(GameContext ctx, int startingCost)
         {
             _ctx = ctx;
-            _nextCost = 50;
+            _nextCost = startingCost;
         }
 
         public void Execute()

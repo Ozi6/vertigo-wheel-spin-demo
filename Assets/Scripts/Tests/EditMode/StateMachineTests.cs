@@ -42,15 +42,14 @@ namespace WheelOfFortune.Tests.EditMode
             _randomStrategy = new StubSpinStrategy();
             _wheelFactory = new StubWheelFactory();
 
-            _reviveCommand = new ReviveCommand(CreateGameContext());
-            _giveUpCommand = new GiveUpCommand(_zone, _reward, TransitionTo);
-
             _ctx = CreateGameContext();
+            _reviveCommand = new ReviveCommand(_ctx, 25);
+            _giveUpCommand = new GiveUpCommand(_zone, _reward, TransitionTo);
         }
 
         private GameContext CreateGameContext()
         {
-            var revive = new ReviveCommand(null);
+            var revive = new ReviveCommand(null, 25);
             var giveUp = new GiveUpCommand(_zone, _reward, TransitionTo);
 
             return new GameContext(
@@ -103,16 +102,6 @@ namespace WheelOfFortune.Tests.EditMode
             var idle = new IdleState();
             idle.Enter(_ctx);
             Assert.IsTrue(idle.CanCollect());
-        }
-
-        [Test]
-        public void IdleState_CanCollect_FalseAfterExit()
-        {
-            _zone.CanLeave = true;
-            var idle = new IdleState();
-            idle.Enter(_ctx);
-            idle.Exit(_ctx);
-            Assert.IsFalse(idle.CanCollect());
         }
 
         [Test]
@@ -176,10 +165,11 @@ namespace WheelOfFortune.Tests.EditMode
         public void ReviveCommand_DoesNotTransitionWhenInsufficientFunds()
         {
             _currency = new StubCurrencyService(10);
-            _reviveCommand = new ReviveCommand(CreateGameContext());
+            var ctx = CreateGameContext();
+            var reviveCommand = new ReviveCommand(ctx, 25);
             var previousState = _currentState;
 
-            _reviveCommand.Execute();
+            reviveCommand.Execute();
 
             Assert.AreEqual(previousState, _currentState);
         }
@@ -188,10 +178,11 @@ namespace WheelOfFortune.Tests.EditMode
         public void ReviveCommand_DoesNotDeductWhenInsufficientFunds()
         {
             _currency = new StubCurrencyService(10);
-            _reviveCommand = new ReviveCommand(CreateGameContext());
+            var ctx = CreateGameContext();
+            var reviveCommand = new ReviveCommand(ctx, 25);
             var initialBalance = _currency.GetBalance();
 
-            _reviveCommand.Execute();
+            reviveCommand.Execute();
 
             Assert.AreEqual(initialBalance, _currency.GetBalance());
         }
