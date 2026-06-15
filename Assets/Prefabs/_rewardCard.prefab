@@ -184,7 +184,7 @@ GameObject:
   - component: {fileID: 1207369474252095242}
   - component: {fileID: 2167912873541917102}
   m_Layer: 5
-  m_Name: _count
+  m_Name: _multiplier_value
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
