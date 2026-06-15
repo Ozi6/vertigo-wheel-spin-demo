@@ -21,6 +21,18 @@ MonoBehaviour:
     _weight: 1
   - _rewardItem: {fileID: 11400000, guid: 10f5789f43c3fe24091992a96f122b06, type: 2}
     _weight: 1
+  - _rewardItem: {fileID: 11400000, guid: 3d7e80d3ca2193344bfa9c52d0d363dc, type: 2}
+    _weight: 1
+  - _rewardItem: {fileID: 11400000, guid: ac7725d3cd0adb34da5aa0c259527119, type: 2}
+    _weight: 1
+  - _rewardItem: {fileID: 11400000, guid: 5d86e8f55ee38264cad044e76165a5a9, type: 2}
+    _weight: 1
+  - _rewardItem: {fileID: 11400000, guid: 2caaf03acbcf6ed40b6de106022c6dc3, type: 2}
+    _weight: 1
+  - _rewardItem: {fileID: 11400000, guid: 075a029822807814cbf8830347bd9cdf, type: 2}
+    _weight: 1
+  - _rewardItem: {fileID: 11400000, guid: 01bb0c6adedd6fc4bb8825a605f12ecc, type: 2}
+    _weight: 1
   _sliceCount: 8
   _hasBomb: 0
   _minMultiplier: 100

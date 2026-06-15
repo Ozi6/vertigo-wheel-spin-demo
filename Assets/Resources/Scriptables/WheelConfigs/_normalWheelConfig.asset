@@ -15,15 +15,25 @@ MonoBehaviour:
   _rewardPool:
   - _rewardItem: {fileID: 11400000, guid: cbdb23541cec49c49bc6176d2361823a, type: 2}
     _weight: 1
-    _zoneValueMultiplier: 0
   - _rewardItem: {fileID: 11400000, guid: 10f5789f43c3fe24091992a96f122b06, type: 2}
     _weight: 1
-    _zoneValueMultiplier: 0
   - _rewardItem: {fileID: 11400000, guid: 470ed3fb075edaa4ab2d06230a3ce7bd, type: 2}
     _weight: 1
-    _zoneValueMultiplier: 0
   - _rewardItem: {fileID: 11400000, guid: 68318b3c25c64174f9aaf4c6e7d4ca85, type: 2}
     _weight: 1
-    _zoneValueMultiplier: 0
+  - _rewardItem: {fileID: 11400000, guid: 075a029822807814cbf8830347bd9cdf, type: 2}
+    _weight: 1
+  - _rewardItem: {fileID: 11400000, guid: ac7725d3cd0adb34da5aa0c259527119, type: 2}
+    _weight: 1
+  - _rewardItem: {fileID: 11400000, guid: 5d86e8f55ee38264cad044e76165a5a9, type: 2}
+    _weight: 1
+  - _rewardItem: {fileID: 11400000, guid: 01bb0c6adedd6fc4bb8825a605f12ecc, type: 2}
+    _weight: 1
+  - _rewardItem: {fileID: 11400000, guid: 2caaf03acbcf6ed40b6de106022c6dc3, type: 2}
+    _weight: 1
+  - _rewardItem: {fileID: 11400000, guid: 3d7e80d3ca2193344bfa9c52d0d363dc, type: 2}
+    _weight: 1
   _sliceCount: 8
   _hasBomb: 1
+  _minMultiplier: 1
+  _maxMultiplier: 10
