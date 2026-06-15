@@ -138,7 +138,7 @@ namespace WheelOfFortune.Views
         {
             DestroyClone();
             _onComplete?.Invoke();
-            Destroy(gameObject);
+            Destroy(gameObject, 0.1f);
         }
 
         public static void ResetSliceAlphas(WheelSlice[] slices)
