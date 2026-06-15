@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eaf04c510cce6c44cbd71220e791e2ba, type: 3}
+  m_Name: _winEffectConfig
+  m_EditorClassIdentifier: 
+  _zoomDuration: 0.75
+  _zoomScalePeak: 4.5
+  _zoomEase: 27
+  _zoomWorldOffset: {x: 5, y: 0}
+  _settleScale: 3.9
+  _settleDuration: 0.18
+  _fadeDuration: 0.6
+  _fadeEase: 6
+  _reelBackTriggerFraction: 0.25
+  _backgroundSprite: {fileID: 21300000, guid: 238d652e5baf5044f9831ae421a25b10, type: 3}
+  _backgroundFallbackColor: {r: 1, g: 0.85, b: 0.1, a: 1}
+  _backgroundSize: 420
+  _backgroundSpinDuration: 1.8
+  _backgroundFadeInDuration: 0.2
+  _backgroundFadeOutDuration: 0.15
+  _iconSize: 200
+  _burstRadius: 60
+  _popDuration: 0.15
+  _burstMoveDuration: 0.12
+  _flyDuration: 0.55
+  _flyStagger: 0.07
+  _flyArcStrength: 180
+  _flyEase: 26
