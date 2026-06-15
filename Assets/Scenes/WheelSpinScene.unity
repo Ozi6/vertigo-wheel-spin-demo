@@ -1520,6 +1520,7 @@ GameObject:
   m_Component:
   - component: {fileID: 664661193}
   - component: {fileID: 664661194}
+  - component: {fileID: 664661195}
   m_Layer: 5
   m_Name: ui_rewards_container_value
   m_TagString: Untagged
@@ -1545,7 +1546,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -275, y: 255}
-  m_SizeDelta: {x: 550, y: 1000}
+  m_SizeDelta: {x: 550, y: 200}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &664661194
 MonoBehaviour:
@@ -1563,7 +1564,7 @@ MonoBehaviour:
     m_Left: 50
     m_Right: 0
     m_Top: 20
-    m_Bottom: 0
+    m_Bottom: 20
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
@@ -1571,6 +1572,20 @@ MonoBehaviour:
   m_Spacing: {x: 40, y: 5}
   m_Constraint: 0
   m_ConstraintCount: 3
+--- !u!114 &664661195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 664661192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b65d88bd1cf859b478412c075134ec25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grid: {fileID: 664661194}
+  content: {fileID: 664661193}
 --- !u!1 &683650283
 GameObject:
   m_ObjectHideFlags: 0
