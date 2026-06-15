@@ -1,4 +1,5 @@
 using DG.Tweening;
+using UnityEngine;
 using WheelOfFortune.Domain;
 
 namespace WheelOfFortune.StateMachine
@@ -19,8 +20,14 @@ namespace WheelOfFortune.StateMachine
             ctx.RewardService.Collect(_result.RewardItem, _result.Multiplier);
             ctx.ZoneService.Advance();
 
+            Sprite icon = _result.RewardItem != null ? _result.RewardItem.Icon : null;
+            Transform panel = ctx.HudView.GetRewardsPanelTarget();
+
             ctx.WheelView.PlayWinEffect(
                 _result.SliceIndex,
+                _result.Multiplier,
+                icon,
+                panel,
                 onReelBack: () => StartReelBack(ctx),
                 onComplete: () => RebuildAndIdle(ctx));
         }

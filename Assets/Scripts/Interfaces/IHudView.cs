@@ -1,3 +1,4 @@
+using UnityEngine;
 using WheelOfFortune.Domain;
 
 namespace WheelOfFortune.Interfaces
@@ -6,5 +7,6 @@ namespace WheelOfFortune.Interfaces
     {
         void UpdateZoneDisplay(ZoneProgressModel progress);
         void UpdateRewardsDisplay(CollectedRewards rewards);
+        Transform GetRewardsPanelTarget();
     }
 }

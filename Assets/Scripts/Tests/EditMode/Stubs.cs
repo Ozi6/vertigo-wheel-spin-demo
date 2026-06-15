@@ -124,7 +124,7 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
             throw new NotImplementedException();
         }
 
-        void IWheelView.PlayWinEffect(int winningSliceIndex, Action onReelBack, Action onComplete)
+        void IWheelView.PlayWinEffect(int winningSliceIndex, int multiplier, Sprite itemIcon, Transform rewardsPanelTarget, Action onReelBack, Action onComplete)
         {
             throw new NotImplementedException();
         }
@@ -137,6 +137,11 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
 
         public void UpdateZoneDisplay(ZoneProgressModel progress) => LastZoneProgress = progress;
         public void UpdateRewardsDisplay(CollectedRewards rewards) => LastRewards = rewards;
+
+        Transform IHudView.GetRewardsPanelTarget()
+        {
+            throw new NotImplementedException();
+        }
     }
 
     internal sealed class StubDialogView : IDialogView

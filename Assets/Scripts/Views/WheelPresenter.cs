@@ -72,7 +72,13 @@ namespace WheelOfFortune.Views
                 .OnComplete(() => onComplete?.Invoke());
         }
 
-        public void PlayWinEffect(int winningSliceIndex, Action onReelBack, Action onComplete)
+        public void PlayWinEffect(
+            int winningSliceIndex,
+            int multiplier,
+            Sprite itemIcon,
+            Transform rewardsPanelTarget,
+            Action onReelBack,
+            Action onComplete)
         {
             if (_liveSlices == null || _liveSlices.Length == 0 ||
                 winningSliceIndex < 0 || winningSliceIndex >= _liveSlices.Length)
@@ -97,6 +103,9 @@ namespace WheelOfFortune.Views
                 winningSlice,
                 _liveSlices,
                 winningSliceIndex,
+                multiplier,
+                rewardsPanelTarget,
+                itemIcon,
                 onReelBack,
                 onComplete);
         }

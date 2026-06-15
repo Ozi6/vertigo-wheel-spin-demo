@@ -42,6 +42,11 @@ namespace WheelOfFortune.Views
             RefreshColors(1);
         }
 
+        public Transform GetRewardsPanelTarget()
+        {
+            return _rewardsContainer_value;
+        }
+
         public void UpdateZoneDisplay(ZoneProgressModel progress)
         {
             RefreshColors(progress.ZoneNumber);
