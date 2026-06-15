@@ -6,18 +6,18 @@ namespace WheelOfFortune.Commands
 {
     public sealed class SpinCommand : ICommand
     {
-        private readonly IdleState _idleState;
+        private readonly IGameStateGuard _guard;
         private readonly Action<IGameState> _transitionTo;
 
-        public SpinCommand(IdleState idleState, Action<IGameState> transitionTo)
+        public SpinCommand(IGameStateGuard guard, Action<IGameState> transitionTo)
         {
-            _idleState = idleState;
+            _guard = guard;
             _transitionTo = transitionTo;
         }
 
         public void Execute()
         {
-            if (!_idleState.CanSpin()) return;
+            if (!_guard.CanSpin()) return;
             _transitionTo(new SpinningState());
         }
     }

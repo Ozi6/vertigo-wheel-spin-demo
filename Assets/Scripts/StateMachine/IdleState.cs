@@ -1,8 +1,9 @@
 using WheelOfFortune.Domain;
+using WheelOfFortune.Interfaces;
 
 namespace WheelOfFortune.StateMachine
 {
-    public sealed class IdleState : IGameState
+    public sealed class IdleState : IGameState, IGameStateGuard
     {
         private GameContext _ctx;
 

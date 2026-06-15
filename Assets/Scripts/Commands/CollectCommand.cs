@@ -6,18 +6,18 @@ namespace WheelOfFortune.Commands
 {
     public sealed class CollectCommand : ICommand
     {
-        private readonly IdleState _idleState;
+        private readonly IGameStateGuard _guard;
         private readonly Action<IGameState> _transitionTo;
 
-        public CollectCommand(IdleState idleState, Action<IGameState> transitionTo)
+        public CollectCommand(IGameStateGuard guard, Action<IGameState> transitionTo)
         {
-            _idleState = idleState;
+            _guard = guard;
             _transitionTo = transitionTo;
         }
 
         public void Execute()
         {
-            if (!_idleState.CanCollect()) return;
+            if (!_guard.CanCollect()) return;
             _transitionTo(new CollectState());
         }
     }
