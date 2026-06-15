@@ -33,9 +33,9 @@ namespace WheelOfFortune.StateMachine
 
         private void OnRevive(GameContext ctx)
         {
-            _reviveCommand.Execute();
             foreach (var entry in _lostRewards.Entries)
                 ctx.RewardService.Collect(entry.Item, entry.Multiplier);
+            _reviveCommand.Execute();
         }
     }
 }
