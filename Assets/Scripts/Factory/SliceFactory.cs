@@ -7,10 +7,12 @@ namespace WheelOfFortune.Factory
     public sealed class SliceFactory
     {
         private readonly WheelSlice _slicePrefab;
+        private readonly Sprite _bombIcon;
 
-        public SliceFactory(WheelSlice slicePrefab)
+        public SliceFactory(WheelSlice slicePrefab, Sprite bombIcon = null)
         {
             _slicePrefab = slicePrefab;
+            _bombIcon = bombIcon;
         }
 
         public WheelSlice[] CreateSlices(SliceDefinition[] slices, SlotDefinition[] slots)
@@ -24,10 +26,18 @@ namespace WheelOfFortune.Factory
                 instance.name = $"ui_slice_{i:D2}_value";
 
                 var reward = slices[i].RewardItem;
-                var icon = reward != null ? reward.Icon : null;
-                var label = reward != null ? $"x{slices[i].Multiplier}" : string.Empty;
 
-                instance.Setup(icon, label);
+                if (reward == null && _bombIcon != null)
+                    instance.Setup(_bombIcon, "BOMB");
+                else if (reward != null)
+                {
+                    var icon = reward.Icon;
+                    var label = $"x{slices[i].Multiplier}";
+                    instance.Setup(icon, label);
+                }
+                else
+                    instance.Setup(null, "BOMB");
+
                 instances[i] = instance;
             }
 

@@ -15,6 +15,7 @@ namespace WheelOfFortune.Installer
         [SerializeField] private GameSettingsSO _gameSettings;
         [SerializeField] private ZoneConfigSO[] _zoneConfigs;
         [SerializeField] private WheelSlice _slicePrefab;
+        [SerializeField] private Sprite _bombIcon;
         [SerializeField] private Transform _slotParent;
         [SerializeField] private int _slotCount = 8;
         [SerializeField] private GameController _gameController;
@@ -29,7 +30,7 @@ namespace WheelOfFortune.Installer
             var spinService = new SpinService(randomStrategy, eventBus);
             var rewardService = new RewardService(eventBus);
 
-            var sliceFactory = new SliceFactory(_slicePrefab);
+            var sliceFactory = new SliceFactory(_slicePrefab, _bombIcon);
             var slotFactory = new SlotFactory();
             var wheelFactory = new WheelFactory(_zoneConfigs, sliceFactory, slotFactory, _slotParent, _slotCount);
 

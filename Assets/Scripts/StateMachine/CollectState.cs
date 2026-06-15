@@ -1,4 +1,5 @@
 using WheelOfFortune.Events;
+using WheelOfFortune.Domain;
 
 namespace WheelOfFortune.StateMachine
 {
@@ -22,6 +23,12 @@ namespace WheelOfFortune.StateMachine
         {
             ctx.ZoneService.Reset();
             ctx.RewardService.Reset();
+
+            ctx.WheelFactory.BuildWheel(
+                ctx.ZoneService.GetCurrentZoneType(),
+                ctx.ZoneService.GetCurrentZoneNumber(),
+                ctx.WheelView);
+
             ctx.TransitionTo(new IdleState());
         }
 
