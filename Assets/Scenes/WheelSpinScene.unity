@@ -543,7 +543,7 @@ GameObject:
   - component: {fileID: 286501572}
   - component: {fileID: 286501571}
   m_Layer: 5
-  m_Name: ui_viewport
+  m_Name: ui_rewards_scroll_viewport
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -804,7 +804,7 @@ GameObject:
   - component: {fileID: 344620068}
   - component: {fileID: 344620067}
   m_Layer: 5
-  m_Name: ui_image_wheel_bg
+  m_Name: ui_wheel_image_bg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1109,7 +1109,7 @@ GameObject:
   - component: {fileID: 396544592}
   - component: {fileID: 396544593}
   m_Layer: 5
-  m_Name: ui_scroll_rewards
+  m_Name: ui_rewards_scroll
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1894,7 +1894,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -275, y: 434.99948}
+  m_AnchoredPosition: {x: -275, y: 255}
   m_SizeDelta: {x: 550, y: 200}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &664661194
@@ -1945,7 +1945,7 @@ GameObject:
   m_Component:
   - component: {fileID: 683650284}
   m_Layer: 5
-  m_Name: ui_slot_2
+  m_Name: ui_wheel_slot_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2270,7 +2270,7 @@ GameObject:
   m_Component:
   - component: {fileID: 894226551}
   m_Layer: 5
-  m_Name: ui_slot_5
+  m_Name: ui_wheel_slot_5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2442,7 +2442,7 @@ GameObject:
   m_Component:
   - component: {fileID: 948099053}
   m_Layer: 5
-  m_Name: ui_slot_parent
+  m_Name: ui_wheel_slot_parent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3236,7 +3236,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1157684319}
   m_Layer: 5
-  m_Name: ui_slot_4
+  m_Name: ui_wheel_slot_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3514,7 +3514,7 @@ GameObject:
   - component: {fileID: 1260464536}
   - component: {fileID: 1260464537}
   m_Layer: 5
-  m_Name: ui_rewards_panel
+  m_Name: ui_panel_rewards
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3638,7 +3638,7 @@ GameObject:
   - component: {fileID: 1286282794}
   - component: {fileID: 1286282793}
   m_Layer: 5
-  m_Name: ui_button_spin_text
+  m_Name: ui_button_collect_text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4148,7 +4148,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1506678357}
   m_Layer: 5
-  m_Name: ui_slot_7
+  m_Name: ui_wheel_slot_7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4558,7 +4558,7 @@ GameObject:
   - component: {fileID: 1731350303}
   - component: {fileID: 1731350302}
   m_Layer: 5
-  m_Name: ui_button_collect
+  m_Name: ui_wheel_button_collect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4677,7 +4677,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1825902109}
   m_Layer: 5
-  m_Name: ui_slot_3
+  m_Name: ui_wheel_slot_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4956,7 +4956,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1873109357}
   m_Layer: 5
-  m_Name: ui_slot_6
+  m_Name: ui_wheel_slot_6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5369,7 +5369,7 @@ GameObject:
   - component: {fileID: 2002256430}
   - component: {fileID: 2002256429}
   m_Layer: 5
-  m_Name: ui_image_arrow
+  m_Name: ui_wheel_image_arrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5519,7 +5519,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2074285803}
   m_Layer: 5
-  m_Name: ui_slot_1
+  m_Name: ui_wheel_slot_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
