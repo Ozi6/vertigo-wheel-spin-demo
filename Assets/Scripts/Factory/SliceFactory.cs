@@ -28,7 +28,7 @@ namespace WheelOfFortune.Factory
                 var reward = slices[i].RewardItem;
 
                 if (reward == null && _bombIcon != null)
-                    instance.Setup(_bombIcon, "BOMB");
+                    instance.Setup(_bombIcon, "LOSE");
                 else if (reward != null)
                 {
                     var icon = reward.Icon;
@@ -36,7 +36,7 @@ namespace WheelOfFortune.Factory
                     instance.Setup(icon, label);
                 }
                 else
-                    instance.Setup(null, "BOMB");
+                    instance.Setup(null, "LOSE");
 
                 instances[i] = instance;
             }
