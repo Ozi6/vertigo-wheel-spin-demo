@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 27800476}
   - component: {fileID: 27800475}
   m_Layer: 5
-  m_Name: ui_button_watchad_image
+  m_Name: ui_bomb_button_watchad_image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -181,7 +181,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 10915, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 0
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -348,7 +348,7 @@ GameObject:
   - component: {fileID: 254612980}
   - component: {fileID: 254612979}
   m_Layer: 5
-  m_Name: ui_button_watchad
+  m_Name: ui_bomb_button_watchad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -634,7 +634,7 @@ GameObject:
   - component: {fileID: 300006033}
   - component: {fileID: 300006032}
   m_Layer: 5
-  m_Name: ui_viewport
+  m_Name: ui_bomb_scroll_viewport
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -882,7 +882,7 @@ GameObject:
   - component: {fileID: 394988632}
   - component: {fileID: 394988631}
   m_Layer: 5
-  m_Name: ui_text_title
+  m_Name: ui_bomb_text_title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1268,7 +1268,7 @@ GameObject:
   - component: {fileID: 476603321}
   - component: {fileID: 476603322}
   m_Layer: 5
-  m_Name: ui_grid_content
+  m_Name: ui_bomb_scroll_grid_content
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1345,7 +1345,7 @@ GameObject:
   - component: {fileID: 517774704}
   - component: {fileID: 517774703}
   m_Layer: 5
-  m_Name: ui_button_cancel
+  m_Name: ui_collect_cancel_button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1393,7 +1393,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: 9e9974e7f4810644b87c0faabdd5a4d2, type: 3}
-  m_Type: 0
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1466,7 +1466,7 @@ GameObject:
   - component: {fileID: 617472221}
   - component: {fileID: 617472220}
   m_Layer: 5
-  m_Name: ui_button_cancel_text
+  m_Name: ui_collect_cancel_button_text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1736,7 +1736,7 @@ GameObject:
   - component: {fileID: 661482963}
   - component: {fileID: 661482962}
   m_Layer: 5
-  m_Name: ui_button_collect_text
+  m_Name: ui_collect_collect_button_text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2118,7 +2118,7 @@ GameObject:
   - component: {fileID: 839623946}
   - component: {fileID: 839623945}
   m_Layer: 5
-  m_Name: ui_button_revive_moneydisplay_icon
+  m_Name: ui_bomb_button_revive_moneydisplay_icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2165,7 +2165,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: 4d8777802bde52e4c934a4aac63cfd25, type: 3}
-  m_Type: 0
+  m_Type: 1
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
@@ -2524,7 +2524,7 @@ GameObject:
   - component: {fileID: 972507479}
   - component: {fileID: 972507478}
   m_Layer: 5
-  m_Name: ui_image_bomb
+  m_Name: ui_bomb_image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2571,7 +2571,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: 152c7781b28d7b049bfb1361199a871d, type: 3}
-  m_Type: 0
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -2600,7 +2600,7 @@ GameObject:
   - component: {fileID: 1025085836}
   - component: {fileID: 1025085835}
   m_Layer: 5
-  m_Name: ui_button_giveup_text
+  m_Name: ui_bomb_button_giveup_text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2830,7 +2830,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: 9e9974e7f4810644b87c0faabdd5a4d2, type: 3}
-  m_Type: 0
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -2949,7 +2949,7 @@ GameObject:
   - component: {fileID: 1046257806}
   - component: {fileID: 1046257805}
   m_Layer: 5
-  m_Name: ui_scroll_lostitems
+  m_Name: ui_bomb_scroll_lostitems
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3058,7 +3058,7 @@ GameObject:
   - component: {fileID: 1086132716}
   - component: {fileID: 1086132715}
   m_Layer: 5
-  m_Name: ui_button_revive
+  m_Name: ui_bomb_button_revive
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3151,7 +3151,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: 5001199b83605734a8f502fdc0018bd7, type: 3}
-  m_Type: 0
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -3366,7 +3366,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: 244dfd4aeb9e98e4bb974806fca547b8, type: 3}
-  m_Type: 0
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -3393,7 +3393,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1176251830}
   m_Layer: 5
-  m_Name: ui_button_revive_moneydisplay
+  m_Name: ui_bomb_button_revive_moneydisplay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3638,7 +3638,7 @@ GameObject:
   - component: {fileID: 1286282794}
   - component: {fileID: 1286282793}
   m_Layer: 5
-  m_Name: ui_button_collect_text
+  m_Name: ui_wheel_button_collect_text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3773,7 +3773,7 @@ GameObject:
   - component: {fileID: 1354963085}
   - component: {fileID: 1354963084}
   m_Layer: 5
-  m_Name: ui_text_title
+  m_Name: ui_bomb_scroll_title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3908,7 +3908,7 @@ GameObject:
   - component: {fileID: 1355845081}
   - component: {fileID: 1355845080}
   m_Layer: 5
-  m_Name: ui_button_watchad_text
+  m_Name: ui_bomb_button_watchad_text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4210,7 +4210,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -64, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 76, y: 76}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1544315695
 MonoBehaviour:
@@ -4233,7 +4233,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: 4d8777802bde52e4c934a4aac63cfd25, type: 3}
-  m_Type: 0
+  m_Type: 1
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
@@ -4298,7 +4298,7 @@ GameObject:
   - component: {fileID: 1665697785}
   - component: {fileID: 1665697784}
   m_Layer: 5
-  m_Name: ui_button_revive_text
+  m_Name: ui_bomb_button_revive_text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4436,7 +4436,7 @@ GameObject:
   - component: {fileID: 1675428435}
   - component: {fileID: 1675428434}
   m_Layer: 5
-  m_Name: ui_button_collect
+  m_Name: ui_collect_collect_button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4484,7 +4484,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: 5001199b83605734a8f502fdc0018bd7, type: 3}
-  m_Type: 0
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -4650,7 +4650,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: 9e9974e7f4810644b87c0faabdd5a4d2, type: 3}
-  m_Type: 0
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -4716,7 +4716,7 @@ GameObject:
   - component: {fileID: 1831234652}
   - component: {fileID: 1831234651}
   m_Layer: 5
-  m_Name: ui_scroll_collect
+  m_Name: ui_collect_scroll
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4823,7 +4823,7 @@ GameObject:
   - component: {fileID: 1837549513}
   - component: {fileID: 1837549512}
   m_Layer: 5
-  m_Name: ui_button_revive_moneydisplay_amount
+  m_Name: ui_bomb_button_revive_moneydisplay_amount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5095,7 +5095,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: c0a2dac23a2ffca488d62ac341ad60e4, type: 3}
-  m_Type: 0
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -5279,7 +5279,7 @@ GameObject:
   - component: {fileID: 1971019595}
   - component: {fileID: 1971019594}
   m_Layer: 5
-  m_Name: ui_viewport
+  m_Name: ui_collect_scroll_viewport
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5492,7 +5492,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: 6655ecaf0d99af54bb437352656a82b2, type: 3}
-  m_Type: 0
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -5658,7 +5658,7 @@ GameObject:
   - component: {fileID: 2101752216}
   - component: {fileID: 2101752215}
   m_Layer: 5
-  m_Name: ui_text_title
+  m_Name: ui_collect_text_title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
