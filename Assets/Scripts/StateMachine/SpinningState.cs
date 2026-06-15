@@ -28,7 +28,7 @@ namespace WheelOfFortune.StateMachine
         private void OnSpinAnimationComplete(GameContext ctx)
         {
             if (_pendingResult.IsBomb)
-                ctx.TransitionTo(new BombState(ctx.ReviveCommand, ctx.GiveUpCommand));
+                ctx.TransitionTo(new BombState());
             else
                 ctx.TransitionTo(new RewardState(_pendingResult));
         }
