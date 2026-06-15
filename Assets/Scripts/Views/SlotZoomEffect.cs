@@ -15,6 +15,7 @@ namespace WheelOfFortune.Views
         private SlotSpinBackground _spinBg;
         private List<CanvasGroup> _allFadeGroups = new List<CanvasGroup>();
         private Action _onComplete;
+        private Action _onBurstFinished;
         private WinEffectConfig _cfg;
 
         public static SlotZoomEffect Play(
@@ -57,6 +58,7 @@ namespace WheelOfFortune.Views
         {
             _cfg = cfg;
             _onComplete = onComplete;
+            _onBurstFinished = onBurstFinished;
 
             foreach (var slice in allSlices)
             {
@@ -74,6 +76,20 @@ namespace WheelOfFortune.Views
             float reelBackAt = cfg.ZoomDuration * cfg.ReelBackTriggerFraction;
             int cappedMultiplier = Mathf.Min(multiplier, MaxFlyingMultipliers);
 
+            Action<int> remappedIconArrived = null;
+            if (onIconArrived != null)
+            {
+                int realMultiplier = multiplier;
+                int capped = cappedMultiplier;
+                remappedIconArrived = arrived =>
+                {
+                    int mapped = arrived >= capped
+                        ? realMultiplier
+                        : Mathf.RoundToInt((float)arrived / capped * realMultiplier);
+                    onIconArrived(mapped);
+                };
+            }
+
             DOTween.Sequence()
                 .Append(ZoomToPeak())
                 .Append(SettleDown())
@@ -84,10 +100,9 @@ namespace WheelOfFortune.Views
                     _spinBg.FadeOutAndDestroy();
                     _spinBg = null;
                     DestroyClone();
-                    SlotIconBurst.Play(transform, worldCenter, cappedMultiplier, itemIcon, rewardsPanelTarget, cfg, onIconArrived);
+                    SlotIconBurst.Play(transform, worldCenter, cappedMultiplier, itemIcon, rewardsPanelTarget, cfg, remappedIconArrived);
                 })
                 .AppendInterval(cfg.TotalBurstDuration(cappedMultiplier))
-                .AppendCallback(() => onBurstFinished?.Invoke())
                 .OnComplete(OnSequenceComplete);
         }
 
@@ -143,6 +158,7 @@ namespace WheelOfFortune.Views
         {
             DestroyClone();
             _onComplete?.Invoke();
+            _onBurstFinished?.Invoke();
             Destroy(gameObject, 0.1f);
         }
 
