@@ -42,6 +42,11 @@ namespace WheelOfFortune.StateMachine
                     previousMultiplier,
                     _result.Multiplier);
 
+            var onBurstFinished =
+                ctx.HudView.BuildFinalMultiplierCallback(
+                    itemId,
+                    previousMultiplier + _result.Multiplier);
+
             Sprite itemIcon = _result.RewardItem != null
                 ? _result.RewardItem.Icon
                 : null;
@@ -56,7 +61,8 @@ namespace WheelOfFortune.StateMachine
                 ctx.WinEffectConfig,
                 onReelBack: () => ctx.WheelView.RotateToOrigin(ReelBackDuration),
                 onComplete: () => RebuildAndIdle(ctx),
-                onIconArrived: onIconArrived);
+                onIconArrived: onIconArrived,
+                onBurstFinished: onBurstFinished);
         }
 
         public void Exit(GameContext ctx) { }

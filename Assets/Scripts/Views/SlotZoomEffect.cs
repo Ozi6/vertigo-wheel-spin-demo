@@ -28,7 +28,8 @@ namespace WheelOfFortune.Views
             WinEffectConfig cfg,
             Action onReelBack,
             Action onComplete,
-            Action<int> onIconArrived = null)
+            Action<int> onIconArrived = null,
+            Action onBurstFinished = null)
         {
             var go = new GameObject("SlotZoomEffect");
             go.transform.SetParent(uiRoot, false);
@@ -37,7 +38,7 @@ namespace WheelOfFortune.Views
             effect.Begin(
                 winningSlice, allSlices, winningIndex,
                 multiplier, rewardsPanelTarget, itemIcon, cfg,
-                onReelBack, onComplete, onIconArrived);
+                onReelBack, onComplete, onIconArrived, onBurstFinished);
             return effect;
         }
 
@@ -51,7 +52,8 @@ namespace WheelOfFortune.Views
             WinEffectConfig cfg,
             Action onReelBack,
             Action onComplete,
-            Action<int> onIconArrived)
+            Action<int> onIconArrived = null,
+            Action onBurstFinished = null)
         {
             _cfg = cfg;
             _onComplete = onComplete;
@@ -85,6 +87,7 @@ namespace WheelOfFortune.Views
                     SlotIconBurst.Play(transform, worldCenter, cappedMultiplier, itemIcon, rewardsPanelTarget, cfg, onIconArrived);
                 })
                 .AppendInterval(cfg.TotalBurstDuration(cappedMultiplier))
+                .AppendCallback(() => onBurstFinished?.Invoke())
                 .OnComplete(OnSequenceComplete);
         }
 

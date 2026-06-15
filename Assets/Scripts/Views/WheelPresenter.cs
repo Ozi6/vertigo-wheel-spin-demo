@@ -70,7 +70,8 @@ namespace WheelOfFortune.Views
             WinEffectConfig cfg,
             Action onReelBack,
             Action onComplete,
-            Action<int> onIconArrived)
+            Action<int> onIconArrived,
+            Action onBurstFinished)
         {
             if (_liveSlices == null || _liveSlices.Length == 0 ||
                 winningSliceIndex < 0 || winningSliceIndex >= _liveSlices.Length)
@@ -101,7 +102,8 @@ namespace WheelOfFortune.Views
                 cfg,
                 onReelBack,
                 onComplete,
-                onIconArrived);
+                onIconArrived,
+                onBurstFinished);
         }
 
         public void SnapSlicesToFullAlpha() => SlotZoomEffect.ResetSliceAlphas(_liveSlices);

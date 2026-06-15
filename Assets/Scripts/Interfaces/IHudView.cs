@@ -11,5 +11,6 @@ namespace WheelOfFortune.Interfaces
         Transform GetRewardsPanelTarget();
         void InitializeNewRewardCard(CollectedRewards rewards, string newItemId);
         Action<int> BuildIconArrivedCallback(string itemId, int previousMultiplier, int rewardMultiplier);
+        Action BuildFinalMultiplierCallback(string itemId, int finalValue);
     }
 }

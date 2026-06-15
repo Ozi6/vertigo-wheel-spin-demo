@@ -108,6 +108,17 @@ namespace WheelOfFortune.Views
             };
         }
 
+        public Action BuildFinalMultiplierCallback(string itemId, int finalValue)
+        {
+            return () =>
+            {
+                if (!_cardById.TryGetValue(itemId, out var card) || card == null)
+                    return;
+
+                card.SetMultiplier(finalValue);
+            };
+        }
+
         private void BuildStrip()
         {
             foreach (Transform child in _zoneStrip_value)

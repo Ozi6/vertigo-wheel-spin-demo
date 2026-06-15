@@ -21,6 +21,7 @@ namespace WheelOfFortune.Interfaces
             WinEffectConfig cfg,
             Action onReelBack,
             Action onComplete,
-            Action<int> onIconArrived);
+            Action<int> onIconArrived,
+            Action onBurstFinished);
     }
 }
