@@ -15,6 +15,7 @@ namespace WheelOfFortune.Views
         [SerializeField] private TextMeshProUGUI _zoneCellPrefab_value;
         [SerializeField] private Transform _rewardsContainer_value;
         [SerializeField] private RewardCard _rewardCardPrefab_value;
+        [SerializeField] private TextMeshProUGUI _currencyDisplay_value;
 
         [SerializeField] private int _safeZoneInterval = 5;
         [SerializeField] private int _superZoneInterval = 30;
@@ -73,6 +74,12 @@ namespace WheelOfFortune.Views
                 _rewardCards.Add(card);
                 _cardById[stack.Item.Id] = card;
             }
+        }
+
+        public void UpdateCurrencyDisplay(int balance)
+        {
+            if (_currencyDisplay_value != null)
+                _currencyDisplay_value.text = balance.ToString();
         }
 
         public void InitializeNewRewardCard(CollectedRewards rewards, string newItemId)

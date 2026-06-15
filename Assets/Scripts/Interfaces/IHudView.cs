@@ -8,6 +8,7 @@ namespace WheelOfFortune.Interfaces
     {
         void UpdateZoneDisplay(ZoneProgressModel progress);
         void UpdateRewardsDisplay(CollectedRewards rewards);
+        void UpdateCurrencyDisplay(int balance);
         Transform GetRewardsPanelTarget();
         void InitializeNewRewardCard(CollectedRewards rewards, string newItemId);
         Action<int> BuildIconArrivedCallback(string itemId, int previousMultiplier, int rewardMultiplier);

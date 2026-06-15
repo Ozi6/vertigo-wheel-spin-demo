@@ -11,6 +11,7 @@ namespace WheelOfFortune.StateMachine
         public readonly IZoneService ZoneService;
         public readonly ISpinService SpinService;
         public readonly IRewardService RewardService;
+        public readonly ICurrencyService CurrencyService;
         public readonly IWheelView WheelView;
         public readonly IHudView HudView;
         public readonly IDialogView DialogView;
@@ -26,6 +27,7 @@ namespace WheelOfFortune.StateMachine
             IZoneService zoneService,
             ISpinService spinService,
             IRewardService rewardService,
+            ICurrencyService currencyService,
             IWheelView wheelView,
             IHudView hudView,
             IDialogView dialogView,
@@ -40,6 +42,7 @@ namespace WheelOfFortune.StateMachine
             ZoneService = zoneService;
             SpinService = spinService;
             RewardService = rewardService;
+            CurrencyService = currencyService;
             WheelView = wheelView;
             HudView = hudView;
             DialogView = dialogView;

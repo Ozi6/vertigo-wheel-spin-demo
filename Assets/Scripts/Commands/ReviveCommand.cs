@@ -1,4 +1,3 @@
-using System;
 using WheelOfFortune.Interfaces;
 using WheelOfFortune.StateMachine;
 
@@ -6,19 +5,23 @@ namespace WheelOfFortune.Commands
 {
     public sealed class ReviveCommand : ICommand
     {
-        private readonly Action<IGameState> _transitionTo;
-        private readonly Func<bool> _canAffordRevive;
+        private readonly GameContext _ctx;
+        private int _nextCost;
 
-        public ReviveCommand(Action<IGameState> transitionTo, Func<bool> canAffordRevive)
+        public ReviveCommand(GameContext ctx)
         {
-            _transitionTo = transitionTo;
-            _canAffordRevive = canAffordRevive;
+            _ctx = ctx;
+            _nextCost = 50;
         }
 
         public void Execute()
         {
-            if (!_canAffordRevive()) return;
-            _transitionTo(new IdleState());
+            if (!_ctx.CurrencyService.TryDeduct(_nextCost))
+                return;
+
+            _nextCost *= 2;
+            _ctx.ButtonView.UpdateReviveCost(_nextCost);
+            _ctx.TransitionTo(new IdleState());
         }
     }
 }

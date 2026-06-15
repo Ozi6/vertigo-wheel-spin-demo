@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using WheelOfFortune.Controller;
@@ -9,6 +10,8 @@ namespace WheelOfFortune.Views
     {
         [SerializeField] private Button _spinButton_value;
         [SerializeField] private Button _collectButton_value;
+        [SerializeField] private Button _reviveButton_value;
+        [SerializeField] private TextMeshProUGUI _reviveCostDisplay_value;
 
         public void Init(GameController gameController)
         {
@@ -17,6 +20,9 @@ namespace WheelOfFortune.Views
 
             if (_collectButton_value != null)
                 _collectButton_value.onClick.AddListener(() => gameController.ExecuteCollect());
+
+            if (_reviveButton_value != null)
+                _reviveButton_value.onClick.AddListener(() => gameController.ExecuteRevive());
 
             SetCollectVisible(false);
         }
@@ -31,6 +37,18 @@ namespace WheelOfFortune.Views
         {
             if (_collectButton_value != null)
                 _collectButton_value.gameObject.SetActive(visible);
+        }
+
+        public void SetReviveInteractable(bool interactable)
+        {
+            if (_reviveButton_value != null)
+                _reviveButton_value.interactable = interactable;
+        }
+
+        public void UpdateReviveCost(int cost)
+        {
+            if (_reviveCostDisplay_value != null)
+                _reviveCostDisplay_value.text = cost.ToString();
         }
     }
 }
