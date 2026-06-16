@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using WheelOfFortune.Commands;
 using WheelOfFortune.Data;
 using WheelOfFortune.Domain;
 using WheelOfFortune.Factory;
@@ -83,9 +84,7 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         }
 
         void IRewardService.Collect(RewardItemSO item, int multiplier)
-        {
-            throw new NotImplementedException();
-        }
+            => Collect(item);
     }
 
     internal sealed class StubWheelView : IWheelView

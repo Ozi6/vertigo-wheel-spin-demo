@@ -1,5 +1,6 @@
-using System;
 using NUnit.Framework;
+using System;
+using System.Runtime.Remoting.Contexts;
 using WheelOfFortune.Commands;
 using WheelOfFortune.Domain;
 using WheelOfFortune.Interfaces;
@@ -41,18 +42,19 @@ namespace WheelOfFortune.Tests.EditMode
             _button = new StubButtonView();
             _randomStrategy = new StubSpinStrategy();
             _wheelFactory = new StubWheelFactory();
-
             _ctx = CreateGameContext();
-            _reviveCommand = new ReviveCommand(_ctx, 25);
-            _giveUpCommand = new GiveUpCommand(_zone, _reward, TransitionTo, () => { });
+            _reviveCommand = _ctx.ReviveCommand;
+            _giveUpCommand = _ctx.GiveUpCommand;
         }
 
         private GameContext CreateGameContext()
         {
-            var revive = new ReviveCommand(null, 25);
+            GameContext context = null;
+
+            var revive = new ReviveCommand(() => context, 25);
             var giveUp = new GiveUpCommand(_zone, _reward, TransitionTo, () => { });
 
-            return new GameContext(
+            return context = new GameContext(
                 _zone,
                 _spin,
                 _reward,
@@ -166,10 +168,9 @@ namespace WheelOfFortune.Tests.EditMode
         {
             _currency = new StubCurrencyService(10);
             var ctx = CreateGameContext();
-            var reviveCommand = new ReviveCommand(ctx, 25);
             var previousState = _currentState;
 
-            reviveCommand.Execute();
+            ctx.ReviveCommand.Execute();
 
             Assert.AreEqual(previousState, _currentState);
         }
@@ -179,10 +180,9 @@ namespace WheelOfFortune.Tests.EditMode
         {
             _currency = new StubCurrencyService(10);
             var ctx = CreateGameContext();
-            var reviveCommand = new ReviveCommand(ctx, 25);
             var initialBalance = _currency.GetBalance();
 
-            reviveCommand.Execute();
+            ctx.ReviveCommand.Execute();
 
             Assert.AreEqual(initialBalance, _currency.GetBalance());
         }

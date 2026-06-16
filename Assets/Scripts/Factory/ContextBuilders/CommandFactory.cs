@@ -16,15 +16,5 @@ namespace WheelOfFortune.Factory
         {
             return new CollectCommand(guard, transitionTo);
         }
-
-        public ReviveCommand CreateReviveCommand(GameContext ctx, int startingCost)
-        {
-            return new ReviveCommand(ctx, startingCost);
-        }
-
-        public GiveUpCommand CreateGiveUpCommand(IZoneService zoneService, IRewardService rewardService, Action<IGameState> transitionTo, Action resetReviveCost)
-        {
-            return new GiveUpCommand(zoneService, rewardService, transitionTo, resetReviveCost);
-        }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using WheelOfFortune.Interfaces;
 using WheelOfFortune.StateMachine;
 
@@ -5,33 +6,34 @@ namespace WheelOfFortune.Commands
 {
     public sealed class ReviveCommand : ICommand
     {
-        private readonly GameContext _ctx;
+        private readonly Func<GameContext> _ctxFactory;
         private readonly int _startingCost;
         private int _nextCost;
 
-        public ReviveCommand(GameContext ctx, int startingCost)
+        private GameContext Ctx => _ctxFactory();
+
+        public ReviveCommand(Func<GameContext> ctxFactory, int startingCost)
         {
-            _ctx = ctx;
+            _ctxFactory = ctxFactory;
             _startingCost = startingCost;
             _nextCost = startingCost;
         }
 
         public void Execute()
         {
-            if (!_ctx.CurrencyService.TryDeduct(_nextCost))
+            if (!Ctx.CurrencyService.TryDeduct(_nextCost))
                 return;
-
             _nextCost *= 2;
-            _ctx.ButtonView.UpdateReviveCost(_nextCost);
-            _ctx.ButtonView.SetReviveInteractable(_ctx.CurrencyService.CanAfford(_nextCost));
-            _ctx.TransitionTo(new IdleState());
+            Ctx.ButtonView.UpdateReviveCost(_nextCost);
+            Ctx.ButtonView.SetReviveInteractable(Ctx.CurrencyService.CanAfford(_nextCost));
+            Ctx.TransitionTo(new IdleState());
         }
 
         public void Reset()
         {
             _nextCost = _startingCost;
-            _ctx.ButtonView.UpdateReviveCost(_nextCost);
-            _ctx.ButtonView.SetReviveInteractable(_ctx.CurrencyService.CanAfford(_nextCost));
+            Ctx.ButtonView.UpdateReviveCost(_nextCost);
+            Ctx.ButtonView.SetReviveInteractable(Ctx.CurrencyService.CanAfford(_nextCost));
         }
     }
 }

@@ -48,19 +48,18 @@ namespace WheelOfFortune.Factory
             return this;
         }
 
-        public GameContext Build(Func<GameContext, ReviveCommand> reviveFactory, Func<GameContext, GiveUpCommand> giveUpFactory)
+        public GameContext Build(int reviveStartingCost)
         {
-            var context = new GameContext(
+            GameContext context = null;
+
+            var revive = new ReviveCommand(() => context!, reviveStartingCost);
+            var giveUp = new GiveUpCommand(_zoneService, _rewardService, _transitionTo, revive.Reset);
+
+            context = new GameContext(
                 _zoneService, _spinService, _rewardService, _currencyService,
                 _wheelView, _hudView, _dialogView, _buttonView, _wheelFactory,
-                _transitionTo, _randomStrategy, null, null, _winEffectConfig);
-
-            var fields = typeof(GameContext).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-            foreach (var f in fields)
-            {
-                if (f.Name == nameof(GameContext.ReviveCommand)) f.SetValue(context, reviveFactory(context));
-                if (f.Name == nameof(GameContext.GiveUpCommand)) f.SetValue(context, giveUpFactory(context));
-            }
+                _transitionTo, _randomStrategy,
+                revive, giveUp, _winEffectConfig);
 
             return context;
         }

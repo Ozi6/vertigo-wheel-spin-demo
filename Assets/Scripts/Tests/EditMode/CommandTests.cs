@@ -32,49 +32,44 @@ namespace WheelOfFortune.Tests.EditMode
             _transitionCount++;
         }
 
-        private IdleState MakeActiveIdleState(StubZoneService zone)
-        {
-            var zone2 = zone;
-            var reward = new StubRewardService();
-            var currency = new StubCurrencyService(10000);
-            var hud = new StubHudView();
-            var dialog = new StubDialogView();
-            var randomStrategy = new StubSpinStrategy();
-            var revive = new ReviveCommand(CreateGameContext(zone2, reward, currency, hud, dialog, randomStrategy), 25);
-            var giveUp = new GiveUpCommand(zone2, reward, CaptureTransition, () => { });
-
-            var ctx = CreateGameContext(zone2, reward, currency, hud, dialog, randomStrategy);
-            ctx = new GameContext(
-                zone2, new StubSpinService(), reward, currency,
-                new StubWheelView(), hud, dialog,
-                new StubButtonView(),
-                null, CaptureTransition,
-                randomStrategy,
-                revive, giveUp, null);
-
-            var idle = new IdleState();
-            idle.Enter(ctx);
-            return idle;
-        }
-
         private GameContext CreateGameContext(
             StubZoneService zone,
             StubRewardService reward,
             StubCurrencyService currency,
             StubHudView hud,
             StubDialogView dialog,
-            StubSpinStrategy randomStrategy)
+            StubSpinStrategy randomStrategy,
+            StubButtonView buttonView = null)
         {
-            var revive = new ReviveCommand(null, 25);
-            var giveUp = new GiveUpCommand(zone, reward, CaptureTransition, () => { });
+            GameContext context = null;
 
-            return new GameContext(
+            var revive = new ReviveCommand(() => context, 25);
+            var giveUp = new GiveUpCommand(zone, reward, CaptureTransition, revive.Reset);
+
+            context = new GameContext(
                 zone, new StubSpinService(), reward, currency,
                 new StubWheelView(), hud, dialog,
-                new StubButtonView(),
+                buttonView ?? new StubButtonView(),
                 null, CaptureTransition,
                 randomStrategy,
                 revive, giveUp, null);
+
+            return context;
+        }
+
+        private IdleState MakeActiveIdleState(StubZoneService zone)
+        {
+            var ctx = CreateGameContext(
+                zone,
+                new StubRewardService(),
+                new StubCurrencyService(10000),
+                new StubHudView(),
+                new StubDialogView(),
+                new StubSpinStrategy());
+
+            var idle = new IdleState();
+            idle.Enter(ctx);
+            return idle;
         }
 
         [Test]
@@ -152,9 +147,8 @@ namespace WheelOfFortune.Tests.EditMode
         public void ReviveCommand_Execute_WhenCanAfford_TransitionsToIdle()
         {
             var ctx = CreateGameContext(_zone, _reward, _currency, new StubHudView(), new StubDialogView(), new StubSpinStrategy());
-            var cmd = new ReviveCommand(ctx, 25);
 
-            cmd.Execute();
+            ctx.ReviveCommand.Execute();
 
             Assert.IsInstanceOf<IdleState>(_lastTransitionTarget);
         }
@@ -164,9 +158,8 @@ namespace WheelOfFortune.Tests.EditMode
         {
             _currency = new StubCurrencyService(10);
             var ctx = CreateGameContext(_zone, _reward, _currency, new StubHudView(), new StubDialogView(), new StubSpinStrategy());
-            var cmd = new ReviveCommand(ctx, 25);
 
-            cmd.Execute();
+            ctx.ReviveCommand.Execute();
 
             Assert.AreEqual(0, _transitionCount);
         }
@@ -176,9 +169,8 @@ namespace WheelOfFortune.Tests.EditMode
         {
             _currency = new StubCurrencyService(10);
             var ctx = CreateGameContext(_zone, _reward, _currency, new StubHudView(), new StubDialogView(), new StubSpinStrategy());
-            var cmd = new ReviveCommand(ctx, 25);
 
-            cmd.Execute();
+            ctx.ReviveCommand.Execute();
 
             Assert.IsNull(_lastTransitionTarget);
         }
@@ -187,10 +179,9 @@ namespace WheelOfFortune.Tests.EditMode
         public void ReviveCommand_Execute_DeductsCost()
         {
             var ctx = CreateGameContext(_zone, _reward, _currency, new StubHudView(), new StubDialogView(), new StubSpinStrategy());
-            var cmd = new ReviveCommand(ctx, 25);
             var initialBalance = _currency.GetBalance();
 
-            cmd.Execute();
+            ctx.ReviveCommand.Execute();
 
             Assert.AreEqual(initialBalance - 25, _currency.GetBalance());
         }
@@ -198,19 +189,10 @@ namespace WheelOfFortune.Tests.EditMode
         [Test]
         public void ReviveCommand_Execute_DoublesCostForNextRevive()
         {
-            var ctx = CreateGameContext(_zone, _reward, _currency, new StubHudView(), new StubDialogView(), new StubSpinStrategy());
             var buttonView = new StubButtonView();
-            var reviveCommand = new ReviveCommand(ctx, 25);
-            ctx = new GameContext(
-                _zone, new StubSpinService(), _reward, _currency,
-                new StubWheelView(), new StubHudView(), new StubDialogView(),
-                buttonView,
-                null, CaptureTransition,
-                new StubSpinStrategy(),
-                reviveCommand, new GiveUpCommand(_zone, _reward, CaptureTransition, () => { }), null);
-            var cmd = new ReviveCommand(ctx, 25);
+            var ctx = CreateGameContext(_zone, _reward, _currency, new StubHudView(), new StubDialogView(), new StubSpinStrategy(), buttonView);
 
-            cmd.Execute();
+            ctx.ReviveCommand.Execute();
 
             Assert.AreEqual(50, buttonView.LastReviveCost);
         }

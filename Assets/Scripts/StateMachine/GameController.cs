@@ -32,27 +32,19 @@ namespace WheelOfFortune.Controller
             GameSettingsSO settings)
         {
             _idleState = new IdleState();
-
             var commandFactory = new CommandFactory();
             _spinCommand = commandFactory.CreateSpinCommand(_idleState, TransitionTo);
 
-            var contextBuilder = new GameContextBuilder();
-            _ctx = contextBuilder
+            _ctx = new GameContextBuilder()
                 .WithServices(zoneService, spinService, rewardService, currencyService)
                 .WithViews(wheelView, hudView, dialogView, buttonView)
                 .WithInfrastructure(wheelFactory, TransitionTo, randomStrategy, _winEffectConfig_value)
-                .Build(
-                    reviveFactory: ctx => commandFactory.CreateReviveCommand(ctx, settings.StartingReviveCost),
-                    giveUpFactory: ctx => commandFactory.CreateGiveUpCommand(zoneService, rewardService, TransitionTo, ctx.ReviveCommand.Reset)
-                );
+                .Build(settings.StartingReviveCost);
 
             _collectCommand = commandFactory.CreateCollectCommand(_idleState, TransitionTo);
-
             currencyService.OnBalanceChanged += balance => hudView.UpdateCurrencyDisplay(balance);
             hudView.UpdateCurrencyDisplay(currencyService.GetBalance());
-
             buttonView.UpdateReviveCost(settings.StartingReviveCost);
-
             TransitionTo(_idleState);
         }
 
