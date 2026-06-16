@@ -6,7 +6,7 @@ SpriteAtlas:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: CollectedRewardsAtlas
+  m_Name: CashDisplayAtlas
   m_EditorData:
     serializedVersion: 2
     textureSettings:
@@ -32,15 +32,18 @@ SpriteAtlas:
     secondaryTextureSettings: {}
     variantMultiplier: 1
     packables:
-    - {fileID: 21300000, guid: 0ad60b6510bd50f4da1445944630a553, type: 3}
+    - {fileID: 21300000, guid: 4d8777802bde52e4c934a4aac63cfd25, type: 3}
+    - {fileID: 21300000, guid: 7d00f992d587833408ca506faba722e9, type: 3}
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
-  - {fileID: 21300000, guid: 0ad60b6510bd50f4da1445944630a553, type: 3}
+  - {fileID: 21300000, guid: 4d8777802bde52e4c934a4aac63cfd25, type: 3}
+  - {fileID: 21300000, guid: 7d00f992d587833408ca506faba722e9, type: 3}
   m_PackedSpriteNamesToIndex:
-  - ui_card_frame_gardient
+  - UI_icon_cash
+  - ui_card_frame_4px_zone
   m_RenderDataMap: {}
-  m_Tag: CollectedRewardsAtlas
+  m_Tag: CashDisplayAtlas
   m_IsVariant: 0
