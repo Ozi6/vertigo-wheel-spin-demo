@@ -27,7 +27,14 @@ namespace WheelOfFortune.Views
 
         private void Begin(Vector3 fromWorld, int count, Sprite icon, Transform panelTarget, WinEffectConfig cfg, Action<int> onIconArrived)
         {
-            Vector3 targetWorld = panelTarget != null ? panelTarget.position : fromWorld;
+            Vector3 targetWorld = fromWorld;
+            if (panelTarget != null)
+            {
+                Transform t = panelTarget.parent != null ? panelTarget.parent : panelTarget;
+                targetWorld = t is RectTransform rt
+                    ? (Vector3)rt.rect.center + t.position
+                    : t.position;
+            }
 
             for (int i = 0; i < count; i++)
                 SpawnOne(i, count, fromWorld, targetWorld, icon, cfg, onIconArrived);
