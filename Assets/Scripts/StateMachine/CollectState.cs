@@ -23,6 +23,7 @@ namespace WheelOfFortune.StateMachine
         {
             ctx.ZoneService.Reset();
             ctx.RewardService.Reset();
+            ctx.ReviveCommand.Reset();
 
             ctx.WheelFactory.BuildWheel(
                 ctx.ZoneService.GetCurrentZoneType(),

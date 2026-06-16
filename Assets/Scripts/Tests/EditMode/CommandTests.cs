@@ -41,7 +41,7 @@ namespace WheelOfFortune.Tests.EditMode
             var dialog = new StubDialogView();
             var randomStrategy = new StubSpinStrategy();
             var revive = new ReviveCommand(CreateGameContext(zone2, reward, currency, hud, dialog, randomStrategy), 25);
-            var giveUp = new GiveUpCommand(zone2, reward, CaptureTransition);
+            var giveUp = new GiveUpCommand(zone2, reward, CaptureTransition, () => { });
 
             var ctx = CreateGameContext(zone2, reward, currency, hud, dialog, randomStrategy);
             ctx = new GameContext(
@@ -66,7 +66,7 @@ namespace WheelOfFortune.Tests.EditMode
             StubSpinStrategy randomStrategy)
         {
             var revive = new ReviveCommand(null, 25);
-            var giveUp = new GiveUpCommand(zone, reward, CaptureTransition);
+            var giveUp = new GiveUpCommand(zone, reward, CaptureTransition, () => { });
 
             return new GameContext(
                 zone, new StubSpinService(), reward, currency,
@@ -207,7 +207,7 @@ namespace WheelOfFortune.Tests.EditMode
                 buttonView,
                 null, CaptureTransition,
                 new StubSpinStrategy(),
-                reviveCommand, new GiveUpCommand(_zone, _reward, CaptureTransition), null);
+                reviveCommand, new GiveUpCommand(_zone, _reward, CaptureTransition, () => { }), null);
             var cmd = new ReviveCommand(ctx, 25);
 
             cmd.Execute();
@@ -218,7 +218,7 @@ namespace WheelOfFortune.Tests.EditMode
         [Test]
         public void GiveUpCommand_Execute_TransitionsToIdle()
         {
-            var cmd = new GiveUpCommand(_zone, _reward, CaptureTransition);
+            var cmd = new GiveUpCommand(_zone, _reward, CaptureTransition, () => { });
 
             cmd.Execute();
 
@@ -228,7 +228,7 @@ namespace WheelOfFortune.Tests.EditMode
         [Test]
         public void GiveUpCommand_Execute_ResetsZoneService()
         {
-            var cmd = new GiveUpCommand(_zone, _reward, CaptureTransition);
+            var cmd = new GiveUpCommand(_zone, _reward, CaptureTransition, () => { });
 
             cmd.Execute();
 
@@ -238,7 +238,7 @@ namespace WheelOfFortune.Tests.EditMode
         [Test]
         public void GiveUpCommand_Execute_ResetsRewardService()
         {
-            var cmd = new GiveUpCommand(_zone, _reward, CaptureTransition);
+            var cmd = new GiveUpCommand(_zone, _reward, CaptureTransition, () => { });
 
             cmd.Execute();
 
@@ -248,7 +248,7 @@ namespace WheelOfFortune.Tests.EditMode
         [Test]
         public void GiveUpCommand_Execute_HasNoGuard_AlwaysRuns()
         {
-            var cmd = new GiveUpCommand(_zone, _reward, CaptureTransition);
+            var cmd = new GiveUpCommand(_zone, _reward, CaptureTransition, () => { });
 
             cmd.Execute();
             cmd.Execute();

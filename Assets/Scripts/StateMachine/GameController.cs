@@ -35,7 +35,6 @@ namespace WheelOfFortune.Controller
 
             var commandFactory = new CommandFactory();
             _spinCommand = commandFactory.CreateSpinCommand(_idleState, TransitionTo);
-            _collectCommand = commandFactory.CreateCollectCommand(_idleState, TransitionTo);
 
             var contextBuilder = new GameContextBuilder();
             _ctx = contextBuilder
@@ -44,8 +43,10 @@ namespace WheelOfFortune.Controller
                 .WithInfrastructure(wheelFactory, TransitionTo, randomStrategy, _winEffectConfig_value)
                 .Build(
                     reviveFactory: ctx => commandFactory.CreateReviveCommand(ctx, settings.StartingReviveCost),
-                    giveUpFactory: ctx => commandFactory.CreateGiveUpCommand(zoneService, rewardService, TransitionTo)
+                    giveUpFactory: ctx => commandFactory.CreateGiveUpCommand(zoneService, rewardService, TransitionTo, ctx.ReviveCommand.Reset)
                 );
+
+            _collectCommand = commandFactory.CreateCollectCommand(_idleState, TransitionTo);
 
             currencyService.OnBalanceChanged += balance => hudView.UpdateCurrencyDisplay(balance);
             hudView.UpdateCurrencyDisplay(currencyService.GetBalance());

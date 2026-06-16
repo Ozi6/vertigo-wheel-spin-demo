@@ -44,13 +44,13 @@ namespace WheelOfFortune.Tests.EditMode
 
             _ctx = CreateGameContext();
             _reviveCommand = new ReviveCommand(_ctx, 25);
-            _giveUpCommand = new GiveUpCommand(_zone, _reward, TransitionTo);
+            _giveUpCommand = new GiveUpCommand(_zone, _reward, TransitionTo, () => { });
         }
 
         private GameContext CreateGameContext()
         {
             var revive = new ReviveCommand(null, 25);
-            var giveUp = new GiveUpCommand(_zone, _reward, TransitionTo);
+            var giveUp = new GiveUpCommand(_zone, _reward, TransitionTo, () => { });
 
             return new GameContext(
                 _zone,

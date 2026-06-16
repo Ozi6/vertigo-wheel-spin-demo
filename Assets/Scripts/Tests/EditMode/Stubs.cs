@@ -286,5 +286,7 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
             _balance += amount;
             OnBalanceChanged?.Invoke(_balance);
         }
+
+        public bool CanAfford(int amount) => _balance >= amount;
     }
 }

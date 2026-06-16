@@ -22,9 +22,9 @@ namespace WheelOfFortune.Factory
             return new ReviveCommand(ctx, startingCost);
         }
 
-        public GiveUpCommand CreateGiveUpCommand(IZoneService zoneService, IRewardService rewardService, Action<IGameState> transitionTo)
+        public GiveUpCommand CreateGiveUpCommand(IZoneService zoneService, IRewardService rewardService, Action<IGameState> transitionTo, Action resetReviveCost)
         {
-            return new GiveUpCommand(zoneService, rewardService, transitionTo);
+            return new GiveUpCommand(zoneService, rewardService, transitionTo, resetReviveCost);
         }
     }
 }

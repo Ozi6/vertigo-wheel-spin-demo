@@ -15,6 +15,8 @@ namespace WheelOfFortune.Services
 
         public int GetBalance() => _balance;
 
+        public bool CanAfford(int amount) => _balance >= amount;
+
         public bool TryDeduct(int amount)
         {
             if (_balance < amount) return false;
