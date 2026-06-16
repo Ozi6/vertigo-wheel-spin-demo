@@ -46,7 +46,7 @@ The cash reward increments everytime the player revives themselves, but resets u
 
 # Gameplay Video
 
-[![Watch Gameplay](20_9.PNG)]([videolink](https://www.youtube.com/watch?v=7VS2zZbaAzM))
+[![Watch Gameplay](https://img.youtube.com/vi/7VS2zZbaAzM/0.jpg)](https://www.youtube.com/watch?v=7VS2zZbaAzM)
 
 ---
 
