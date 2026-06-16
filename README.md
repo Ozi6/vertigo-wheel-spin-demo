@@ -170,3 +170,7 @@ This keeps gameplay logic separate from UI and presentation concerns.
 ### MVP-Inspired Presentation Layer
 
 Views are exposed through interfaces (IWheelView, IHudView, etc.) and coordinated by presenters/controllers, improving separation between UI and game logic.
+
+### Test Runner
+
+A Test Runner for different services and mechanism of the project is implemented using built-in Unity systems. Can be run using Window > General > Test Runner in Unity topbar. All prepared tests give a success as of 16/06/2026.
