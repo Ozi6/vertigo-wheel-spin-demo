@@ -116,3 +116,5 @@ in landscape mode without requiring separate layouts.
 The latest (v1.1) Android build can be found in the Releases section of this repository.
 
 APK is in the release file.
+
+In the case of running from the Unity Editor, DOTWeen and TextMeshPro are within gitignore. As packages should not be pushed into GitHub, they should be reinstalled upon setting up the repository.
