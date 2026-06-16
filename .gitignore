@@ -79,3 +79,4 @@ crashlytics-build.properties
 .vsconfig
 Assets/TextMesh Pro.meta
 Assets/Plugins/Demigiant.meta
+**/*_BurstDebugInformation_DoNotShip
