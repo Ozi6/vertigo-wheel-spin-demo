@@ -125,7 +125,6 @@ In the case of running from the Unity Editor, DOTWeen and TextMeshPro are within
 
 This project follows a modular architecture built around dependency injection, services, state machines, and command-driven interactions.
 
-## Design Patterns
 ### Dependency Injection
 
 Dependencies are composed in GameInstaller and injected into services, factories, and controllers. This reduces coupling and improves testability.
