@@ -12,6 +12,7 @@ namespace WheelOfFortune.Data
         public RewardItemSO RewardItem => _rewardItem;
         public int Multiplier => _multiplier;
         public bool IsBomb => _rewardItem == null;
+        public float Weight => _rewardItem != null ? _rewardItem.Weight : 1f;
 
         public SliceDefinition(RewardItemSO rewardItem, int multiplier)
         {

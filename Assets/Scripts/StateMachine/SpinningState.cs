@@ -1,4 +1,6 @@
 using WheelOfFortune.Domain;
+using WheelOfFortune.Interfaces;
+using WheelOfFortune.Services;
 
 namespace WheelOfFortune.StateMachine
 {
@@ -13,7 +15,10 @@ namespace WheelOfFortune.StateMachine
 
             var zoneType = ctx.ZoneService.GetCurrentZoneType();
             var zoneNumber = ctx.ZoneService.GetCurrentZoneNumber();
-            var strategy = ctx.RandomStrategy;
+
+            IWheelSpinStrategy strategy = zoneType == ZoneType.Super
+                ? new WeightedSpinStrategy()
+                : ctx.RandomStrategy;
 
             ctx.SpinService.SetStrategy(strategy);
 

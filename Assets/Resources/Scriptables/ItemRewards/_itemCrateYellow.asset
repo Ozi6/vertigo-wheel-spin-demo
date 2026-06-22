@@ -16,3 +16,4 @@ MonoBehaviour:
   _icon: {fileID: 21300000, guid: 9bd9c11e9f99f6b43bbff15dea764a84, type: 3}
   _value: 1
   _tier: 2
+  _weight: 77
