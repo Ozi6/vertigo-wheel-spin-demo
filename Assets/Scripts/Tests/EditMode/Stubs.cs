@@ -199,6 +199,16 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         public void SimulateGiveUp() => _onGiveUp?.Invoke();
         public void SimulateConfirmCollect() => _onConfirm?.Invoke();
         public void SimulateCancelCollect() => _onCancel?.Invoke();
+
+        void IDialogView.UpdateReviveCost(int cost)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IDialogView.SetReviveInteractable(bool interactable)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     internal sealed class StubButtonView : IButtonView

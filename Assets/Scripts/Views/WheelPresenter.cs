@@ -55,9 +55,9 @@ namespace WheelOfFortune.Views
             if (delta < 0f) delta += 360f;
 
             _wheelRoot.DORotate(
-                    new Vector3(0, 0, normalizedZ + delta + 360f * _extraSpins),
-                    _spinDuration,
-                    RotateMode.FastBeyond360)
+                new Vector3(0, 0, normalizedZ + delta + 360f * _extraSpins),
+                _spinDuration,
+                RotateMode.FastBeyond360)
                 .SetEase(_spinEase)
                 .OnComplete(() => onComplete?.Invoke());
         }
@@ -112,6 +112,24 @@ namespace WheelOfFortune.Views
         {
             if (_spinDuration < 0.01f) _spinDuration = 0.01f;
             if (_extraSpins < 1) _extraSpins = 1;
+
+            var transforms = GetComponentsInChildren<Transform>(true);
+            foreach (var t in transforms)
+            {
+                string nameLower = t.name.ToLower();
+                if (nameLower.Contains("bg") && nameLower.Contains("wheel"))
+                    _wheelRoot = t;
+            }
+
+            var images = GetComponentsInChildren<Image>(true);
+            foreach (var img in images)
+            {
+                string nameLower = img.name.ToLower();
+                if (nameLower.Contains("wheel") && nameLower.Contains("bg") && !nameLower.Contains("root"))
+                    _wheelImage_value = img;
+                else if (nameLower.Contains("arrow") || nameLower.Contains("pointer"))
+                    _arrowImage_value = img;
+            }
         }
     }
 }

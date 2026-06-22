@@ -24,16 +24,16 @@ namespace WheelOfFortune.Commands
             if (!Ctx.CurrencyService.TryDeduct(_nextCost))
                 return;
             _nextCost *= 2;
-            Ctx.ButtonView.UpdateReviveCost(_nextCost);
-            Ctx.ButtonView.SetReviveInteractable(Ctx.CurrencyService.CanAfford(_nextCost));
+            Ctx.DialogView.UpdateReviveCost(_nextCost);
+            Ctx.DialogView.SetReviveInteractable(Ctx.CurrencyService.CanAfford(_nextCost));
             Ctx.TransitionTo(new IdleState());
         }
 
         public void Reset()
         {
             _nextCost = _startingCost;
-            Ctx.ButtonView.UpdateReviveCost(_nextCost);
-            Ctx.ButtonView.SetReviveInteractable(Ctx.CurrencyService.CanAfford(_nextCost));
+            Ctx.DialogView.UpdateReviveCost(_nextCost);
+            Ctx.DialogView.SetReviveInteractable(Ctx.CurrencyService.CanAfford(_nextCost));
         }
     }
 }

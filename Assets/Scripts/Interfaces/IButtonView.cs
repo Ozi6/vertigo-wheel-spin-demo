@@ -6,7 +6,5 @@ namespace WheelOfFortune.Interfaces
     {
         void SetSpinInteractable(bool interactable);
         void SetCollectVisible(bool visible);
-        void SetReviveInteractable(bool interactable);
-        void UpdateReviveCost(int cost);
     }
 }

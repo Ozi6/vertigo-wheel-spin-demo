@@ -49,13 +49,14 @@ namespace WheelOfFortune.Controller
             _collectCommand = commandFactory.CreateCollectCommand(_idleState, _eventBus);
 
             hudView.UpdateCurrencyDisplay(currencyService.GetBalance());
-            buttonView.UpdateReviveCost(settings.StartingReviveCost);
+
+            dialogView.UpdateReviveCost(settings.StartingReviveCost);
+
             TransitionTo(_idleState);
         }
 
         public void ExecuteSpin() => _spinCommand?.Execute();
         public void ExecuteCollect() => _collectCommand?.Execute();
-        public void ExecuteRevive() => _ctx.ReviveCommand?.Execute();
 
         private void OnStateTransitionRequested(OnStateTransition evt)
         {

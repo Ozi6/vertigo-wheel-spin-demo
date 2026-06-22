@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using WheelOfFortune.Domain;
 using WheelOfFortune.Interfaces;
 using WheelOfFortune.Utility;
@@ -36,6 +37,7 @@ namespace WheelOfFortune.Views
         private ComponentPool<RewardCard> _pool;
         private Tweener _scrollTween;
         private IEventBus _eventBus;
+        private bool _isInitialized;
 
         private void Awake()
         {
@@ -54,6 +56,18 @@ namespace WheelOfFortune.Views
             RefreshColors(1);
         }
 
+        private void OnEnable()
+        {
+            if (_isInitialized && _eventBus != null)
+                _eventBus.Subscribe<OnBalanceChange>(OnBalanceChanged);
+        }
+
+        private void OnDisable()
+        {
+            if (_eventBus != null)
+                _eventBus.Unsubscribe<OnBalanceChange>(OnBalanceChanged);
+        }
+
         private void OnBalanceChanged(OnBalanceChange evt)
         {
             UpdateCurrencyDisplay(evt.NewBalance);
@@ -64,6 +78,7 @@ namespace WheelOfFortune.Views
         public void Initialize(IEventBus eventBus)
         {
             _eventBus = eventBus;
+            _isInitialized = true;
             _eventBus.Subscribe<OnBalanceChange>(OnBalanceChanged);
         }
 
@@ -217,6 +232,24 @@ namespace WheelOfFortune.Views
             if (_totalZones < 1) _totalZones = 1;
             if (_cellWidth < 1f) _cellWidth = 1f;
             if (_scrollDuration < 0.01f) _scrollDuration = 0.01f;
+
+            var transforms = GetComponentsInChildren<Transform>(true);
+            foreach (var t in transforms)
+            {
+                string nameLower = t.name.ToLower();
+                if (t is RectTransform rt && nameLower.Contains("strip"))
+                    _zoneStrip_value = rt;
+                else if (nameLower.Contains("container") || (nameLower.Contains("rewards") && t != transform))
+                    _rewardsContainer_value = t;
+            }
+
+            var texts = GetComponentsInChildren<TextMeshProUGUI>(true);
+            foreach (var txt in texts)
+            {
+                string nameLower = txt.name.ToLower();
+                if (nameLower.Contains("currency") || nameLower.Contains("balance"))
+                    _currencyDisplay_value = txt;
+            }
         }
     }
 }

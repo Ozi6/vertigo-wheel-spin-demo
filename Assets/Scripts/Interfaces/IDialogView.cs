@@ -8,5 +8,8 @@ namespace WheelOfFortune.Interfaces
         void ShowBombScreen(CollectedRewards lostRewards, Action onRevive, Action onGiveUp);
         void ShowCollectConfirmScreen(CollectedRewards rewards, Action onConfirm, Action onCancel);
         void Hide();
+
+        void UpdateReviveCost(int cost);
+        void SetReviveInteractable(bool interactable);
     }
 }

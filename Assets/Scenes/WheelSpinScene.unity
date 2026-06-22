@@ -329,6 +329,7 @@ MonoBehaviour:
   _bombScreen: {fileID: 33938759}
   _bombRewardsGrid_value: {fileID: 476603320}
   _reviveButton_value: {fileID: 1086132714}
+  _reviveCostDisplay_value: {fileID: 1837549512}
   _giveUpButton_value: {fileID: 1025806632}
   _collectScreen: {fileID: 1261803597}
   _collectRewardsGrid_value: {fileID: 1934058656}
@@ -823,7 +824,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 948099053}
-  - {fileID: 1731350300}
   m_Father: {fileID: 1111234516}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1896,7 +1896,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -275, y: 255.22539}
+  m_AnchoredPosition: {x: -275, y: 255.00009}
   m_SizeDelta: {x: 550, y: 200}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &664661194
@@ -3179,7 +3179,7 @@ GameObject:
   - component: {fileID: 1111234516}
   - component: {fileID: 1111234517}
   m_Layer: 5
-  m_Name: ui_panel_wheel
+  m_Name: ui_panel_wheel_root
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4436,7 +4436,7 @@ GameObject:
   - component: {fileID: 1675428435}
   - component: {fileID: 1675428434}
   m_Layer: 5
-  m_Name: ui_collect_collect_button
+  m_Name: ui_collect_confirm_button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4558,7 +4558,7 @@ GameObject:
   - component: {fileID: 1731350303}
   - component: {fileID: 1731350302}
   m_Layer: 5
-  m_Name: ui_wheel_button_collect
+  m_Name: ui_button_collect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4577,12 +4577,12 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1286282792}
-  m_Father: {fileID: 344620066}
+  m_Father: {fileID: 1917194768}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 150, y: -63}
+  m_AnchoredPosition: {x: -790.7455, y: 98.999985}
   m_SizeDelta: {x: 300, y: 140}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &1731350301
@@ -5012,6 +5012,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1162450764}
+  - {fileID: 1731350300}
   m_Father: {fileID: 1448803028}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5034,8 +5035,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spinButton_value: {fileID: 1162450767}
   _collectButton_value: {fileID: 1731350301}
-  _reviveButton_value: {fileID: 1086132714}
-  _reviveCostDisplay_value: {fileID: 1837549512}
 --- !u!1 &1922096063
 GameObject:
   m_ObjectHideFlags: 0

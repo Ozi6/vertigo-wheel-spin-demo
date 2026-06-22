@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using WheelOfFortune.Domain;
@@ -13,6 +14,7 @@ namespace WheelOfFortune.Views
         [SerializeField] private GameObject _bombScreen;
         [SerializeField] private Transform _bombRewardsGrid_value;
         [SerializeField] private Button _reviveButton_value;
+        [SerializeField] private TextMeshProUGUI _reviveCostDisplay_value;
         [SerializeField] private Button _giveUpButton_value;
 
         [SerializeField] private GameObject _collectScreen;
@@ -26,17 +28,52 @@ namespace WheelOfFortune.Views
         private readonly List<RewardCard> _collectCards = new List<RewardCard>();
         private ComponentPool<RewardCard> _pool;
 
+        private Action _onReviveCallback;
+        private Action _onGiveUpCallback;
+        private Action _onConfirmCallback;
+        private Action _onCancelCallback;
+
         private void Awake()
         {
             if (_rewardCardPrefab_value != null)
                 _pool = new ComponentPool<RewardCard>(_rewardCardPrefab_value, "Pool_DialogRewardCards", 6);
         }
 
+        private void OnEnable()
+        {
+            if (_reviveButton_value != null)
+                _reviveButton_value.onClick.AddListener(HandleReviveClicked);
+            if (_giveUpButton_value != null)
+                _giveUpButton_value.onClick.AddListener(HandleGiveUpClicked);
+            if (_confirmButton_value != null)
+                _confirmButton_value.onClick.AddListener(HandleConfirmClicked);
+            if (_cancelButton_value != null)
+                _cancelButton_value.onClick.AddListener(HandleCancelClicked);
+        }
+
+        private void OnDisable()
+        {
+            if (_reviveButton_value != null)
+                _reviveButton_value.onClick.RemoveListener(HandleReviveClicked);
+            if (_giveUpButton_value != null)
+                _giveUpButton_value.onClick.RemoveListener(HandleGiveUpClicked);
+            if (_confirmButton_value != null)
+                _confirmButton_value.onClick.RemoveListener(HandleConfirmClicked);
+            if (_cancelButton_value != null)
+                _cancelButton_value.onClick.RemoveListener(HandleCancelClicked);
+        }
+
+        private void HandleReviveClicked() => _onReviveCallback?.Invoke();
+        private void HandleGiveUpClicked() => _onGiveUpCallback?.Invoke();
+        private void HandleConfirmClicked() => _onConfirmCallback?.Invoke();
+        private void HandleCancelClicked() => _onCancelCallback?.Invoke();
+
         public void ShowBombScreen(CollectedRewards lostRewards, Action onRevive, Action onGiveUp)
         {
             PopulateGrid(_bombRewardsGrid_value, _bombCards, lostRewards);
-            SetListeners(_reviveButton_value, onRevive);
-            SetListeners(_giveUpButton_value, onGiveUp);
+            _onReviveCallback = onRevive;
+            _onGiveUpCallback = onGiveUp;
+
             if (_bombScreen != null) _bombScreen.SetActive(true);
             if (_collectScreen != null) _collectScreen.SetActive(false);
         }
@@ -44,16 +81,35 @@ namespace WheelOfFortune.Views
         public void ShowCollectConfirmScreen(CollectedRewards rewards, Action onConfirm, Action onCancel)
         {
             PopulateGrid(_collectRewardsGrid_value, _collectCards, rewards);
-            SetListeners(_confirmButton_value, onConfirm);
-            SetListeners(_cancelButton_value, onCancel);
-            if (_collectScreen != null) _collectScreen.SetActive(true);
+            _onConfirmCallback = onConfirm;
+            _onCancelCallback = onCancel;
+
             if (_bombScreen != null) _bombScreen.SetActive(false);
+            if (_collectScreen != null) _collectScreen.SetActive(true);
+        }
+
+        public void UpdateReviveCost(int cost)
+        {
+            if (_reviveCostDisplay_value != null)
+                _reviveCostDisplay_value.text = cost.ToString();
+        }
+
+        public void SetReviveInteractable(bool interactable)
+        {
+            if (_reviveButton_value != null)
+                _reviveButton_value.interactable = interactable;
         }
 
         public void Hide()
         {
             if (_bombScreen != null) _bombScreen.SetActive(false);
             if (_collectScreen != null) _collectScreen.SetActive(false);
+
+            _onReviveCallback = null;
+            _onGiveUpCallback = null;
+            _onConfirmCallback = null;
+            _onCancelCallback = null;
+
             ClearGrid(_bombCards);
             ClearGrid(_collectCards);
         }
@@ -84,18 +140,41 @@ namespace WheelOfFortune.Views
         private void OnDestroy()
         {
             _pool?.Clear();
-
-            if (_reviveButton_value != null) _reviveButton_value.onClick.RemoveAllListeners();
-            if (_giveUpButton_value != null) _giveUpButton_value.onClick.RemoveAllListeners();
-            if (_confirmButton_value != null) _confirmButton_value.onClick.RemoveAllListeners();
-            if (_cancelButton_value != null) _cancelButton_value.onClick.RemoveAllListeners();
         }
 
-        private void SetListeners(Button button, Action callback)
+        private void OnValidate()
         {
-            if (button == null) return;
-            button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(() => callback?.Invoke());
+            var buttons = GetComponentsInChildren<Button>(true);
+            foreach (var btn in buttons)
+            {
+                string nameLower = btn.name.ToLower();
+                if (nameLower.Contains("revive"))
+                    _reviveButton_value = btn;
+                else if (nameLower.Contains("give") || nameLower.Contains("up"))
+                    _giveUpButton_value = btn;
+                else if (nameLower.Contains("confirm") || nameLower.Contains("accept"))
+                    _confirmButton_value = btn;
+                else if (nameLower.Contains("cancel") || nameLower.Contains("close"))
+                    _cancelButton_value = btn;
+            }
+
+            var transforms = GetComponentsInChildren<Transform>(true);
+            foreach (var t in transforms)
+            {
+                string nameLower = t.name.ToLower();
+                if (nameLower.Contains("bomb") && (nameLower.Contains("grid") || nameLower.Contains("container")))
+                    _bombRewardsGrid_value = t;
+                else if (nameLower.Contains("collect") && (nameLower.Contains("grid") || nameLower.Contains("container")))
+                    _collectRewardsGrid_value = t;
+            }
+
+            var texts = GetComponentsInChildren<TextMeshProUGUI>(true);
+            foreach (var txt in texts)
+            {
+                string nameLower = txt.name.ToLower();
+                if (nameLower.Contains("cost") || nameLower.Contains("revive"))
+                    _reviveCostDisplay_value = txt;
+            }
         }
     }
 }

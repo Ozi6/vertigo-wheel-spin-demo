@@ -10,31 +10,35 @@ namespace WheelOfFortune.Views
     {
         [SerializeField] private Button _spinButton_value;
         [SerializeField] private Button _collectButton_value;
-        [SerializeField] private Button _reviveButton_value;
-        [SerializeField] private TextMeshProUGUI _reviveCostDisplay_value;
+
+        private GameController _gameController;
 
         public void Init(GameController gameController)
         {
-            if (_spinButton_value != null)
-            {
-                _spinButton_value.onClick.RemoveAllListeners();
-                _spinButton_value.onClick.AddListener(() => gameController.ExecuteSpin());
-            }
-
-            if (_collectButton_value != null)
-            {
-                _collectButton_value.onClick.RemoveAllListeners();
-                _collectButton_value.onClick.AddListener(() => gameController.ExecuteCollect());
-            }
-
-            if (_reviveButton_value != null)
-            {
-                _reviveButton_value.onClick.RemoveAllListeners();
-                _reviveButton_value.onClick.AddListener(() => gameController.ExecuteRevive());
-            }
-
+            _gameController = gameController;
             SetCollectVisible(false);
         }
+
+        private void OnEnable()
+        {
+            if (_spinButton_value != null)
+                _spinButton_value.onClick.AddListener(HandleSpinClicked);
+
+            if (_collectButton_value != null)
+                _collectButton_value.onClick.AddListener(HandleCollectClicked);
+        }
+
+        private void OnDisable()
+        {
+            if (_spinButton_value != null)
+                _spinButton_value.onClick.RemoveListener(HandleSpinClicked);
+
+            if (_collectButton_value != null)
+                _collectButton_value.onClick.RemoveListener(HandleCollectClicked);
+        }
+
+        private void HandleSpinClicked() => _gameController?.ExecuteSpin();
+        private void HandleCollectClicked() => _gameController?.ExecuteCollect();
 
         public void SetSpinInteractable(bool interactable)
         {
@@ -48,23 +52,17 @@ namespace WheelOfFortune.Views
                 _collectButton_value.gameObject.SetActive(visible);
         }
 
-        public void SetReviveInteractable(bool interactable)
+        private void OnValidate()
         {
-            if (_reviveButton_value != null)
-                _reviveButton_value.interactable = interactable;
-        }
-
-        public void UpdateReviveCost(int cost)
-        {
-            if (_reviveCostDisplay_value != null)
-                _reviveCostDisplay_value.text = cost.ToString();
-        }
-
-        private void OnDestroy()
-        {
-            if (_spinButton_value != null) _spinButton_value.onClick.RemoveAllListeners();
-            if (_collectButton_value != null) _collectButton_value.onClick.RemoveAllListeners();
-            if (_reviveButton_value != null) _reviveButton_value.onClick.RemoveAllListeners();
+            var buttons = GetComponentsInChildren<Button>(true);
+            foreach (var btn in buttons)
+            {
+                string nameLower = btn.name.ToLower();
+                if (nameLower.Contains("spin"))
+                    _spinButton_value = btn;
+                else if (nameLower.Contains("collect"))
+                    _collectButton_value = btn;
+            }
         }
     }
 }
