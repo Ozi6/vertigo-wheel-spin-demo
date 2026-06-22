@@ -24,6 +24,13 @@ namespace WheelOfFortune.Views
 
         private readonly List<RewardCard> _bombCards = new List<RewardCard>();
         private readonly List<RewardCard> _collectCards = new List<RewardCard>();
+        private ComponentPool<RewardCard> _pool;
+
+        private void Awake()
+        {
+            if (_rewardCardPrefab_value != null)
+                _pool = new ComponentPool<RewardCard>(_rewardCardPrefab_value, "Pool_DialogRewardCards", 6);
+        }
 
         public void ShowBombScreen(CollectedRewards lostRewards, Action onRevive, Action onGiveUp)
         {
@@ -54,12 +61,12 @@ namespace WheelOfFortune.Views
         private void PopulateGrid(Transform grid, List<RewardCard> cards, CollectedRewards rewards)
         {
             ClearGrid(cards);
-            if (grid == null || _rewardCardPrefab_value == null) return;
+            if (grid == null || _pool == null) return;
 
             var stacks = RewardStackBuilder.Build(rewards.Entries);
             foreach (var stack in stacks)
             {
-                var card = Instantiate(_rewardCardPrefab_value, grid);
+                var card = _pool.Get(grid);
                 card.name = $"ui_card_{stack.Item.Id}_value";
                 card.Setup(stack);
                 cards.Add(card);
@@ -68,9 +75,15 @@ namespace WheelOfFortune.Views
 
         private void ClearGrid(List<RewardCard> cards)
         {
+            if (_pool == null) return;
             foreach (var card in cards)
-                if (card != null) Destroy(card.gameObject);
+                if (card != null) _pool.Release(card);
             cards.Clear();
+        }
+
+        private void OnDestroy()
+        {
+            _pool?.Clear();
         }
 
         private void SetListeners(Button button, Action callback)

@@ -2,6 +2,7 @@ using UnityEngine;
 using WheelOfFortune.Data;
 using WheelOfFortune.Domain;
 using WheelOfFortune.Interfaces;
+using WheelOfFortune.Views;
 
 namespace WheelOfFortune.Factory
 {
@@ -12,6 +13,7 @@ namespace WheelOfFortune.Factory
         private readonly ZoneConfigSelector _configSelector;
         private readonly SliceDrawer _sliceDrawer;
         private readonly BombInjector _bombInjector;
+        private WheelSlice[] _currentSlices;
 
         public WheelFactory(
             ZoneConfigSO[] zoneConfigs,
@@ -53,6 +55,7 @@ namespace WheelOfFortune.Factory
 
             ClearExistingSlices();
             var sliceInstances = _sliceFactory.CreateSlices(slices, _slots);
+            _currentSlices = sliceInstances;
             wheelView.SetupSlices(slices);
             wheelView.SetLiveSlices(sliceInstances);
 
@@ -61,6 +64,12 @@ namespace WheelOfFortune.Factory
 
         private void ClearExistingSlices()
         {
+            if (_currentSlices != null)
+            {
+                _sliceFactory.ReturnSlices(_currentSlices);
+                _currentSlices = null;
+            }
+
             foreach (var slot in _slots)
             {
                 for (int i = slot.Position.childCount - 1; i >= 0; i--)

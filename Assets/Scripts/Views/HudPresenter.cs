@@ -32,7 +32,14 @@ namespace WheelOfFortune.Views
         private readonly List<TextMeshProUGUI> _cells = new List<TextMeshProUGUI>();
         private readonly List<RewardCard> _rewardCards = new List<RewardCard>();
         private readonly Dictionary<string, RewardCard> _cardById = new Dictionary<string, RewardCard>();
+        private ComponentPool<RewardCard> _pool;
         private Tweener _scrollTween;
+
+        private void Awake()
+        {
+            if (_rewardCardPrefab_value != null)
+                _pool = new ComponentPool<RewardCard>(_rewardCardPrefab_value, "Pool_HudRewardCards", 6);
+        }
 
         private void Start()
         {
@@ -55,17 +62,19 @@ namespace WheelOfFortune.Views
 
         public void UpdateRewardsDisplay(CollectedRewards rewards)
         {
+            if (_pool == null) return;
+
             foreach (var card in _rewardCards)
-                if (card != null) Destroy(card.gameObject);
+                if (card != null) _pool.Release(card);
             _rewardCards.Clear();
             _cardById.Clear();
 
-            if (_rewardCardPrefab_value == null || _rewardsContainer_value == null) return;
+            if (_rewardsContainer_value == null) return;
 
             var stacks = RewardStackBuilder.Build(rewards.Entries);
             foreach (var stack in stacks)
             {
-                var card = Instantiate(_rewardCardPrefab_value, _rewardsContainer_value);
+                var card = _pool.Get(_rewardsContainer_value);
                 card.name = $"ui_card_reward_{stack.Item.Id}_value";
                 card.Setup(stack);
                 _rewardCards.Add(card);
@@ -81,7 +90,7 @@ namespace WheelOfFortune.Views
 
         public void InitializeNewRewardCard(CollectedRewards rewards, string newItemId)
         {
-            if (_rewardCardPrefab_value == null || _rewardsContainer_value == null) return;
+            if (_pool == null || _rewardsContainer_value == null) return;
 
             var stacks = RewardStackBuilder.Build(rewards.Entries);
             foreach (var stack in stacks)
@@ -89,7 +98,7 @@ namespace WheelOfFortune.Views
                 if (stack.Item == null || stack.Item.Id != newItemId) continue;
                 if (_cardById.ContainsKey(newItemId)) continue;
 
-                var card = Instantiate(_rewardCardPrefab_value, _rewardsContainer_value);
+                var card = _pool.Get(_rewardsContainer_value);
                 card.name = $"ui_card_reward_{stack.Item.Id}_value";
                 card.InitializeEmpty(stack);
                 _rewardCards.Add(card);
@@ -178,6 +187,11 @@ namespace WheelOfFortune.Views
             if (_superZoneInterval > 0 && zoneNumber % _superZoneInterval == 0) return _colorSuper;
             if (_safeZoneInterval > 0 && zoneNumber % _safeZoneInterval == 0) return _colorSafe;
             return _colorNormal;
+        }
+
+        private void OnDestroy()
+        {
+            _pool?.Clear();
         }
 
         private void OnValidate()

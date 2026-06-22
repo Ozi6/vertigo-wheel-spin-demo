@@ -8,6 +8,19 @@ namespace WheelOfFortune.Views
 {
     public sealed class SlotIconBurst : MonoBehaviour
     {
+        private static Image _prefab;
+        private static Utility.ComponentPool<Image> _pool;
+
+        private static void InitializePool()
+        {
+            if (_pool != null) return;
+            var go = new GameObject("BurstIcon_Prefab");
+            var rt = go.AddComponent<RectTransform>();
+            _prefab = go.AddComponent<Image>();
+            go.SetActive(false);
+            _pool = new Utility.ComponentPool<Image>(_prefab, "Pool_BurstIcon", 50);
+        }
+
         public static SlotIconBurst Play(
             Transform parent,
             Vector3 fromWorld,
@@ -17,6 +30,8 @@ namespace WheelOfFortune.Views
             WinEffectConfig cfg,
             Action<int> onIconArrived = null)
         {
+            InitializePool();
+
             var go = new GameObject("ui_icon_burst_value");
             go.transform.SetParent(parent, false);
 
@@ -42,16 +57,16 @@ namespace WheelOfFortune.Views
 
         private void SpawnOne(int index, int total, Vector3 from, Vector3 to, Sprite icon, WinEffectConfig cfg, Action<int> onIconArrived)
         {
-            var go = new GameObject($"ui_fly_icon_{index}_value");
-            go.transform.SetParent(transform, false);
+            var img = _pool.Get(transform);
+            var go = img.gameObject;
+            go.name = $"ui_fly_icon_{index}_value";
             go.transform.SetAsLastSibling();
 
-            var rt = go.AddComponent<RectTransform>();
+            var rt = go.GetComponent<RectTransform>();
             rt.position = from;
             rt.sizeDelta = new Vector2(cfg.IconSize, cfg.IconSize);
             rt.localScale = Vector3.zero;
 
-            var img = go.AddComponent<Image>();
             img.sprite = icon;
             img.preserveAspect = true;
 
@@ -65,18 +80,18 @@ namespace WheelOfFortune.Views
                               UnityEngine.Random.Range(-cfg.FlyArcStrength, cfg.FlyArcStrength),
                               cfg.FlyArcStrength * 0.6f, 0f);
 
-            var captured = go;
+            var capturedImg = img;
             int arrivalIndex = index + 1;
 
             var seq = DOTween.Sequence();
             seq.AppendInterval(index * cfg.FlyStagger);
             seq.Append(rt.DOScale(Vector3.one, cfg.PopDuration).SetEase(Ease.OutBack));
             seq.Append(rt.DOMove(from + burstOffset, cfg.BurstMoveDuration).SetEase(Ease.OutCubic));
-            seq.Append(BezierFly(captured.transform, from + burstOffset, mid, to, cfg));
+            seq.Append(BezierFly(rt, from + burstOffset, mid, to, cfg));
             seq.AppendCallback(() =>
             {
                 onIconArrived?.Invoke(arrivalIndex);
-                if (captured != null) Destroy(captured);
+                if (capturedImg != null) _pool.Release(capturedImg);
             });
             seq.OnComplete(() => { if (index == total - 1) Destroy(gameObject); });
         }
