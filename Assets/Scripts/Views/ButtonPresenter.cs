@@ -16,13 +16,22 @@ namespace WheelOfFortune.Views
         public void Init(GameController gameController)
         {
             if (_spinButton_value != null)
+            {
+                _spinButton_value.onClick.RemoveAllListeners();
                 _spinButton_value.onClick.AddListener(() => gameController.ExecuteSpin());
+            }
 
             if (_collectButton_value != null)
+            {
+                _collectButton_value.onClick.RemoveAllListeners();
                 _collectButton_value.onClick.AddListener(() => gameController.ExecuteCollect());
+            }
 
             if (_reviveButton_value != null)
+            {
+                _reviveButton_value.onClick.RemoveAllListeners();
                 _reviveButton_value.onClick.AddListener(() => gameController.ExecuteRevive());
+            }
 
             SetCollectVisible(false);
         }
@@ -49,6 +58,13 @@ namespace WheelOfFortune.Views
         {
             if (_reviveCostDisplay_value != null)
                 _reviveCostDisplay_value.text = cost.ToString();
+        }
+
+        private void OnDestroy()
+        {
+            if (_spinButton_value != null) _spinButton_value.onClick.RemoveAllListeners();
+            if (_collectButton_value != null) _collectButton_value.onClick.RemoveAllListeners();
+            if (_reviveButton_value != null) _reviveButton_value.onClick.RemoveAllListeners();
         }
     }
 }

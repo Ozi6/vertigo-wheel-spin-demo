@@ -84,6 +84,11 @@ namespace WheelOfFortune.Views
         private void OnDestroy()
         {
             _pool?.Clear();
+
+            if (_reviveButton_value != null) _reviveButton_value.onClick.RemoveAllListeners();
+            if (_giveUpButton_value != null) _giveUpButton_value.onClick.RemoveAllListeners();
+            if (_confirmButton_value != null) _confirmButton_value.onClick.RemoveAllListeners();
+            if (_cancelButton_value != null) _cancelButton_value.onClick.RemoveAllListeners();
         }
 
         private void SetListeners(Button button, Action callback)
