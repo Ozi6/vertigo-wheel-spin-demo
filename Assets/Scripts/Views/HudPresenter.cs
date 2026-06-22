@@ -54,18 +54,18 @@ namespace WheelOfFortune.Views
             RefreshColors(1);
         }
 
-        public void Initialize(IEventBus eventBus)
-        {
-            _eventBus = eventBus;
-            _eventBus.Subscribe<OnBalanceChange>(OnBalanceChanged);
-        }
-
         private void OnBalanceChanged(OnBalanceChange evt)
         {
             UpdateCurrencyDisplay(evt.NewBalance);
         }
 
         public Transform GetRewardsPanelTarget() => _rewardsContainer_value;
+
+        public void Initialize(IEventBus eventBus)
+        {
+            _eventBus = eventBus;
+            _eventBus.Subscribe<OnBalanceChange>(OnBalanceChanged);
+        }
 
         public void UpdateZoneDisplay(ZoneProgressModel progress)
         {
@@ -204,11 +204,10 @@ namespace WheelOfFortune.Views
 
         private void OnDestroy()
         {
+            _scrollTween?.Kill();
             _pool?.Clear();
             if (_eventBus != null)
-            {
                 _eventBus.Unsubscribe<OnBalanceChange>(OnBalanceChanged);
-            }
         }
 
         private void OnValidate()

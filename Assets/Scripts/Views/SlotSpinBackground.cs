@@ -9,6 +9,8 @@ namespace WheelOfFortune.Views
     {
         private WinEffectConfig _cfg;
         private CanvasGroup _cg;
+        private Tweener _rotateTween;
+        private Tweener _fadeTween;
 
         public static SlotSpinBackground Create(Transform parent, Vector3 worldPosition, WinEffectConfig cfg)
         {
@@ -38,20 +40,28 @@ namespace WheelOfFortune.Views
             _cg = gameObject.AddComponent<CanvasGroup>();
             _cg.alpha = 0f;
 
-            DOTween.To(() => _cg.alpha, v => _cg.alpha = v, 1f, cfg.BackgroundFadeInDuration)
+            _fadeTween = DOTween.To(() => _cg.alpha, v => _cg.alpha = v, 1f, cfg.BackgroundFadeInDuration)
                    .SetEase(Ease.OutQuad);
 
-            rt.DORotate(new Vector3(0f, 0f, -360f), cfg.BackgroundSpinDuration, RotateMode.FastBeyond360)
+            _rotateTween = rt.DORotate(new Vector3(0f, 0f, -360f), cfg.BackgroundSpinDuration, RotateMode.FastBeyond360)
               .SetEase(Ease.Linear)
               .SetLoops(-1, LoopType.Restart);
         }
 
         public void FadeOutAndDestroy()
         {
-            DOTween.Kill(transform);
-            DOTween.To(() => _cg.alpha, v => _cg.alpha = v, 0f, _cfg.BackgroundFadeOutDuration)
+            _rotateTween?.Kill();
+            _fadeTween?.Kill();
+
+            _fadeTween = DOTween.To(() => _cg.alpha, v => _cg.alpha = v, 0f, _cfg.BackgroundFadeOutDuration)
                    .SetEase(Ease.OutQuad)
                    .OnComplete(() => { if (this != null) Destroy(gameObject); });
+        }
+
+        private void OnDestroy()
+        {
+            _rotateTween?.Kill();
+            _fadeTween?.Kill();
         }
     }
 }

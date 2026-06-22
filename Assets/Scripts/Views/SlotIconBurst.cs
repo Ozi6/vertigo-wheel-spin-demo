@@ -11,6 +11,8 @@ namespace WheelOfFortune.Views
         private static Image _prefab;
         private static Utility.ComponentPool<Image> _pool;
 
+        private Sequence _burstSequence;
+
         private static void InitializePool()
         {
             if (_pool != null) return;
@@ -50,6 +52,8 @@ namespace WheelOfFortune.Views
                     ? (Vector3)rt.rect.center + t.position
                     : t.position;
             }
+
+            _burstSequence = DOTween.Sequence();
 
             for (int i = 0; i < count; i++)
                 SpawnOne(i, count, fromWorld, targetWorld, icon, cfg, onIconArrived);
@@ -94,6 +98,8 @@ namespace WheelOfFortune.Views
                 if (capturedImg != null) _pool.Release(capturedImg);
             });
             seq.OnComplete(() => { if (index == total - 1) Destroy(gameObject); });
+
+            _burstSequence.Join(seq);
         }
 
         private static Tween BezierFly(Transform t, Vector3 p0, Vector3 p1, Vector3 p2, WinEffectConfig cfg)
@@ -109,6 +115,15 @@ namespace WheelOfFortune.Views
                 1f,
                 cfg.FlyDuration)
             .SetEase(cfg.FlyEase);
+        }
+
+        private void OnDestroy()
+        {
+            if (_burstSequence != null)
+            {
+                _burstSequence.Kill();
+                _burstSequence = null;
+            }
         }
     }
 }

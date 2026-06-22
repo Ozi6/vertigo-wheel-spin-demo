@@ -16,6 +16,7 @@ namespace WheelOfFortune.Views
         private Action _onComplete;
         private Action _onBurstFinished;
         private WinEffectConfig _cfg;
+        private Sequence _zoomSequence;
 
         public static SlotZoomEffect Play(
             Transform uiRoot,
@@ -89,15 +90,18 @@ namespace WheelOfFortune.Views
                 };
             }
 
-            DOTween.Sequence()
+            _zoomSequence = DOTween.Sequence()
                 .Append(ZoomToPeak())
                 .Append(SettleDown())
                 .InsertCallback(reelBackAt, () => onReelBack?.Invoke())
                 .Insert(reelBackAt, FadeAllSlices())
                 .AppendCallback(() =>
                 {
-                    _spinBg.FadeOutAndDestroy();
-                    _spinBg = null;
+                    if (_spinBg != null)
+                    {
+                        _spinBg.FadeOutAndDestroy();
+                        _spinBg = null;
+                    }
                     DestroyClone();
                     SlotIconBurst.Play(transform, worldCenter, cappedMultiplier, itemIcon, rewardsPanelTarget, cfg, remappedIconArrived);
                 })
@@ -157,8 +161,7 @@ namespace WheelOfFortune.Views
         {
             DestroyClone();
             _onComplete?.Invoke();
-            _onBurstFinished?.Invoke();
-            Destroy(gameObject, 0.1f);
+            Destroy(gameObject, 0.2f);
         }
 
         public static void ResetSliceAlphas(WheelSlice[] slices)
@@ -177,6 +180,16 @@ namespace WheelOfFortune.Views
             var cg = go.GetComponent<CanvasGroup>();
             if (cg == null) cg = go.AddComponent<CanvasGroup>();
             return cg;
+        }
+
+        private void OnDestroy()
+        {
+            if (_zoomSequence != null)
+            {
+                _zoomSequence.Kill();
+                _zoomSequence = null;
+            }
+            _onBurstFinished?.Invoke();
         }
     }
 }
