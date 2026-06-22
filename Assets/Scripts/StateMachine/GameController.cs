@@ -72,9 +72,7 @@ namespace WheelOfFortune.Controller
         private void OnDestroy()
         {
             if (_eventBus != null)
-            {
                 _eventBus.Unsubscribe<OnStateTransition>(OnStateTransitionRequested);
-            }
         }
 
 #if UNITY_EDITOR
