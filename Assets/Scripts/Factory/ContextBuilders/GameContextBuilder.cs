@@ -3,6 +3,7 @@ using WheelOfFortune.Commands;
 using WheelOfFortune.Data;
 using WheelOfFortune.Interfaces;
 using WheelOfFortune.StateMachine;
+using WheelOfFortune.Events;
 
 namespace WheelOfFortune.Factory
 {
@@ -17,7 +18,6 @@ namespace WheelOfFortune.Factory
         private IDialogView _dialogView;
         private IButtonView _buttonView;
         private IWheelFactory _wheelFactory;
-        private Action<IGameState> _transitionTo;
         private IWheelSpinStrategy _randomStrategy;
         private WinEffectConfig _winEffectConfig;
         private IEventBus _eventBus;
@@ -41,10 +41,9 @@ namespace WheelOfFortune.Factory
             return this;
         }
 
-        public GameContextBuilder WithInfrastructure(IWheelFactory factory, Action<IGameState> transitionTo, IWheelSpinStrategy strategy, WinEffectConfig config)
+        public GameContextBuilder WithInfrastructure(IWheelFactory factory, IWheelSpinStrategy strategy, WinEffectConfig config)
         {
             _wheelFactory = factory;
-            _transitionTo = transitionTo;
             _randomStrategy = strategy;
             _winEffectConfig = config;
             return this;
@@ -57,10 +56,12 @@ namespace WheelOfFortune.Factory
             var revive = new ReviveCommand(() => context!, reviveStartingCost);
             var giveUp = new GiveUpCommand(_zoneService, _rewardService, _eventBus, revive.Reset);
 
+            Action<IGameState> stateTransitionBridge = state => _eventBus.Publish(new OnStateTransition(state));
+
             context = new GameContext(
                 _zoneService, _spinService, _rewardService, _currencyService,
                 _wheelView, _hudView, _dialogView, _buttonView, _wheelFactory,
-                _transitionTo, _randomStrategy,
+                stateTransitionBridge, _randomStrategy,
                 revive, giveUp, _winEffectConfig);
 
             return context;

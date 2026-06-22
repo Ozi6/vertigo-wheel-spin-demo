@@ -43,7 +43,7 @@ namespace WheelOfFortune.Controller
             _ctx = new GameContextBuilder()
                 .WithServices(zoneService, spinService, rewardService, currencyService, _eventBus)
                 .WithViews(wheelView, hudView, dialogView, buttonView)
-                .WithInfrastructure(wheelFactory, TransitionTo, randomStrategy, _winEffectConfig_value)
+                .WithInfrastructure(wheelFactory, randomStrategy, _winEffectConfig_value)
                 .Build(settings.StartingReviveCost);
 
             _collectCommand = commandFactory.CreateCollectCommand(_idleState, _eventBus);
