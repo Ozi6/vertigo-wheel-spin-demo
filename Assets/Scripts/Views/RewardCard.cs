@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using WheelOfFortune.Domain;
+using WheelOfFortune.Utility;
 
 namespace WheelOfFortune.Views
 {
@@ -26,7 +27,7 @@ namespace WheelOfFortune.Views
             }
 
             if (_multiplierLabel_value != null)
-                _multiplierLabel_value.text = $"x{stack.TotalMultiplier}";
+                _multiplierLabel_value.text = MultiplierFormatter.Format(stack.TotalMultiplier);
         }
 
         public void InitializeEmpty(RewardStack stack)
@@ -38,13 +39,13 @@ namespace WheelOfFortune.Views
             }
 
             if (_multiplierLabel_value != null)
-                _multiplierLabel_value.text = "x0";
+                _multiplierLabel_value.text = MultiplierFormatter.Format(0);
         }
 
         public void SetMultiplier(int value)
         {
             if (_multiplierLabel_value != null)
-                _multiplierLabel_value.text = $"x{value}";
+                _multiplierLabel_value.text = MultiplierFormatter.Format(value);
 
             PunchScale();
         }

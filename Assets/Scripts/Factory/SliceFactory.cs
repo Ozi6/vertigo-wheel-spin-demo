@@ -1,5 +1,6 @@
 using UnityEngine;
 using WheelOfFortune.Data;
+using WheelOfFortune.Utility;
 using WheelOfFortune.Views;
 
 namespace WheelOfFortune.Factory
@@ -32,7 +33,7 @@ namespace WheelOfFortune.Factory
                 else if (reward != null)
                 {
                     var icon = reward.Icon;
-                    var label = $"x{slices[i].Multiplier}";
+                    var label = MultiplierFormatter.Format(slices[i].Multiplier);
                     instance.Setup(icon, label);
                 }
                 else
