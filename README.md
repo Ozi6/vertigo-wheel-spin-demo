@@ -118,3 +118,59 @@ The latest (v1.1) Android build can be found in the Releases section of this rep
 APK is in the release file.
 
 In the case of running from the Unity Editor, DOTWeen and TextMeshPro are within gitignore. As packages should not be pushed into GitHub, they should be reinstalled upon setting up the repository.
+
+---
+
+# Architecture
+
+This project follows a modular architecture built around dependency injection, services, state machines, and command-driven interactions.
+
+### Dependency Injection
+
+Dependencies are composed in GameInstaller and injected into services, factories, and controllers. This reduces coupling and improves testability.
+
+### Factory Pattern
+
+Factories are responsible for creating game objects and runtime data.
+
+* WheelFactory
+* SliceFactory
+* SlotFactory
+* CommandFactory
+
+Wheel spin behavior is abstracted behind IWheelSpinStrategy, allowing different spin algorithms to be swapped without modifying game logic.
+
+### Command Pattern
+
+Player actions are encapsulated as commands (SpinCommand, CollectCommand) to decouple UI interactions from gameplay execution.
+
+### State Pattern
+
+Game flow is managed through a state machine (IGameState) with explicit state transitions, making gameplay behavior predictable and extensible.
+
+### Builder Pattern
+
+GameContextBuilder constructs complex game context objects through a fluent API, improving readability and reducing constructor complexity.
+
+### Observer Pattern
+
+An event-driven architecture is used through an EventBus and service events (e.g., currency updates), allowing systems to communicate without direct dependencies.
+
+### Service Layer
+
+Core business logic is encapsulated within dedicated services:
+
+* ZoneService
+* SpinService
+* RewardService
+* CurrencyService
+
+This keeps gameplay logic separate from UI and presentation concerns.
+
+### MVP-Inspired Presentation Layer
+
+Views are exposed through interfaces (IWheelView, IHudView, etc.) and coordinated by presenters/controllers, improving separation between UI and game logic.
+
+### Test Runner
+
+A Test Runner for different services and mechanism of the project is implemented using built-in Unity systems. Can be run using Window > General > Test Runner in Unity topbar. All prepared tests give a success as of 16/06/2026.
