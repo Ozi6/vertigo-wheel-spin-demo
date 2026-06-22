@@ -43,10 +43,7 @@ namespace WheelOfFortune.Installer
 
             ValidateDependencies(wheelView, hudView, dialogView, buttonView, buttonPresenter);
 
-            if (hudView is HudPresenter hudPresenter)
-            {
-                hudPresenter.Initialize(eventBus);
-            }
+            hudView.Initialize(eventBus);
 
             wheelFactory.BuildWheel(zoneService.GetCurrentZoneType(), zoneService.GetCurrentZoneNumber(), wheelView);
 

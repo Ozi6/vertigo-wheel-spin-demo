@@ -158,6 +158,11 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         {
             throw new NotImplementedException();
         }
+
+        void IHudView.Initialize(IEventBus eventBus)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     internal sealed class StubDialogView : IDialogView
