@@ -1,10 +1,10 @@
-using System;
 using UnityEngine;
 using WheelOfFortune.Commands;
 using WheelOfFortune.Data;
 using WheelOfFortune.Factory;
 using WheelOfFortune.Interfaces;
 using WheelOfFortune.StateMachine;
+using WheelOfFortune.Events;
 
 namespace WheelOfFortune.Controller
 {
@@ -17,6 +17,7 @@ namespace WheelOfFortune.Controller
         private IdleState _idleState;
         private SpinCommand _spinCommand;
         private CollectCommand _collectCommand;
+        private IEventBus _eventBus;
 
         public void Init(
             IZoneService zoneService,
@@ -29,20 +30,24 @@ namespace WheelOfFortune.Controller
             IButtonView buttonView,
             IWheelFactory wheelFactory,
             IWheelSpinStrategy randomStrategy,
-            GameSettingsSO settings)
+            GameSettingsSO settings,
+            IEventBus eventBus)
         {
+            _eventBus = eventBus;
+            _eventBus.Subscribe<OnStateTransition>(OnStateTransitionRequested);
+
             _idleState = new IdleState();
             var commandFactory = new CommandFactory();
-            _spinCommand = commandFactory.CreateSpinCommand(_idleState, TransitionTo);
+            _spinCommand = commandFactory.CreateSpinCommand(_idleState, _eventBus);
 
             _ctx = new GameContextBuilder()
-                .WithServices(zoneService, spinService, rewardService, currencyService)
+                .WithServices(zoneService, spinService, rewardService, currencyService, _eventBus)
                 .WithViews(wheelView, hudView, dialogView, buttonView)
                 .WithInfrastructure(wheelFactory, TransitionTo, randomStrategy, _winEffectConfig_value)
                 .Build(settings.StartingReviveCost);
 
-            _collectCommand = commandFactory.CreateCollectCommand(_idleState, TransitionTo);
-            currencyService.OnBalanceChanged += balance => hudView.UpdateCurrencyDisplay(balance);
+            _collectCommand = commandFactory.CreateCollectCommand(_idleState, _eventBus);
+
             hudView.UpdateCurrencyDisplay(currencyService.GetBalance());
             buttonView.UpdateReviveCost(settings.StartingReviveCost);
             TransitionTo(_idleState);
@@ -52,11 +57,24 @@ namespace WheelOfFortune.Controller
         public void ExecuteCollect() => _collectCommand?.Execute();
         public void ExecuteRevive() => _ctx.ReviveCommand?.Execute();
 
+        private void OnStateTransitionRequested(OnStateTransition evt)
+        {
+            TransitionTo(evt.NewState);
+        }
+
         private void TransitionTo(IGameState next)
         {
             _currentState?.Exit(_ctx);
             _currentState = next;
             _currentState.Enter(_ctx);
+        }
+
+        private void OnDestroy()
+        {
+            if (_eventBus != null)
+            {
+                _eventBus.Unsubscribe<OnStateTransition>(OnStateTransitionRequested);
+            }
         }
 
 #if UNITY_EDITOR

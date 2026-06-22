@@ -1,6 +1,7 @@
 using System;
 using WheelOfFortune.Interfaces;
 using WheelOfFortune.StateMachine;
+using WheelOfFortune.Events;
 
 namespace WheelOfFortune.Commands
 {
@@ -8,18 +9,18 @@ namespace WheelOfFortune.Commands
     {
         private readonly IZoneService _zoneService;
         private readonly IRewardService _rewardService;
-        private readonly Action<IGameState> _transitionTo;
+        private readonly IEventBus _eventBus;
         private readonly Action _resetReviveCost;
 
         public GiveUpCommand(
             IZoneService zoneService,
             IRewardService rewardService,
-            Action<IGameState> transitionTo,
+            IEventBus eventBus,
             Action resetReviveCost)
         {
             _zoneService = zoneService;
             _rewardService = rewardService;
-            _transitionTo = transitionTo;
+            _eventBus = eventBus;
             _resetReviveCost = resetReviveCost;
         }
 
@@ -28,7 +29,7 @@ namespace WheelOfFortune.Commands
             _zoneService.Reset();
             _rewardService.Reset();
             _resetReviveCost();
-            _transitionTo(new IdleState());
+            _eventBus.Publish(new OnStateTransition(new IdleState()));
         }
     }
 }

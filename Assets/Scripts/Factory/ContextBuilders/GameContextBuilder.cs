@@ -20,13 +20,15 @@ namespace WheelOfFortune.Factory
         private Action<IGameState> _transitionTo;
         private IWheelSpinStrategy _randomStrategy;
         private WinEffectConfig _winEffectConfig;
+        private IEventBus _eventBus;
 
-        public GameContextBuilder WithServices(IZoneService zone, ISpinService spin, IRewardService reward, ICurrencyService currency)
+        public GameContextBuilder WithServices(IZoneService zone, ISpinService spin, IRewardService reward, ICurrencyService currency, IEventBus eventBus)
         {
             _zoneService = zone;
             _spinService = spin;
             _rewardService = reward;
             _currencyService = currency;
+            _eventBus = eventBus;
             return this;
         }
 
@@ -53,7 +55,7 @@ namespace WheelOfFortune.Factory
             GameContext context = null;
 
             var revive = new ReviveCommand(() => context!, reviveStartingCost);
-            var giveUp = new GiveUpCommand(_zoneService, _rewardService, _transitionTo, revive.Reset);
+            var giveUp = new GiveUpCommand(_zoneService, _rewardService, _eventBus, revive.Reset);
 
             context = new GameContext(
                 _zoneService, _spinService, _rewardService, _currencyService,

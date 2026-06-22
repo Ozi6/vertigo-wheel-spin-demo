@@ -6,6 +6,7 @@ using UnityEngine;
 using WheelOfFortune.Domain;
 using WheelOfFortune.Interfaces;
 using WheelOfFortune.Utility;
+using WheelOfFortune.Events;
 
 namespace WheelOfFortune.Views
 {
@@ -34,6 +35,7 @@ namespace WheelOfFortune.Views
         private readonly Dictionary<string, RewardCard> _cardById = new Dictionary<string, RewardCard>();
         private ComponentPool<RewardCard> _pool;
         private Tweener _scrollTween;
+        private IEventBus _eventBus;
 
         private void Awake()
         {
@@ -50,6 +52,17 @@ namespace WheelOfFortune.Views
             BuildStrip();
             SnapStripTo(1);
             RefreshColors(1);
+        }
+
+        public void Initialize(IEventBus eventBus)
+        {
+            _eventBus = eventBus;
+            _eventBus.Subscribe<OnBalanceChange>(OnBalanceChanged);
+        }
+
+        private void OnBalanceChanged(OnBalanceChange evt)
+        {
+            UpdateCurrencyDisplay(evt.NewBalance);
         }
 
         public Transform GetRewardsPanelTarget() => _rewardsContainer_value;
@@ -192,6 +205,10 @@ namespace WheelOfFortune.Views
         private void OnDestroy()
         {
             _pool?.Clear();
+            if (_eventBus != null)
+            {
+                _eventBus.Unsubscribe<OnBalanceChange>(OnBalanceChanged);
+            }
         }
 
         private void OnValidate()

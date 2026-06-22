@@ -1,15 +1,16 @@
-using System;
 using WheelOfFortune.Interfaces;
+using WheelOfFortune.Events;
 
 namespace WheelOfFortune.Services
 {
     public sealed class CurrencyService : ICurrencyService
     {
+        private readonly IEventBus _eventBus;
         private int _balance;
-        public event Action<int> OnBalanceChanged;
 
-        public CurrencyService(int initialBalance = 1000)
+        public CurrencyService(IEventBus eventBus, int initialBalance = 1000)
         {
+            _eventBus = eventBus;
             _balance = initialBalance;
         }
 
@@ -21,14 +22,14 @@ namespace WheelOfFortune.Services
         {
             if (_balance < amount) return false;
             _balance -= amount;
-            OnBalanceChanged?.Invoke(_balance);
+            _eventBus.Publish(new OnBalanceChange(_balance));
             return true;
         }
 
         public void Add(int amount)
         {
             _balance += amount;
-            OnBalanceChanged?.Invoke(_balance);
+            _eventBus.Publish(new OnBalanceChange(_balance));
         }
     }
 }

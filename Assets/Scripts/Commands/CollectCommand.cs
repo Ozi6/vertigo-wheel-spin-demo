@@ -1,24 +1,24 @@
-using System;
 using WheelOfFortune.StateMachine;
 using WheelOfFortune.Interfaces;
+using WheelOfFortune.Events;
 
 namespace WheelOfFortune.Commands
 {
     public sealed class CollectCommand : ICommand
     {
         private readonly IGameStateGuard _guard;
-        private readonly Action<IGameState> _transitionTo;
+        private readonly IEventBus _eventBus;
 
-        public CollectCommand(IGameStateGuard guard, Action<IGameState> transitionTo)
+        public CollectCommand(IGameStateGuard guard, IEventBus eventBus)
         {
             _guard = guard;
-            _transitionTo = transitionTo;
+            _eventBus = eventBus;
         }
 
         public void Execute()
         {
             if (!_guard.CanCollect()) return;
-            _transitionTo(new CollectState());
+            _eventBus.Publish(new OnStateTransition(new CollectState()));
         }
     }
 }

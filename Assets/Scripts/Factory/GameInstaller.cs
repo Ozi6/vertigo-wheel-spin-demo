@@ -29,7 +29,7 @@ namespace WheelOfFortune.Installer
             var randomStrategy = new RandomSpinStrategy();
             var spinService = new SpinService(randomStrategy, eventBus);
             var rewardService = new RewardService(eventBus);
-            var currencyService = new CurrencyService(_gameSettings.StartingCurrencyBalance);
+            var currencyService = new CurrencyService(eventBus, _gameSettings.StartingCurrencyBalance);
 
             var sliceFactory = new SliceFactory(_slicePrefab, _bombIcon);
             var slotFactory = new SlotFactory();
@@ -42,6 +42,11 @@ namespace WheelOfFortune.Installer
             var buttonPresenter = _uiRoot.GetComponentInChildren<ButtonPresenter>(true);
 
             ValidateDependencies(wheelView, hudView, dialogView, buttonView, buttonPresenter);
+
+            if (hudView is HudPresenter hudPresenter)
+            {
+                hudPresenter.Initialize(eventBus);
+            }
 
             wheelFactory.BuildWheel(zoneService.GetCurrentZoneType(), zoneService.GetCurrentZoneNumber(), wheelView);
 
@@ -56,7 +61,8 @@ namespace WheelOfFortune.Installer
                 buttonView,
                 wheelFactory,
                 randomStrategy,
-                _gameSettings);
+                _gameSettings,
+                eventBus);
 
             buttonPresenter.Init(_gameController);
         }

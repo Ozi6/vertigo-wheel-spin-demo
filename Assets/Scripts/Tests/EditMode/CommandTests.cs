@@ -3,15 +3,51 @@ using WheelOfFortune.Commands;
 using WheelOfFortune.Interfaces;
 using WheelOfFortune.StateMachine;
 using WheelOfFortune.Tests.EditMode.Stubs;
+using WheelOfFortune.Events;
+using System;
+using System.Collections.Generic;
 
 namespace WheelOfFortune.Tests.EditMode
 {
     [TestFixture]
     public class CommandTests
     {
+        private class StubEventBus : IEventBus
+        {
+            private readonly Dictionary<Type, Delegate> _handlers = new Dictionary<Type, Delegate>();
+
+            public void Publish<T>(T payload)
+            {
+                if (_handlers.TryGetValue(typeof(T), out var existing))
+                    (existing as Action<T>)?.Invoke(payload);
+            }
+
+            public void Subscribe<T>(Action<T> handler)
+            {
+                var key = typeof(T);
+                if (_handlers.TryGetValue(key, out var existing))
+                    _handlers[key] = (Action<T>)existing + handler;
+                else
+                    _handlers[key] = handler;
+            }
+
+            public void Unsubscribe<T>(Action<T> handler)
+            {
+                var key = typeof(T);
+                if (!_handlers.TryGetValue(key, out var existing)) return;
+
+                var updated = (Action<T>)existing - handler;
+                if (updated == null)
+                    _handlers.Remove(key);
+                else
+                    _handlers[key] = updated;
+            }
+        }
+
         private StubZoneService _zone;
         private StubRewardService _reward;
         private StubCurrencyService _currency;
+        private StubEventBus _eventBus;
 
         private IGameState _lastTransitionTarget;
         private int _transitionCount;
@@ -22,8 +58,17 @@ namespace WheelOfFortune.Tests.EditMode
             _zone = new StubZoneService();
             _reward = new StubRewardService();
             _currency = new StubCurrencyService(10000);
+            _eventBus = new StubEventBus();
             _lastTransitionTarget = null;
             _transitionCount = 0;
+
+            _eventBus.Subscribe<OnStateTransition>(OnStateTransitionEvent);
+        }
+
+        private void OnStateTransitionEvent(OnStateTransition evt)
+        {
+            _lastTransitionTarget = evt.NewState;
+            _transitionCount++;
         }
 
         private void CaptureTransition(IGameState next)
@@ -44,7 +89,7 @@ namespace WheelOfFortune.Tests.EditMode
             GameContext context = null;
 
             var revive = new ReviveCommand(() => context, 25);
-            var giveUp = new GiveUpCommand(zone, reward, CaptureTransition, revive.Reset);
+            var giveUp = new GiveUpCommand(zone, reward, _eventBus, revive.Reset);
 
             context = new GameContext(
                 zone, new StubSpinService(), reward, currency,
@@ -76,7 +121,7 @@ namespace WheelOfFortune.Tests.EditMode
         public void SpinCommand_Execute_TransitionsToSpinningState()
         {
             var idle = MakeActiveIdleState(_zone);
-            var cmd = new SpinCommand(idle, CaptureTransition);
+            var cmd = new SpinCommand(idle, _eventBus);
 
             cmd.Execute();
 
@@ -87,7 +132,7 @@ namespace WheelOfFortune.Tests.EditMode
         public void SpinCommand_CanSpin_AlwaysAllowsSpin()
         {
             var idle = MakeActiveIdleState(_zone);
-            var cmd = new SpinCommand(idle, CaptureTransition);
+            var cmd = new SpinCommand(idle, _eventBus);
 
             cmd.Execute();
             cmd.Execute();
@@ -100,7 +145,7 @@ namespace WheelOfFortune.Tests.EditMode
         {
             var idle = MakeActiveIdleState(_zone);
             idle.Exit(null);
-            var cmd = new SpinCommand(idle, CaptureTransition);
+            var cmd = new SpinCommand(idle, _eventBus);
 
             cmd.Execute();
 
@@ -112,7 +157,7 @@ namespace WheelOfFortune.Tests.EditMode
         {
             _zone.CanLeave = true;
             var idle = MakeActiveIdleState(_zone);
-            var cmd = new CollectCommand(idle, CaptureTransition);
+            var cmd = new CollectCommand(idle, _eventBus);
 
             cmd.Execute();
 
@@ -124,7 +169,7 @@ namespace WheelOfFortune.Tests.EditMode
         {
             _zone.CanLeave = false;
             var idle = MakeActiveIdleState(_zone);
-            var cmd = new CollectCommand(idle, CaptureTransition);
+            var cmd = new CollectCommand(idle, _eventBus);
 
             cmd.Execute();
 
@@ -136,7 +181,7 @@ namespace WheelOfFortune.Tests.EditMode
         {
             _zone.CanLeave = false;
             var idle = MakeActiveIdleState(_zone);
-            var cmd = new CollectCommand(idle, CaptureTransition);
+            var cmd = new CollectCommand(idle, _eventBus);
 
             cmd.Execute();
 
@@ -200,7 +245,7 @@ namespace WheelOfFortune.Tests.EditMode
         [Test]
         public void GiveUpCommand_Execute_TransitionsToIdle()
         {
-            var cmd = new GiveUpCommand(_zone, _reward, CaptureTransition, () => { });
+            var cmd = new GiveUpCommand(_zone, _reward, _eventBus, () => { });
 
             cmd.Execute();
 
@@ -210,7 +255,7 @@ namespace WheelOfFortune.Tests.EditMode
         [Test]
         public void GiveUpCommand_Execute_ResetsZoneService()
         {
-            var cmd = new GiveUpCommand(_zone, _reward, CaptureTransition, () => { });
+            var cmd = new GiveUpCommand(_zone, _reward, _eventBus, () => { });
 
             cmd.Execute();
 
@@ -220,7 +265,7 @@ namespace WheelOfFortune.Tests.EditMode
         [Test]
         public void GiveUpCommand_Execute_ResetsRewardService()
         {
-            var cmd = new GiveUpCommand(_zone, _reward, CaptureTransition, () => { });
+            var cmd = new GiveUpCommand(_zone, _reward, _eventBus, () => { });
 
             cmd.Execute();
 
@@ -230,7 +275,7 @@ namespace WheelOfFortune.Tests.EditMode
         [Test]
         public void GiveUpCommand_Execute_HasNoGuard_AlwaysRuns()
         {
-            var cmd = new GiveUpCommand(_zone, _reward, CaptureTransition, () => { });
+            var cmd = new GiveUpCommand(_zone, _reward, _eventBus, () => { });
 
             cmd.Execute();
             cmd.Execute();
@@ -244,8 +289,8 @@ namespace WheelOfFortune.Tests.EditMode
         {
             _zone.CanLeave = false;
             var idle = MakeActiveIdleState(_zone);
-            var spinCmd = new SpinCommand(idle, CaptureTransition);
-            var collectCmd = new CollectCommand(idle, CaptureTransition);
+            var spinCmd = new SpinCommand(idle, _eventBus);
+            var collectCmd = new CollectCommand(idle, _eventBus);
 
             spinCmd.Execute();
             collectCmd.Execute();

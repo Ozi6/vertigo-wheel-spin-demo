@@ -1,17 +1,50 @@
 using NUnit.Framework;
 using System;
-using System.Runtime.Remoting.Contexts;
+using System.Collections.Generic;
 using WheelOfFortune.Commands;
 using WheelOfFortune.Domain;
 using WheelOfFortune.Interfaces;
 using WheelOfFortune.StateMachine;
 using WheelOfFortune.Tests.EditMode.Stubs;
+using WheelOfFortune.Events;
 
 namespace WheelOfFortune.Tests.EditMode
 {
     [TestFixture]
     public class StateMachineTests
     {
+        private class StubEventBus : IEventBus
+        {
+            private readonly Dictionary<Type, Delegate> _handlers = new Dictionary<Type, Delegate>();
+
+            public void Publish<T>(T payload)
+            {
+                if (_handlers.TryGetValue(typeof(T), out var existing))
+                    (existing as Action<T>)?.Invoke(payload);
+            }
+
+            public void Subscribe<T>(Action<T> handler)
+            {
+                var key = typeof(T);
+                if (_handlers.TryGetValue(key, out var existing))
+                    _handlers[key] = (Action<T>)existing + handler;
+                else
+                    _handlers[key] = handler;
+            }
+
+            public void Unsubscribe<T>(Action<T> handler)
+            {
+                var key = typeof(T);
+                if (!_handlers.TryGetValue(key, out var existing)) return;
+
+                var updated = (Action<T>)existing - handler;
+                if (updated == null)
+                    _handlers.Remove(key);
+                else
+                    _handlers[key] = updated;
+            }
+        }
+
         private StubZoneService _zone;
         private StubSpinService _spin;
         private StubRewardService _reward;
@@ -21,8 +54,8 @@ namespace WheelOfFortune.Tests.EditMode
         private StubDialogView _dialog;
         private StubButtonView _button;
         private StubSpinStrategy _randomStrategy;
-        private StubSpinStrategy _weightedStrategy;
         private StubWheelFactory _wheelFactory;
+        private StubEventBus _eventBus;
 
         private IGameState _currentState;
         private GameContext _ctx;
@@ -42,9 +75,18 @@ namespace WheelOfFortune.Tests.EditMode
             _button = new StubButtonView();
             _randomStrategy = new StubSpinStrategy();
             _wheelFactory = new StubWheelFactory();
+
+            _eventBus = new StubEventBus();
+            _eventBus.Subscribe<OnStateTransition>(OnStateTransitionEvent);
+
             _ctx = CreateGameContext();
             _reviveCommand = _ctx.ReviveCommand;
             _giveUpCommand = _ctx.GiveUpCommand;
+        }
+
+        private void OnStateTransitionEvent(OnStateTransition evt)
+        {
+            TransitionTo(evt.NewState);
         }
 
         private GameContext CreateGameContext()
@@ -52,7 +94,7 @@ namespace WheelOfFortune.Tests.EditMode
             GameContext context = null;
 
             var revive = new ReviveCommand(() => context, 25);
-            var giveUp = new GiveUpCommand(_zone, _reward, TransitionTo, () => { });
+            var giveUp = new GiveUpCommand(_zone, _reward, _eventBus, () => { });
 
             return context = new GameContext(
                 _zone,
