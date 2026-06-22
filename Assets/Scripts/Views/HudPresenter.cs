@@ -17,11 +17,11 @@ namespace WheelOfFortune.Views
         [SerializeField] private RewardCard _rewardCardPrefab_value;
         [SerializeField] private TextMeshProUGUI _currencyDisplay_value;
 
-        [SerializeField] private int _safeZoneInterval = 5;
-        [SerializeField] private int _superZoneInterval = 30;
-        [SerializeField] private int _totalZones = 30;
-        [SerializeField] private float _cellWidth = 64f;
-        [SerializeField] private float _scrollDuration = 0.4f;
+        [SerializeField, Min(1)] private int _safeZoneInterval = 5;
+        [SerializeField, Min(1)] private int _superZoneInterval = 30;
+        [SerializeField, Min(1)] private int _totalZones = 30;
+        [SerializeField, Min(1f)] private float _cellWidth = 64f;
+        [SerializeField, Min(0.01f)] private float _scrollDuration = 0.4f;
         [SerializeField] private Ease _scrollEase = Ease.OutCubic;
 
         [SerializeField] private Color _colorNormal = new Color(0.72f, 0.45f, 0.20f);
@@ -45,10 +45,7 @@ namespace WheelOfFortune.Views
             RefreshColors(1);
         }
 
-        public Transform GetRewardsPanelTarget()
-        {
-            return _rewardsContainer_value;
-        }
+        public Transform GetRewardsPanelTarget() => _rewardsContainer_value;
 
         public void UpdateZoneDisplay(ZoneProgressModel progress)
         {
@@ -101,10 +98,7 @@ namespace WheelOfFortune.Views
             }
         }
 
-        public Action<int> BuildIconArrivedCallback(
-            string itemId,
-            int previousMultiplier,
-            int rewardMultiplier)
+        public Action<int> BuildIconArrivedCallback(string itemId, int previousMultiplier, int rewardMultiplier)
         {
             return arrived =>
             {
@@ -184,6 +178,15 @@ namespace WheelOfFortune.Views
             if (_superZoneInterval > 0 && zoneNumber % _superZoneInterval == 0) return _colorSuper;
             if (_safeZoneInterval > 0 && zoneNumber % _safeZoneInterval == 0) return _colorSafe;
             return _colorNormal;
+        }
+
+        private void OnValidate()
+        {
+            if (_safeZoneInterval < 1) _safeZoneInterval = 1;
+            if (_superZoneInterval < 1) _superZoneInterval = 1;
+            if (_totalZones < 1) _totalZones = 1;
+            if (_cellWidth < 1f) _cellWidth = 1f;
+            if (_scrollDuration < 0.01f) _scrollDuration = 0.01f;
         }
     }
 }

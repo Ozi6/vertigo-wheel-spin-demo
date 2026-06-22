@@ -17,7 +17,7 @@ namespace WheelOfFortune.Installer
         [SerializeField] private WheelSlice _slicePrefab;
         [SerializeField] private Sprite _bombIcon;
         [SerializeField] private Transform _slotParent;
-        [SerializeField] private int _slotCount = 8;
+        [SerializeField, Min(1)] private int _slotCount = 8;
         [SerializeField] private GameController _gameController;
         [SerializeField] private Transform _uiRoot;
 
@@ -73,6 +73,11 @@ namespace WheelOfFortune.Installer
             if (dialogView == null) Debug.LogError("[GameInstaller] IDialogView not found in scene.");
             if (buttonView == null) Debug.LogError("[GameInstaller] IButtonView not found in scene.");
             if (buttonPresenter == null) Debug.LogError("[GameInstaller] ButtonPresenter not found in scene.");
+        }
+
+        private void OnValidate()
+        {
+            if (_slotCount < 1) _slotCount = 1;
         }
     }
 }

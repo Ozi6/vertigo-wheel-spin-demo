@@ -11,9 +11,9 @@ namespace WheelOfFortune.Views
         [SerializeField] private Image _icon_value;
         [SerializeField] private TextMeshProUGUI _multiplierLabel_value;
 
-        [SerializeField] private float _punchScaleAmount = 0.25f;
-        [SerializeField] private float _punchDuration = 0.22f;
-        [SerializeField] private int _punchVibrato = 1;
+        [SerializeField, Min(0.01f)] private float _punchScaleAmount = 0.25f;
+        [SerializeField, Min(0.01f)] private float _punchDuration = 0.22f;
+        [SerializeField, Min(1)] private int _punchVibrato = 1;
 
         private Tweener _punchTween;
 
@@ -56,6 +56,13 @@ namespace WheelOfFortune.Views
             _punchTween = transform
                 .DOPunchScale(Vector3.one * _punchScaleAmount, _punchDuration, _punchVibrato, 0.5f)
                 .SetEase(Ease.OutQuad);
+        }
+
+        private void OnValidate()
+        {
+            if (_punchScaleAmount < 0.01f) _punchScaleAmount = 0.01f;
+            if (_punchDuration < 0.01f) _punchDuration = 0.01f;
+            if (_punchVibrato < 1) _punchVibrato = 1;
         }
     }
 }

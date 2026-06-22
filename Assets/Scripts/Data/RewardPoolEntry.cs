@@ -7,7 +7,7 @@ namespace WheelOfFortune.Data
     public struct RewardPoolEntry
     {
         [SerializeField] private RewardItemSO _rewardItem;
-        [SerializeField] private float _weight;
+        [SerializeField, Min(0.01f)] private float _weight;
 
         public RewardItemSO RewardItem => _rewardItem;
         public float Weight => _weight;

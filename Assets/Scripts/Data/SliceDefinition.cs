@@ -7,7 +7,7 @@ namespace WheelOfFortune.Data
     public struct SliceDefinition
     {
         [SerializeField] private RewardItemSO _rewardItem;
-        [SerializeField] private int _multiplier;
+        [SerializeField, Min(1)] private int _multiplier;
 
         public RewardItemSO RewardItem => _rewardItem;
         public int Multiplier => _multiplier;
@@ -16,7 +16,7 @@ namespace WheelOfFortune.Data
         public SliceDefinition(RewardItemSO rewardItem, int multiplier)
         {
             _rewardItem = rewardItem;
-            _multiplier = multiplier;
+            _multiplier = Mathf.Max(1, multiplier);
         }
     }
 }

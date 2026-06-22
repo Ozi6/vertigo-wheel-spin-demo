@@ -12,8 +12,8 @@ namespace WheelOfFortune.Views
         [SerializeField] private Transform _wheelRoot;
         [SerializeField] private Image _wheelImage_value;
         [SerializeField] private Image _arrowImage_value;
-        [SerializeField] private float _spinDuration = 3f;
-        [SerializeField] private int _extraSpins = 5;
+        [SerializeField, Min(0.01f)] private float _spinDuration = 3f;
+        [SerializeField, Min(1)] private int _extraSpins = 5;
         [SerializeField] private Ease _spinEase = Ease.OutQuart;
         [SerializeField] private HudPresenter _hudPresenter;
 
@@ -107,5 +107,11 @@ namespace WheelOfFortune.Views
         }
 
         public void SnapSlicesToFullAlpha() => SlotZoomEffect.ResetSliceAlphas(_liveSlices);
+
+        private void OnValidate()
+        {
+            if (_spinDuration < 0.01f) _spinDuration = 0.01f;
+            if (_extraSpins < 1) _extraSpins = 1;
+        }
     }
 }
