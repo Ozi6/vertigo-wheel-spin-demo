@@ -7,6 +7,7 @@ namespace WheelOfFortune.Factory
     {
         public SliceDefinition[] DrawSlices(WheelConfigSO config)
         { 
+            if (config == null) return new SliceDefinition[0];
             var pool = config.RewardPool;
             int count = config.SliceCount;
             var slices = new SliceDefinition[count];

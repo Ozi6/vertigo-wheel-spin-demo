@@ -9,9 +9,11 @@ namespace WheelOfFortune.Data
 
         public RewardRegistry(ZoneConfigSO[] configs)
         {
+            if (configs == null) return;
             foreach (var c in configs)
             {
-                if (c.WheelConfig == null) continue;
+                if (c == null || c.WheelConfig == null) continue;
+                if (c.WheelConfig.RewardPool == null) continue;
                 foreach (var poolEntry in c.WheelConfig.RewardPool)
                 {
                     if (poolEntry.RewardItem != null && !_map.ContainsKey(poolEntry.RewardItem.Id))

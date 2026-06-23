@@ -14,9 +14,10 @@ namespace WheelOfFortune.Factory
 
         public ZoneConfigSO GetZoneConfig(ZoneType zoneType)
         { 
+            if (_zoneConfigs == null) return null;
             foreach (var zoneConfig in _zoneConfigs)
             { 
-                if (zoneConfig.ZoneType == zoneType)
+                if (zoneConfig != null && zoneConfig.ZoneType == zoneType)
                     return zoneConfig;
             }
             return null;

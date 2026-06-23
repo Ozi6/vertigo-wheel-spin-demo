@@ -32,7 +32,15 @@ namespace WheelOfFortune.Utility
 
         public T Get(Transform parent)
         {
-            var instance = _inactive.Count > 0 ? _inactive.Pop() : CreateNew();
+            T instance = null;
+            while (_inactive.Count > 0)
+            {
+                instance = _inactive.Pop();
+                if (instance != null) break;
+            }
+            if (instance == null)
+                instance = CreateNew();
+
             instance.transform.SetParent(parent, false);
             instance.gameObject.SetActive(true);
             _active.Add(instance);
