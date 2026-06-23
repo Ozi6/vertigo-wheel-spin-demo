@@ -34,6 +34,8 @@ namespace WheelOfFortune.Views
         private IEventBus _eventBus;
         private int _currentCost;
         private int _currentBalance;
+        private bool _isInitialized;
+        private bool _isSubscribed;
 
         private Action _onReviveCallback;
         private Action _onGiveUpCallback;
@@ -46,9 +48,10 @@ namespace WheelOfFortune.Views
         {
             _eventBus = eventBus;
             _registry = registry;
+            _isInitialized = true;
             
-            _eventBus.Subscribe<Events.OnBalanceChange>(OnBalanceChanged);
-            _eventBus.Subscribe<Events.OnReviveCostChanged>(OnReviveCostChanged);
+            if (isActiveAndEnabled)
+                SubscribeEvents();
         }
 
         private void Awake()
@@ -59,6 +62,8 @@ namespace WheelOfFortune.Views
 
         private void OnEnable()
         {
+            if (_isInitialized) SubscribeEvents();
+
             if (_reviveButton_value != null)
                 _reviveButton_value.onClick.AddListener(HandleReviveClicked);
             if (_giveUpButton_value != null)
@@ -71,6 +76,8 @@ namespace WheelOfFortune.Views
 
         private void OnDisable()
         {
+            UnsubscribeEvents();
+
             if (_reviveButton_value != null)
                 _reviveButton_value.onClick.RemoveListener(HandleReviveClicked);
             if (_giveUpButton_value != null)
@@ -79,17 +86,28 @@ namespace WheelOfFortune.Views
                 _confirmButton_value.onClick.RemoveListener(HandleConfirmClicked);
             if (_cancelButton_value != null)
                 _cancelButton_value.onClick.RemoveListener(HandleCancelClicked);
-
-            if (_eventBus != null)
-            {
-                _eventBus.Unsubscribe<Events.OnBalanceChange>(OnBalanceChanged);
-                _eventBus.Unsubscribe<Events.OnReviveCostChanged>(OnReviveCostChanged);
-            }
         }
 
         private void OnDestroy()
         {
             _pool?.Clear();
+            UnsubscribeEvents();
+        }
+
+        private void SubscribeEvents()
+        {
+            if (_isSubscribed || _eventBus == null) return;
+            _eventBus.Subscribe<Events.OnBalanceChange>(OnBalanceChanged);
+            _eventBus.Subscribe<Events.OnReviveCostChanged>(OnReviveCostChanged);
+            _isSubscribed = true;
+        }
+
+        private void UnsubscribeEvents()
+        {
+            if (!_isSubscribed || _eventBus == null) return;
+            _eventBus.Unsubscribe<Events.OnBalanceChange>(OnBalanceChanged);
+            _eventBus.Unsubscribe<Events.OnReviveCostChanged>(OnReviveCostChanged);
+            _isSubscribed = false;
         }
         #endregion
 

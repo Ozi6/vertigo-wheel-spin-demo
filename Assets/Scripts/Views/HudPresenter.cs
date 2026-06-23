@@ -42,6 +42,7 @@ namespace WheelOfFortune.Views
         private IEventBus _eventBus;
         private IRewardRegistry _registry;
         private bool _isInitialized;
+        private bool _isSubscribed;
         #endregion
 
         #region Unity Lifecycle
@@ -64,22 +65,33 @@ namespace WheelOfFortune.Views
 
         private void OnEnable()
         {
-            if (_isInitialized && _eventBus != null)
-                _eventBus.Subscribe<OnBalanceChange>(OnBalanceChanged);
+            if (_isInitialized) SubscribeEvents();
         }
 
         private void OnDisable()
         {
-            if (_eventBus != null)
-                _eventBus.Unsubscribe<OnBalanceChange>(OnBalanceChanged);
+            UnsubscribeEvents();
         }
 
         private void OnDestroy()
         {
             _scrollTween?.Kill();
             _pool?.Clear();
-            if (_eventBus != null)
-                _eventBus.Unsubscribe<OnBalanceChange>(OnBalanceChanged);
+            UnsubscribeEvents();
+        }
+
+        private void SubscribeEvents()
+        {
+            if (_isSubscribed || _eventBus == null) return;
+            _eventBus.Subscribe<OnBalanceChange>(OnBalanceChanged);
+            _isSubscribed = true;
+        }
+
+        private void UnsubscribeEvents()
+        {
+            if (!_isSubscribed || _eventBus == null) return;
+            _eventBus.Unsubscribe<OnBalanceChange>(OnBalanceChanged);
+            _isSubscribed = false;
         }
         #endregion
 
@@ -89,7 +101,9 @@ namespace WheelOfFortune.Views
             _eventBus = eventBus;
             _registry = registry;
             _isInitialized = true;
-            _eventBus.Subscribe<OnBalanceChange>(OnBalanceChanged);
+            
+            if (isActiveAndEnabled)
+                SubscribeEvents();
         }
 
         public Transform GetRewardsPanelTarget() => _rewardsContainer_value;
