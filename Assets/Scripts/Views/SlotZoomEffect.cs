@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
-using WheelOfFortune.Data;
+using WheelOfFortune.Utility;
 using WheelOfFortune.Domain;
 using WheelOfFortune.Events;
 
@@ -17,27 +17,31 @@ namespace WheelOfFortune.Views
         private List<CanvasGroup> _allFadeGroups = new List<CanvasGroup>();
         private WinEffectPayload _payload;
         private Sequence _zoomSequence;
+        private ComponentPool<UnityEngine.UI.Image> _iconPool;
 
         public static SlotZoomEffect Play(
             Transform uiRoot,
             WheelSlice winningSlice,
             WheelSlice[] allSlices,
-            WinEffectPayload payload)
+            WinEffectPayload payload,
+            ComponentPool<UnityEngine.UI.Image> iconPool)
         {
             var go = new GameObject("SlotZoomEffect");
             go.transform.SetParent(uiRoot, false);
 
             var effect = go.AddComponent<SlotZoomEffect>();
-            effect.Begin(winningSlice, allSlices, payload);
+            effect.Begin(winningSlice, allSlices, payload, iconPool);
             return effect;
         }
 
         private void Begin(
             WheelSlice winningSlice,
             WheelSlice[] allSlices,
-            WinEffectPayload payload)
+            WinEffectPayload payload,
+            ComponentPool<UnityEngine.UI.Image> iconPool)
         {
             _payload = payload;
+            _iconPool = iconPool;
 
             foreach (var slice in allSlices)
             {
@@ -68,7 +72,7 @@ namespace WheelOfFortune.Views
                         _spinBg = null;
                     }
                     DestroyClone();
-                    SlotIconBurst.Play(transform, worldCenter, cappedMultiplier, _payload);
+                    SlotIconBurst.Play(transform, worldCenter, cappedMultiplier, _payload, _iconPool);
                 })
                 .AppendInterval(_payload.Config.TotalBurstDuration(cappedMultiplier))
                 .OnComplete(OnSequenceComplete);
@@ -109,8 +113,10 @@ namespace WheelOfFortune.Views
             {
                 var target = cg;
                 seq.Join(
-                    DOVirtual.Float(1f, 0f, _payload.Config.FadeDuration, v => target.alpha = v)
-                             .SetEase(_payload.Config.FadeEase));
+                    DOVirtual.Float(1f, 0f, _payload.Config.FadeDuration, v => {
+                        if (target != null) target.alpha = v;
+                    })
+                    .SetEase(_payload.Config.FadeEase));
             }
             return seq;
         }

@@ -5,46 +5,35 @@ using UnityEngine.UI;
 using WheelOfFortune.Data;
 using WheelOfFortune.Domain;
 using WheelOfFortune.Events;
+using WheelOfFortune.Utility;
 
 namespace WheelOfFortune.Views
 {
     public sealed class SlotIconBurst : MonoBehaviour
     {
-        private static Image _prefab;
-        private static Utility.ComponentPool<Image> _pool;
-
         private Sequence _burstSequence;
         private WinEffectPayload _payload;
-
-        private static void InitializePool()
-        {
-            if (_pool != null) return;
-            var go = new GameObject("BurstIcon_Prefab");
-            var rt = go.AddComponent<RectTransform>();
-            _prefab = go.AddComponent<Image>();
-            go.SetActive(false);
-            _pool = new Utility.ComponentPool<Image>(_prefab, "Pool_BurstIcon", 50);
-        }
+        private ComponentPool<Image> _pool;
 
         public static SlotIconBurst Play(
             Transform parent,
             Vector3 fromWorld,
             int count,
-            WinEffectPayload payload)
+            WinEffectPayload payload,
+            ComponentPool<Image> pool)
         {
-            InitializePool();
-
             var go = new GameObject("ui_icon_burst_value");
             go.transform.SetParent(parent, false);
 
             var comp = go.AddComponent<SlotIconBurst>();
-            comp.Begin(fromWorld, Mathf.Max(1, count), payload);
+            comp.Begin(fromWorld, Mathf.Max(1, count), payload, pool);
             return comp;
         }
 
-        private void Begin(Vector3 fromWorld, int count, WinEffectPayload payload)
+        private void Begin(Vector3 fromWorld, int count, WinEffectPayload payload, ComponentPool<Image> pool)
         {
             _payload = payload;
+            _pool = pool;
             Vector3 targetWorld = fromWorld;
             if (payload.RewardsPanelTarget != null)
             {
@@ -132,9 +121,7 @@ namespace WheelOfFortune.Views
         private void OnDestroy()
         {
             if (_burstSequence != null && _burstSequence.IsActive())
-            {
                 _burstSequence.Kill();
-            }
             _burstSequence = null;
         }
     }

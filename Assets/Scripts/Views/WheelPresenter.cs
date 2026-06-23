@@ -20,6 +20,23 @@ namespace WheelOfFortune.Views
         private SliceDefinition[] _currentSlices;
         private WheelSlice[] _liveSlices;
         private IEventBus _eventBus;
+        private Utility.ComponentPool<Image> _burstIconPool;
+
+        private void Awake()
+        {
+            var go = new GameObject("BurstIcon_Prefab");
+            go.AddComponent<RectTransform>();
+            var prefab = go.AddComponent<Image>();
+            go.SetActive(false);
+            go.transform.SetParent(transform, false);
+            _burstIconPool = new Utility.ComponentPool<Image>(prefab, "Pool_BurstIcon", 50);
+        }
+
+        private void OnDestroy()
+        {
+            _wheelRoot?.DOKill();
+            _burstIconPool?.Clear();
+        }
 
         public void Initialize(IEventBus eventBus) => _eventBus = eventBus;
         public void SetupSlices(SliceDefinition[] slices) => _currentSlices = slices;
@@ -38,7 +55,8 @@ namespace WheelOfFortune.Views
         {
             _wheelRoot
                 .DORotate(Vector3.zero, duration, RotateMode.Fast)
-                .SetEase(Ease.InOutSine);
+                .SetEase(Ease.InOutSine)
+                .SetLink(_wheelRoot.gameObject);
         }
 
         public void SpinTo(int targetSliceIndex)
@@ -61,6 +79,7 @@ namespace WheelOfFortune.Views
                 _spinDuration,
                 RotateMode.FastBeyond360)
                 .SetEase(_spinEase)
+                .SetLink(_wheelRoot.gameObject)
                 .OnComplete(() => _eventBus?.Publish(new WheelOfFortune.Events.OnSpinAnimationComplete()));
         }
 
@@ -88,7 +107,8 @@ namespace WheelOfFortune.Views
                 effectRoot,
                 winningSlice,
                 _liveSlices,
-                payload);
+                payload,
+                _burstIconPool);
         }
 
         public void SnapSlicesToFullAlpha() => SlotZoomEffect.ResetSliceAlphas(_liveSlices);
