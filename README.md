@@ -46,7 +46,7 @@ The cash reward increments everytime the player revives themselves, but resets u
 
 # Gameplay Video
 
-[![Watch Gameplay](https://img.youtube.com/vi/7VS2zZbaAzM/0.jpg)](https://www.youtube.com/watch?v=7VS2zZbaAzM)
+[![Watch Gameplay](https://img.youtube.com/vi/7VS2zZbaAzM/0.jpg)](https://youtu.be/HFooD97QA10)
 
 ---
 
@@ -76,6 +76,9 @@ The cash reward increments everytime the player revives themselves, but resets u
 * Animated wheel spins
 * Animated reward collecting mechanism
 * Responsive UI supporting multiple aspect ratios
+* Custom Developer Window containing a design-time Monte Carlo Spin Simulator (Tools -> Wheel of Fortune -> Developer Window)
+* Custom Unity inspector editors for all key ScriptableObject configurations
+* Object pooling (`ComponentPool<T>`) for optimized memory and initialization usage
 
 ---
 
@@ -98,6 +101,7 @@ The project uses DOTween for:
 * Wheel spin animations
 * Rewards being chosen feedback
 * Rewards being put to the inventory animation
+* Punch scaling animations on active reward card updates
 
 ### UI
 
@@ -113,7 +117,7 @@ in landscape mode without requiring separate layouts.
 
 # Build
 
-The latest (v1.1) Android build can be found in the Releases section of this repository.
+The latest (v1.3) Android build can be found in the Releases section of this repository.
 
 APK is in the release file.
 
@@ -142,11 +146,11 @@ Wheel spin behavior is abstracted behind IWheelSpinStrategy, allowing different 
 
 ### Command Pattern
 
-Player actions are encapsulated as commands (SpinCommand, CollectCommand) to decouple UI interactions from gameplay execution.
+Player actions are encapsulated as commands (SpinCommand, CollectCommand) to decouple UI interactions from gameplay execution. Commands are assigned programmatically via `OnValidate` to avoid direct inspector bindings.
 
 ### State Pattern
 
-Game flow is managed through a state machine (IGameState) with explicit state transitions, making gameplay behavior predictable and extensible.
+Game flow is managed through a state machine (IGameState) with explicit state transitions. Transitions are unified under the central `EventBus` using decoupled transition actions.
 
 ### Builder Pattern
 
@@ -169,8 +173,8 @@ This keeps gameplay logic separate from UI and presentation concerns.
 
 ### MVP-Inspired Presentation Layer
 
-Views are exposed through interfaces (IWheelView, IHudView, etc.) and coordinated by presenters/controllers, improving separation between UI and game logic.
+Views are exposed through interfaces (IWheelView, IHudView, etc.) and coordinated by presenters/controllers. UI components utilize a non-static `ComponentPool<T>` for highly optimized runtime allocation and memory safety.
 
 ### Test Runner
 
-A Test Runner for different services and mechanism of the project is implemented using built-in Unity systems. Can be run using Window > General > Test Runner in Unity topbar. All prepared tests give a success as of 16/06/2026.
+A Test Runner for different services and mechanism of the project is implemented using built-in Unity systems. Can be run using Window > General > Test Runner in Unity topbar. All prepared tests give a success as of 23/06/2026.
