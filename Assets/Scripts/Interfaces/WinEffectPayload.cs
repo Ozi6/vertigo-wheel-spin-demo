@@ -1,8 +1,7 @@
 using UnityEngine;
 using WheelOfFortune.Data;
-using WheelOfFortune.Interfaces;
 
-namespace WheelOfFortune.Domain
+namespace WheelOfFortune.Interfaces
 {
     public readonly struct WinEffectPayload
     {
