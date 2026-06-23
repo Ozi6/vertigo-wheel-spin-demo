@@ -1,4 +1,3 @@
-using System;
 using WheelOfFortune.Commands;
 using WheelOfFortune.Data;
 using WheelOfFortune.Interfaces;
@@ -17,11 +16,7 @@ namespace WheelOfFortune.Factory
         private IHudView _hudView;
         private IDialogView _dialogView;
         private IButtonView _buttonView;
-        private IWheelFactory _wheelFactory;
-        private IWheelSpinStrategy _randomStrategy;
-        private WinEffectConfig _winEffectConfig;
         private IEventBus _eventBus;
-        private IRewardRegistry _rewardRegistry;
 
         public GameContextBuilder WithServices(IZoneService zone, ISpinService spin, IRewardService reward, ICurrencyService currency, IEventBus eventBus)
         {
@@ -42,12 +37,12 @@ namespace WheelOfFortune.Factory
             return this;
         }
 
-        public GameContext Build(IWheelFactory factory, IWheelSpinStrategy strategy, IRewardRegistry registry, WinEffectConfig config, ReviveCommand revive, GiveUpCommand giveUp)
+        public GameContext Build(IWheelFactory factory, IWheelSpinStrategy randomStrategy, IWheelSpinStrategy weightedStrategy, IRewardRegistry registry, WinEffectConfig config, ReviveCommand revive, GiveUpCommand giveUp)
         {
             return new GameContext(
                 _zoneService, _spinService, _rewardService, _currencyService,
                 _wheelView, _hudView, _dialogView, _buttonView, factory,
-                _eventBus, strategy, registry,
+                _eventBus, randomStrategy, weightedStrategy, registry,
                 revive, giveUp, config);
         }
     }

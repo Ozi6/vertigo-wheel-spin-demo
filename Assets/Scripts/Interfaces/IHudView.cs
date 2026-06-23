@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using WheelOfFortune.Domain;
 
@@ -12,7 +11,5 @@ namespace WheelOfFortune.Interfaces
         void UpdateCurrencyDisplay(int balance);
         Transform GetRewardsPanelTarget();
         void InitializeNewRewardCard(CollectedRewards rewards, string newItemId);
-        Action<int> BuildIconArrivedCallback(string itemId, int previousMultiplier, int rewardMultiplier);
-        Action BuildFinalMultiplierCallback(string itemId, int finalValue);
     }
 }

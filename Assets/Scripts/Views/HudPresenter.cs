@@ -84,6 +84,8 @@ namespace WheelOfFortune.Views
         {
             if (_isSubscribed || _eventBus == null) return;
             _eventBus.Subscribe<OnBalanceChange>(OnBalanceChanged);
+            _eventBus.Subscribe<OnRewardIconArrived>(OnRewardIconArrived);
+            _eventBus.Subscribe<OnRewardBurstFinished>(OnRewardBurstFinished);
             _isSubscribed = true;
         }
 
@@ -91,6 +93,8 @@ namespace WheelOfFortune.Views
         {
             if (!_isSubscribed || _eventBus == null) return;
             _eventBus.Unsubscribe<OnBalanceChange>(OnBalanceChanged);
+            _eventBus.Unsubscribe<OnRewardIconArrived>(OnRewardIconArrived);
+            _eventBus.Unsubscribe<OnRewardBurstFinished>(OnRewardBurstFinished);
             _isSubscribed = false;
         }
         #endregion
@@ -162,27 +166,19 @@ namespace WheelOfFortune.Views
                 break;
             }
         }
+        #endregion
 
-        public Action<int> BuildIconArrivedCallback(string itemId, int previousMultiplier, int rewardMultiplier)
+        #region Event Handlers
+        private void OnRewardIconArrived(OnRewardIconArrived evt)
         {
-            return arrived =>
-            {
-                if (!_cardById.TryGetValue(itemId, out var card) || card == null)
-                    return;
-
-                card.SetMultiplier(previousMultiplier + arrived);
-            };
+            if (!_cardById.TryGetValue(evt.ItemId, out var card) || card == null) return;
+            card.AddMultiplier(evt.MultiplierIncrement);
         }
 
-        public Action BuildFinalMultiplierCallback(string itemId, int finalValue)
+        private void OnRewardBurstFinished(OnRewardBurstFinished evt)
         {
-            return () =>
-            {
-                if (!_cardById.TryGetValue(itemId, out var card) || card == null)
-                    return;
-
-                card.SetMultiplier(finalValue, false);
-            };
+            if (!_cardById.TryGetValue(evt.ItemId, out var card) || card == null) return;
+            card.SetMultiplier(evt.FinalMultiplier, false);
         }
         #endregion
 

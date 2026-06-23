@@ -1,6 +1,6 @@
 using WheelOfFortune.Domain;
 using WheelOfFortune.Interfaces;
-using WheelOfFortune.Services;
+using WheelOfFortune.Events;
 
 namespace WheelOfFortune.StateMachine
 {
@@ -12,6 +12,7 @@ namespace WheelOfFortune.StateMachine
         public void Enter(GameContext ctx)
         {
             _ctx = ctx;
+            _ctx.EventBus.Subscribe<OnSpinAnimationComplete>(OnSpinAnimationComplete);
             _ctx.ButtonView.SetSpinInteractable(false);
             _ctx.ButtonView.SetCollectVisible(false);
 
@@ -21,23 +22,26 @@ namespace WheelOfFortune.StateMachine
             var wheelData = _ctx.WheelFactory.BuildWheel(zoneType, zoneNumber, _ctx.WheelView);
 
             IWheelSpinStrategy strategy = wheelData.IsWeighted
-                ? new WeightedSpinStrategy()
+                ? _ctx.WeightedStrategy
                 : _ctx.RandomStrategy;
 
             _ctx.SpinService.SetStrategy(strategy);
             _pendingResult = _ctx.SpinService.Spin(wheelData);
 
-            _ctx.WheelView.SpinTo(_pendingResult.SliceIndex, OnSpinAnimationComplete);
+            _ctx.WheelView.SpinTo(_pendingResult.SliceIndex);
         }
 
-        public void Exit(GameContext ctx) { }
+        public void Exit(GameContext ctx)
+        {
+            ctx.EventBus.Unsubscribe<OnSpinAnimationComplete>(OnSpinAnimationComplete);
+        }
 
-        private void OnSpinAnimationComplete()
+        private void OnSpinAnimationComplete(OnSpinAnimationComplete evt)
         {
             if (_pendingResult.IsBomb)
-                _ctx.EventBus.Publish(new Events.OnStateTransition(new BombState()));
+                _ctx.EventBus.Publish(new OnStateTransition(new BombState()));
             else
-                _ctx.EventBus.Publish(new Events.OnStateTransition(new RewardState(_pendingResult)));
+                _ctx.EventBus.Publish(new OnStateTransition(new RewardState(_pendingResult)));
         }
     }
 }

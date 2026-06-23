@@ -1,6 +1,6 @@
-using System;
 using UnityEngine;
 using WheelOfFortune.Data;
+using WheelOfFortune.Interfaces;
 
 namespace WheelOfFortune.Domain
 {
@@ -12,10 +12,10 @@ namespace WheelOfFortune.Domain
         public readonly Transform RewardsPanelTarget;
         public readonly WinEffectConfig Config;
         
-        public readonly Action OnReelBack;
-        public readonly Action OnComplete;
-        public readonly Action<int> OnIconArrived;
-        public readonly Action OnBurstFinished;
+        public readonly string ItemId;
+        public readonly int PreviousMultiplier;
+        public readonly int RewardMultiplier;
+        public readonly IEventBus EventBus;
 
         public WinEffectPayload(
             int winningSliceIndex,
@@ -23,20 +23,20 @@ namespace WheelOfFortune.Domain
             Sprite itemIcon,
             Transform rewardsPanelTarget,
             WinEffectConfig config,
-            Action onReelBack,
-            Action onComplete,
-            Action<int> onIconArrived,
-            Action onBurstFinished)
+            string itemId,
+            int previousMultiplier,
+            int rewardMultiplier,
+            IEventBus eventBus)
         {
             WinningSliceIndex = winningSliceIndex;
             Multiplier = multiplier;
             ItemIcon = itemIcon;
             RewardsPanelTarget = rewardsPanelTarget;
             Config = config;
-            OnReelBack = onReelBack;
-            OnComplete = onComplete;
-            OnIconArrived = onIconArrived;
-            OnBurstFinished = onBurstFinished;
+            ItemId = itemId;
+            PreviousMultiplier = previousMultiplier;
+            RewardMultiplier = rewardMultiplier;
+            EventBus = eventBus;
         }
     }
 }

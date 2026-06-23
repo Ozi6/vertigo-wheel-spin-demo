@@ -110,15 +110,17 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
             LastArrowSprite = arrowSprite;
         }
 
-        public void SpinTo(int targetSliceIndex, Action onComplete)
+        private IEventBus _eventBus;
+        public void Initialize(IEventBus eventBus) => _eventBus = eventBus;
+
+        public void SpinTo(int targetSliceIndex)
         {
             LastTargetIndex = targetSliceIndex;
-            _pendingCallback = onComplete;
             if (AutoInvokeCallback)
-                _pendingCallback?.Invoke();
+                _eventBus?.Publish(new WheelOfFortune.Events.OnSpinAnimationComplete());
         }
 
-        public void InvokeCallback() => _pendingCallback?.Invoke();
+        public void InvokeCallback() => _eventBus?.Publish(new WheelOfFortune.Events.OnSpinAnimationComplete());
 
         public void RotateToOrigin(float duration)
         {
@@ -156,16 +158,6 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
             LastInitializedNewRewardCardId = newItemId;
         }
 
-        public Action<int> BuildIconArrivedCallback(string itemId, int previousMultiplier, int rewardMultiplier)
-        {
-            return arrived => { };
-        }
-
-        public Action BuildFinalMultiplierCallback(string itemId, int finalValue)
-        {
-            return () => { };
-        }
-
         public void Initialize(IEventBus eventBus, IRewardRegistry registry) { }
     }
 
@@ -178,36 +170,28 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         public CollectedRewards LastRewardsPassedToCollect;
         public int LastReviveCost;
         public bool ReviveInteractable;
-        private Action _onRevive;
-        private Action _onGiveUp;
-        private Action _onConfirm;
-        private Action _onCancel;
         private IEventBus _eventBus;
 
-        public void ShowBombScreen(CollectedRewards lostRewards, int currentReviveCost, bool canAfford, Action onRevive, Action onGiveUp)
+        public void ShowBombScreen(CollectedRewards lostRewards, int currentReviveCost, bool canAfford)
         {
             BombScreenShown = true;
             LastLostRewards = lostRewards;
             LastReviveCost = currentReviveCost;
             ReviveInteractable = canAfford;
-            _onRevive = onRevive;
-            _onGiveUp = onGiveUp;
         }
 
-        public void ShowCollectConfirmScreen(CollectedRewards rewards, Action onConfirm, Action onCancel)
+        public void ShowCollectConfirmScreen(CollectedRewards rewards)
         {
             CollectScreenShown = true;
             LastRewardsPassedToCollect = rewards;
-            _onConfirm = onConfirm;
-            _onCancel = onCancel;
         }
 
         public void Hide() => HideCallCount = true;
 
-        public void SimulateRevive() => _onRevive?.Invoke();
-        public void SimulateGiveUp() => _onGiveUp?.Invoke();
-        public void SimulateConfirmCollect() => _onConfirm?.Invoke();
-        public void SimulateCancelCollect() => _onCancel?.Invoke();
+        public void SimulateRevive() => _eventBus?.Publish(new WheelOfFortune.Events.OnReviveRequested());
+        public void SimulateGiveUp() => _eventBus?.Publish(new WheelOfFortune.Events.OnGiveUpRequested());
+        public void SimulateConfirmCollect() => _eventBus?.Publish(new WheelOfFortune.Events.OnCollectConfirmed());
+        public void SimulateCancelCollect() => _eventBus?.Publish(new WheelOfFortune.Events.OnCollectCanceled());
 
         public void Initialize(IEventBus eventBus, IRewardRegistry registry)
         {

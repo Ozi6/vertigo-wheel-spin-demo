@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using WheelOfFortune.Data;
+using WheelOfFortune.Domain;
+using WheelOfFortune.Events;
 
 namespace WheelOfFortune.Views
 {
@@ -13,52 +15,29 @@ namespace WheelOfFortune.Views
         private GameObject _clone;
         private SlotSpinBackground _spinBg;
         private List<CanvasGroup> _allFadeGroups = new List<CanvasGroup>();
-        private Action _onComplete;
-        private Action _onBurstFinished;
-        private WinEffectConfig _cfg;
+        private WinEffectPayload _payload;
         private Sequence _zoomSequence;
 
         public static SlotZoomEffect Play(
             Transform uiRoot,
             WheelSlice winningSlice,
             WheelSlice[] allSlices,
-            int winningIndex,
-            int multiplier,
-            Transform rewardsPanelTarget,
-            Sprite itemIcon,
-            WinEffectConfig cfg,
-            Action onReelBack,
-            Action onComplete,
-            Action<int> onIconArrived = null,
-            Action onBurstFinished = null)
+            WinEffectPayload payload)
         {
             var go = new GameObject("SlotZoomEffect");
             go.transform.SetParent(uiRoot, false);
 
             var effect = go.AddComponent<SlotZoomEffect>();
-            effect.Begin(
-                winningSlice, allSlices, winningIndex,
-                multiplier, rewardsPanelTarget, itemIcon, cfg,
-                onReelBack, onComplete, onIconArrived, onBurstFinished);
+            effect.Begin(winningSlice, allSlices, payload);
             return effect;
         }
 
         private void Begin(
             WheelSlice winningSlice,
             WheelSlice[] allSlices,
-            int winningIndex,
-            int multiplier,
-            Transform rewardsPanelTarget,
-            Sprite itemIcon,
-            WinEffectConfig cfg,
-            Action onReelBack,
-            Action onComplete,
-            Action<int> onIconArrived = null,
-            Action onBurstFinished = null)
+            WinEffectPayload payload)
         {
-            _cfg = cfg;
-            _onComplete = onComplete;
-            _onBurstFinished = onBurstFinished;
+            _payload = payload;
 
             foreach (var slice in allSlices)
             {
@@ -68,32 +47,18 @@ namespace WheelOfFortune.Views
 
             var srcRect = winningSlice.GetComponent<RectTransform>();
             var worldCenter = srcRect != null ? srcRect.position : winningSlice.transform.position;
-            worldCenter += (Vector3)cfg.ZoomWorldOffset;
+            worldCenter += (Vector3)_payload.Config.ZoomWorldOffset;
 
-            _spinBg = SlotSpinBackground.Create(transform, worldCenter, cfg);
+            _spinBg = SlotSpinBackground.Create(transform, worldCenter, _payload.Config);
             _clone = BuildClone(winningSlice, srcRect, worldCenter);
 
-            float reelBackAt = cfg.ZoomDuration * cfg.ReelBackTriggerFraction;
-            int cappedMultiplier = Mathf.Min(multiplier, MaxFlyingMultipliers);
-
-            Action<int> remappedIconArrived = null;
-            if (onIconArrived != null)
-            {
-                int realMultiplier = multiplier;
-                int capped = cappedMultiplier;
-                remappedIconArrived = arrived =>
-                {
-                    int mapped = arrived >= capped
-                        ? realMultiplier
-                        : Mathf.RoundToInt((float)arrived / capped * realMultiplier);
-                    onIconArrived(mapped);
-                };
-            }
+            float reelBackAt = _payload.Config.ZoomDuration * _payload.Config.ReelBackTriggerFraction;
+            int cappedMultiplier = Mathf.Min(_payload.Multiplier, MaxFlyingMultipliers);
 
             _zoomSequence = DOTween.Sequence()
                 .Append(ZoomToPeak())
                 .Append(SettleDown())
-                .InsertCallback(reelBackAt, () => onReelBack?.Invoke())
+                .InsertCallback(reelBackAt, () => _payload.EventBus?.Publish(new OnWinEffectReelBack()))
                 .Insert(reelBackAt, FadeAllSlices())
                 .AppendCallback(() =>
                 {
@@ -103,9 +68,9 @@ namespace WheelOfFortune.Views
                         _spinBg = null;
                     }
                     DestroyClone();
-                    SlotIconBurst.Play(transform, worldCenter, cappedMultiplier, itemIcon, rewardsPanelTarget, cfg, remappedIconArrived);
+                    SlotIconBurst.Play(transform, worldCenter, cappedMultiplier, _payload);
                 })
-                .AppendInterval(cfg.TotalBurstDuration(cappedMultiplier))
+                .AppendInterval(_payload.Config.TotalBurstDuration(cappedMultiplier))
                 .OnComplete(OnSequenceComplete);
         }
 
@@ -129,12 +94,12 @@ namespace WheelOfFortune.Views
 
         private Tween ZoomToPeak() =>
             _clone.transform
-                .DOScale(Vector3.one * _cfg.ZoomScalePeak, _cfg.ZoomDuration)
-                .SetEase(_cfg.ZoomEase);
+                .DOScale(Vector3.one * _payload.Config.ZoomScalePeak, _payload.Config.ZoomDuration)
+                .SetEase(_payload.Config.ZoomEase);
 
         private Tween SettleDown() =>
             _clone.transform
-                .DOScale(Vector3.one * _cfg.SettleScale, _cfg.SettleDuration)
+                .DOScale(Vector3.one * _payload.Config.SettleScale, _payload.Config.SettleDuration)
                 .SetEase(Ease.OutQuad);
 
         private Tween FadeAllSlices()
@@ -144,8 +109,8 @@ namespace WheelOfFortune.Views
             {
                 var target = cg;
                 seq.Join(
-                    DOVirtual.Float(1f, 0f, _cfg.FadeDuration, v => target.alpha = v)
-                             .SetEase(_cfg.FadeEase));
+                    DOVirtual.Float(1f, 0f, _payload.Config.FadeDuration, v => target.alpha = v)
+                             .SetEase(_payload.Config.FadeEase));
             }
             return seq;
         }
@@ -160,7 +125,7 @@ namespace WheelOfFortune.Views
         private void OnSequenceComplete()
         {
             DestroyClone();
-            _onComplete?.Invoke();
+            _payload.EventBus?.Publish(new OnWinEffectCompleted());
             Destroy(gameObject, 0.2f);
         }
 
@@ -189,7 +154,8 @@ namespace WheelOfFortune.Views
                 _zoomSequence.Kill();
             }
             _zoomSequence = null;
-            _onBurstFinished?.Invoke();
+            if (!string.IsNullOrEmpty(_payload.ItemId))
+                _payload.EventBus?.Publish(new OnRewardBurstFinished(_payload.ItemId, _payload.RewardMultiplier));
         }
     }
 }

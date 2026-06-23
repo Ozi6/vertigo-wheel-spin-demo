@@ -1,4 +1,5 @@
 using WheelOfFortune.Domain;
+using WheelOfFortune.Events;
 
 namespace WheelOfFortune.StateMachine
 {
@@ -10,6 +11,9 @@ namespace WheelOfFortune.StateMachine
         public void Enter(GameContext ctx)
         {
             _ctx = ctx;
+            _ctx.EventBus.Subscribe<OnReviveRequested>(OnReviveRequested);
+            _ctx.EventBus.Subscribe<OnGiveUpRequested>(OnGiveUpRequested);
+
             _lostRewards = _ctx.RewardService.GetCurrentRewards().Clone();
             _ctx.RewardService.ClearAll();
 
@@ -18,24 +22,24 @@ namespace WheelOfFortune.StateMachine
             _ctx.DialogView.ShowBombScreen(
                 _lostRewards,
                 _ctx.ReviveCommand.CurrentCost,
-                canAfford,
-                onRevive: OnReviveClicked,
-                onGiveUp: OnGiveUpClicked);
+                canAfford);
         }
 
         public void Exit(GameContext ctx)
         {
+            ctx.EventBus.Unsubscribe<OnReviveRequested>(OnReviveRequested);
+            ctx.EventBus.Unsubscribe<OnGiveUpRequested>(OnGiveUpRequested);
             ctx.DialogView.Hide();
         }
 
-        private void OnReviveClicked()
+        private void OnReviveRequested(OnReviveRequested evt)
         {
             foreach (var entry in _lostRewards.Entries)
                 _ctx.RewardService.Collect(entry.Item, entry.Multiplier);
             _ctx.ReviveCommand.Execute();
         }
 
-        private void OnGiveUpClicked()
+        private void OnGiveUpRequested(OnGiveUpRequested evt)
         {
             _ctx.GiveUpCommand.Execute();
         }

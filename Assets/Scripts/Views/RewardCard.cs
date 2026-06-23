@@ -40,10 +40,23 @@ namespace WheelOfFortune.Views
                 _multiplierLabel_value.text = MultiplierFormatter.Format(0);
         }
 
+        private int _currentMultiplier;
+
         public void SetMultiplier(int value, bool punch = true)
         {
+            _currentMultiplier = value;
             if (_multiplierLabel_value != null)
-                _multiplierLabel_value.text = MultiplierFormatter.Format(value);
+                _multiplierLabel_value.text = MultiplierFormatter.Format(_currentMultiplier);
+
+            if (punch)
+                PunchScale();
+        }
+
+        public void AddMultiplier(int increment, bool punch = true)
+        {
+            _currentMultiplier += increment;
+            if (_multiplierLabel_value != null)
+                _multiplierLabel_value.text = MultiplierFormatter.Format(_currentMultiplier);
 
             if (punch)
                 PunchScale();

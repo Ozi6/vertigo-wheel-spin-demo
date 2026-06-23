@@ -1,5 +1,6 @@
 using UnityEngine;
 using WheelOfFortune.Domain;
+using WheelOfFortune.Events;
 
 namespace WheelOfFortune.StateMachine
 {
@@ -18,6 +19,9 @@ namespace WheelOfFortune.StateMachine
         public void Enter(GameContext ctx)
         {
             _ctx = ctx;
+            _ctx.EventBus.Subscribe<OnWinEffectReelBack>(OnWinEffectReelBack);
+            _ctx.EventBus.Subscribe<OnWinEffectCompleted>(OnWinEffectCompleted);
+
             int previousMultiplier = 0;
 
             foreach (var entry in _ctx.RewardService.GetCurrentRewards().Entries)
@@ -38,17 +42,6 @@ namespace WheelOfFortune.StateMachine
                 _ctx.RewardService.GetCurrentRewards(),
                 itemId);
 
-            var onIconArrived =
-                _ctx.HudView.BuildIconArrivedCallback(
-                    itemId,
-                    previousMultiplier,
-                    _result.Multiplier);
-
-            var onBurstFinished =
-                _ctx.HudView.BuildFinalMultiplierCallback(
-                    itemId,
-                    previousMultiplier + _result.Multiplier);
-
             Sprite itemIcon = null;
             if (!string.IsNullOrEmpty(_result.RewardItem.Id))
             {
@@ -64,28 +57,32 @@ namespace WheelOfFortune.StateMachine
                 itemIcon,
                 panel,
                 _ctx.WinEffectConfig,
-                OnReelBack,
-                OnComplete,
-                onIconArrived,
-                onBurstFinished);
+                itemId,
+                previousMultiplier,
+                previousMultiplier + _result.Multiplier,
+                _ctx.EventBus);
 
             _ctx.WheelView.PlayWinEffect(payload);
         }
 
-        public void Exit(GameContext ctx) { }
+        public void Exit(GameContext ctx)
+        {
+            ctx.EventBus.Unsubscribe<OnWinEffectReelBack>(OnWinEffectReelBack);
+            ctx.EventBus.Unsubscribe<OnWinEffectCompleted>(OnWinEffectCompleted);
+        }
 
-        private void OnReelBack()
+        private void OnWinEffectReelBack(OnWinEffectReelBack evt)
         {
             _ctx.WheelView.RotateToOrigin(ReelBackDuration);
         }
 
-        private void OnComplete()
+        private void OnWinEffectCompleted(OnWinEffectCompleted evt)
         {
             _ctx.WheelFactory.BuildWheel(
                 _ctx.ZoneService.GetCurrentZoneType(),
                 _ctx.ZoneService.GetCurrentZoneNumber(),
                 _ctx.WheelView);
-            _ctx.EventBus.Publish(new Events.OnStateTransition(new IdleState()));
+            _ctx.EventBus.Publish(new OnStateTransition(new IdleState()));
         }
     }
 }

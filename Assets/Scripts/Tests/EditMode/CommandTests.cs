@@ -89,6 +89,10 @@ namespace WheelOfFortune.Tests.EditMode
             var wheelFactory = new StubWheelFactory();
             var wheelView = new StubWheelView();
 
+            wheelView.Initialize(_eventBus);
+            hud.Initialize(_eventBus, null);
+            dialog.Initialize(_eventBus, null);
+
             var revive = new ReviveCommand(currency, _eventBus, 25);
             var giveUp = new GiveUpCommand(_eventBus);
 
@@ -97,6 +101,7 @@ namespace WheelOfFortune.Tests.EditMode
                 wheelView, hud, dialog,
                 buttonView ?? new StubButtonView(),
                 wheelFactory, _eventBus,
+                randomStrategy,
                 randomStrategy,
                 null,
                 revive, giveUp, null);
@@ -238,7 +243,6 @@ namespace WheelOfFortune.Tests.EditMode
         {
             var dialogView = new StubDialogView();
             var ctx = CreateGameContext(_zone, _reward, _currency, new StubHudView(), dialogView, new StubSpinStrategy());
-            dialogView.Initialize(_eventBus, null);
 
             ctx.ReviveCommand.Execute();
 

@@ -55,6 +55,7 @@ namespace WheelOfFortune.Tests.EditMode
         private StubDialogView _dialog;
         private StubButtonView _button;
         private StubSpinStrategy _randomStrategy;
+        private StubSpinStrategy _weightedStrategy;
         private StubWheelFactory _wheelFactory;
         private StubEventBus _eventBus;
         private StubRewardRegistry _rewardRegistry;
@@ -76,11 +77,16 @@ namespace WheelOfFortune.Tests.EditMode
             _dialog = new StubDialogView();
             _button = new StubButtonView();
             _randomStrategy = new StubSpinStrategy();
+            _weightedStrategy = new StubSpinStrategy();
             _wheelFactory = new StubWheelFactory();
             _rewardRegistry = new StubRewardRegistry();
 
             _eventBus = new StubEventBus();
             _eventBus.Subscribe<OnStateTransition>(OnStateTransitionEvent);
+
+            _wheel.Initialize(_eventBus);
+            _hud.Initialize(_eventBus, _rewardRegistry);
+            _dialog.Initialize(_eventBus, _rewardRegistry);
 
             _ctx = CreateGameContext();
             _reviveCommand = _ctx.ReviveCommand;
@@ -109,6 +115,7 @@ namespace WheelOfFortune.Tests.EditMode
                 _wheelFactory,
                 _eventBus,
                 _randomStrategy,
+                _weightedStrategy,
                 _rewardRegistry,
                 revive,
                 giveUp,
@@ -270,7 +277,7 @@ namespace WheelOfFortune.Tests.EditMode
 
             TransitionTo(new SpinningState());
 
-            Assert.IsInstanceOf<WeightedSpinStrategy>(_spin.LastStrategySet);
+            Assert.AreSame(_weightedStrategy, _spin.LastStrategySet);
         }
 
         [Test]
@@ -294,6 +301,7 @@ namespace WheelOfFortune.Tests.EditMode
             _spin.ResultToReturn = new SpinResult(default, 0, true, 0);
 
             TransitionTo(new SpinningState());
+            _wheel.InvokeCallback();
 
             Assert.IsInstanceOf<BombState>(_currentState);
         }
@@ -307,6 +315,7 @@ namespace WheelOfFortune.Tests.EditMode
             _spin.ResultToReturn = new SpinResult(new RewardData("gold", 10f, 1, 1f), 1, false, 0);
 
             TransitionTo(new SpinningState());
+            _wheel.InvokeCallback();
 
             Assert.IsInstanceOf<RewardState>(_currentState);
         }

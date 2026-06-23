@@ -6,12 +6,12 @@ using UnityEngine.UI;
 using WheelOfFortune.Domain;
 using WheelOfFortune.Interfaces;
 using WheelOfFortune.Utility;
+using WheelOfFortune.Events;
 
 namespace WheelOfFortune.Views
 {
     public sealed class DialogPresenter : MonoBehaviour, IDialogView
     {
-        #region Inspector Fields
         [SerializeField] private GameObject _bombScreen;
         [SerializeField] private Transform _bombRewardsGrid_value;
         [SerializeField] private Button _reviveButton_value;
@@ -24,9 +24,7 @@ namespace WheelOfFortune.Views
         [SerializeField] private Button _cancelButton_value;
 
         [SerializeField] private RewardCard _rewardCardPrefab_value;
-        #endregion
 
-        #region Private Fields
         private readonly List<RewardCard> _bombCards = new List<RewardCard>();
         private readonly List<RewardCard> _collectCards = new List<RewardCard>();
         private ComponentPool<RewardCard> _pool;
@@ -37,13 +35,6 @@ namespace WheelOfFortune.Views
         private bool _isInitialized;
         private bool _isSubscribed;
 
-        private Action _onReviveCallback;
-        private Action _onGiveUpCallback;
-        private Action _onConfirmCallback;
-        private Action _onCancelCallback;
-        #endregion
-
-        #region Initialization & Lifecycle
         public void Initialize(IEventBus eventBus, IRewardRegistry registry)
         {
             _eventBus = eventBus;
@@ -97,29 +88,25 @@ namespace WheelOfFortune.Views
         private void SubscribeEvents()
         {
             if (_isSubscribed || _eventBus == null) return;
-            _eventBus.Subscribe<Events.OnBalanceChange>(OnBalanceChanged);
-            _eventBus.Subscribe<Events.OnReviveCostChanged>(OnReviveCostChanged);
+            _eventBus.Subscribe<OnBalanceChange>(OnBalanceChanged);
+            _eventBus.Subscribe<OnReviveCostChanged>(OnReviveCostChanged);
             _isSubscribed = true;
         }
 
         private void UnsubscribeEvents()
         {
             if (!_isSubscribed || _eventBus == null) return;
-            _eventBus.Unsubscribe<Events.OnBalanceChange>(OnBalanceChanged);
-            _eventBus.Unsubscribe<Events.OnReviveCostChanged>(OnReviveCostChanged);
+            _eventBus.Unsubscribe<OnBalanceChange>(OnBalanceChanged);
+            _eventBus.Unsubscribe<OnReviveCostChanged>(OnReviveCostChanged);
             _isSubscribed = false;
         }
-        #endregion
 
-        #region UI Event Handlers
-        private void HandleReviveClicked() => _onReviveCallback?.Invoke();
-        private void HandleGiveUpClicked() => _onGiveUpCallback?.Invoke();
-        private void HandleConfirmClicked() => _onConfirmCallback?.Invoke();
-        private void HandleCancelClicked() => _onCancelCallback?.Invoke();
-        #endregion
+        private void HandleReviveClicked() => _eventBus?.Publish(new OnReviveRequested());
+        private void HandleGiveUpClicked() => _eventBus?.Publish(new OnGiveUpRequested());
+        private void HandleConfirmClicked() => _eventBus?.Publish(new OnCollectConfirmed());
+        private void HandleCancelClicked() => _eventBus?.Publish(new OnCollectCanceled());
 
-        #region Public Interface
-        public void ShowBombScreen(CollectedRewards lostRewards, int currentReviveCost, bool canAfford, Action onRevive, Action onGiveUp)
+        public void ShowBombScreen(CollectedRewards lostRewards, int currentReviveCost, bool canAfford)
         {
             _currentCost = currentReviveCost;
             if (_reviveCostDisplay_value != null)
@@ -129,18 +116,14 @@ namespace WheelOfFortune.Views
                 _reviveButton_value.interactable = canAfford;
 
             PopulateGrid(_bombRewardsGrid_value, _bombCards, lostRewards);
-            _onReviveCallback = onRevive;
-            _onGiveUpCallback = onGiveUp;
 
             if (_bombScreen != null) _bombScreen.SetActive(true);
             if (_collectScreen != null) _collectScreen.SetActive(false);
         }
 
-        public void ShowCollectConfirmScreen(CollectedRewards rewards, Action onConfirm, Action onCancel)
+        public void ShowCollectConfirmScreen(CollectedRewards rewards)
         {
             PopulateGrid(_collectRewardsGrid_value, _collectCards, rewards);
-            _onConfirmCallback = onConfirm;
-            _onCancelCallback = onCancel;
 
             if (_bombScreen != null) _bombScreen.SetActive(false);
             if (_collectScreen != null) _collectScreen.SetActive(true);
@@ -151,24 +134,17 @@ namespace WheelOfFortune.Views
             if (_bombScreen != null) _bombScreen.SetActive(false);
             if (_collectScreen != null) _collectScreen.SetActive(false);
 
-            _onReviveCallback = null;
-            _onGiveUpCallback = null;
-            _onConfirmCallback = null;
-            _onCancelCallback = null;
-
             ClearGrid(_bombCards);
             ClearGrid(_collectCards);
         }
-        #endregion
 
-        #region Private Methods
-        private void OnBalanceChanged(Events.OnBalanceChange evt)
+        private void OnBalanceChanged(OnBalanceChange evt)
         {
             _currentBalance = evt.NewBalance;
             UpdateInteractable();
         }
 
-        private void OnReviveCostChanged(Events.OnReviveCostChanged evt)
+        private void OnReviveCostChanged(OnReviveCostChanged evt)
         {
             _currentCost = evt.NextCost;
             if (_reviveCostDisplay_value != null)
@@ -240,6 +216,5 @@ namespace WheelOfFortune.Views
                     _reviveCostDisplay_value = txt;
             }
         }
-        #endregion
     }
 }

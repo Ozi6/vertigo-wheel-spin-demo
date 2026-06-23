@@ -27,6 +27,7 @@ namespace WheelOfFortune.Installer
 
             var zoneService = new ZoneService(_gameSettings, eventBus);
             var randomStrategy = new RandomSpinStrategy();
+            var weightedStrategy = new WeightedSpinStrategy();
             var spinService = new SpinService(randomStrategy, eventBus);
             var rewardService = new RewardService(eventBus);
             var currencyService = new CurrencyService(eventBus, _gameSettings.StartingCurrencyBalance);
@@ -45,6 +46,7 @@ namespace WheelOfFortune.Installer
 
             var rewardRegistry = new RewardRegistry(_zoneConfigs);
 
+            wheelView.Initialize(eventBus);
             hudView.Initialize(eventBus, rewardRegistry);
             dialogView.Initialize(eventBus, rewardRegistry);
 
@@ -61,6 +63,7 @@ namespace WheelOfFortune.Installer
                 buttonView,
                 wheelFactory,
                 randomStrategy,
+                weightedStrategy,
                 rewardRegistry,
                 _gameSettings,
                 eventBus);

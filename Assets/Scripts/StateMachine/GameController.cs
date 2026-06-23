@@ -30,6 +30,7 @@ namespace WheelOfFortune.Controller
             IButtonView buttonView,
             IWheelFactory wheelFactory,
             IWheelSpinStrategy randomStrategy,
+            IWheelSpinStrategy weightedStrategy,
             IRewardRegistry rewardRegistry,
             GameSettingsSO settings,
             IEventBus eventBus)
@@ -48,7 +49,7 @@ namespace WheelOfFortune.Controller
             _ctx = new GameContextBuilder()
                 .WithServices(zoneService, spinService, rewardService, currencyService, _eventBus)
                 .WithViews(wheelView, hudView, dialogView, buttonView)
-                .Build(wheelFactory, randomStrategy, rewardRegistry, _winEffectConfig_value, reviveCmd, giveUpCmd);
+                .Build(wheelFactory, randomStrategy, weightedStrategy, rewardRegistry, _winEffectConfig_value, reviveCmd, giveUpCmd);
 
             _eventBus.Publish(new OnBalanceChange(currencyService.GetBalance()));
             _eventBus.Publish(new OnReviveCostChanged(settings.StartingReviveCost));

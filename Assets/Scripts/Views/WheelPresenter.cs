@@ -19,7 +19,9 @@ namespace WheelOfFortune.Views
 
         private SliceDefinition[] _currentSlices;
         private WheelSlice[] _liveSlices;
+        private IEventBus _eventBus;
 
+        public void Initialize(IEventBus eventBus) => _eventBus = eventBus;
         public void SetupSlices(SliceDefinition[] slices) => _currentSlices = slices;
         public void SetLiveSlices(WheelSlice[] slices) => _liveSlices = slices;
 
@@ -39,11 +41,11 @@ namespace WheelOfFortune.Views
                 .SetEase(Ease.InOutSine);
         }
 
-        public void SpinTo(int targetSliceIndex, Action onComplete)
+        public void SpinTo(int targetSliceIndex)
         {
             if (_currentSlices == null || _currentSlices.Length == 0)
             {
-                onComplete?.Invoke();
+                _eventBus?.Publish(new WheelOfFortune.Events.OnSpinAnimationComplete());
                 return;
             }
 
@@ -59,7 +61,7 @@ namespace WheelOfFortune.Views
                 _spinDuration,
                 RotateMode.FastBeyond360)
                 .SetEase(_spinEase)
-                .OnComplete(() => onComplete?.Invoke());
+                .OnComplete(() => _eventBus?.Publish(new WheelOfFortune.Events.OnSpinAnimationComplete()));
         }
 
         public void PlayWinEffect(Domain.WinEffectPayload payload)
@@ -67,16 +69,16 @@ namespace WheelOfFortune.Views
             if (_liveSlices == null || _liveSlices.Length == 0 ||
                 payload.WinningSliceIndex < 0 || payload.WinningSliceIndex >= _liveSlices.Length)
             {
-                payload.OnReelBack?.Invoke();
-                payload.OnComplete?.Invoke();
+                payload.EventBus?.Publish(new WheelOfFortune.Events.OnWinEffectReelBack());
+                payload.EventBus?.Publish(new WheelOfFortune.Events.OnWinEffectCompleted());
                 return;
             }
 
             var winningSlice = _liveSlices[payload.WinningSliceIndex];
             if (winningSlice == null)
             {
-                payload.OnReelBack?.Invoke();
-                payload.OnComplete?.Invoke();
+                payload.EventBus?.Publish(new WheelOfFortune.Events.OnWinEffectReelBack());
+                payload.EventBus?.Publish(new WheelOfFortune.Events.OnWinEffectCompleted());
                 return;
             }
 
@@ -86,15 +88,7 @@ namespace WheelOfFortune.Views
                 effectRoot,
                 winningSlice,
                 _liveSlices,
-                payload.WinningSliceIndex,
-                payload.Multiplier,
-                payload.RewardsPanelTarget,
-                payload.ItemIcon,
-                payload.Config,
-                payload.OnReelBack,
-                payload.OnComplete,
-                payload.OnIconArrived,
-                payload.OnBurstFinished);
+                payload);
         }
 
         public void SnapSlicesToFullAlpha() => SlotZoomEffect.ResetSliceAlphas(_liveSlices);

@@ -1,4 +1,3 @@
-using System;
 using WheelOfFortune.Commands;
 using WheelOfFortune.Data;
 using WheelOfFortune.Factory;
@@ -19,6 +18,7 @@ namespace WheelOfFortune.StateMachine
         public readonly IWheelFactory WheelFactory;
         public readonly IEventBus EventBus;
         public readonly IWheelSpinStrategy RandomStrategy;
+        public readonly IWheelSpinStrategy WeightedStrategy;
         public readonly IRewardRegistry RewardRegistry;
         public readonly ReviveCommand ReviveCommand;
         public readonly GiveUpCommand GiveUpCommand;
@@ -36,6 +36,7 @@ namespace WheelOfFortune.StateMachine
             IWheelFactory wheelFactory,
             IEventBus eventBus,
             IWheelSpinStrategy randomStrategy,
+            IWheelSpinStrategy weightedStrategy,
             IRewardRegistry rewardRegistry,
             ReviveCommand reviveCommand,
             GiveUpCommand giveUpCommand,
@@ -52,6 +53,7 @@ namespace WheelOfFortune.StateMachine
             WheelFactory = wheelFactory;
             EventBus = eventBus;
             RandomStrategy = randomStrategy;
+            WeightedStrategy = weightedStrategy;
             RewardRegistry = rewardRegistry;
             ReviveCommand = reviveCommand;
             GiveUpCommand = giveUpCommand;
