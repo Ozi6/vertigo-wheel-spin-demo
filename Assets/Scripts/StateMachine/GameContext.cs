@@ -19,6 +19,7 @@ namespace WheelOfFortune.StateMachine
         public readonly IWheelFactory WheelFactory;
         public readonly Action<IGameState> TransitionTo;
         public readonly IWheelSpinStrategy RandomStrategy;
+        public readonly IRewardRegistry RewardRegistry;
         public readonly ReviveCommand ReviveCommand;
         public readonly GiveUpCommand GiveUpCommand;
         public readonly WinEffectConfig WinEffectConfig;
@@ -35,6 +36,7 @@ namespace WheelOfFortune.StateMachine
             IWheelFactory wheelFactory,
             Action<IGameState> transitionTo,
             IWheelSpinStrategy randomStrategy,
+            IRewardRegistry rewardRegistry,
             ReviveCommand reviveCommand,
             GiveUpCommand giveUpCommand,
             WinEffectConfig winEffectConfig)
@@ -50,6 +52,7 @@ namespace WheelOfFortune.StateMachine
             WheelFactory = wheelFactory;
             TransitionTo = transitionTo;
             RandomStrategy = randomStrategy;
+            RewardRegistry = rewardRegistry;
             ReviveCommand = reviveCommand;
             GiveUpCommand = giveUpCommand;
             WinEffectConfig = winEffectConfig;

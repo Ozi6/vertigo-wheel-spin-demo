@@ -8,25 +8,27 @@ namespace WheelOfFortune.Utility
     {
         public static List<RewardStack> Build(IReadOnlyList<CollectedRewards.Entry> entries)
         {
-            var multiplierMap = new Dictionary<RewardItemSO, int>();
-            var order = new List<RewardItemSO>();
+            var multiplierMap = new Dictionary<string, int>();
+            var itemMap = new Dictionary<string, RewardData>();
+            var order = new List<string>();
 
             foreach (var entry in entries)
             {
-                if (entry.Item == null) continue;
+                if (string.IsNullOrEmpty(entry.Item.Id)) continue;
 
-                if (!multiplierMap.ContainsKey(entry.Item))
+                if (!multiplierMap.ContainsKey(entry.Item.Id))
                 {
-                    multiplierMap[entry.Item] = 0;
-                    order.Add(entry.Item);
+                    multiplierMap[entry.Item.Id] = 0;
+                    itemMap[entry.Item.Id] = entry.Item;
+                    order.Add(entry.Item.Id);
                 }
 
-                multiplierMap[entry.Item] += entry.Multiplier;
+                multiplierMap[entry.Item.Id] += entry.Multiplier;
             }
 
             var result = new List<RewardStack>(order.Count);
-            foreach (var item in order)
-                result.Add(new RewardStack(item, multiplierMap[item]));
+            foreach (var id in order)
+                result.Add(new RewardStack(itemMap[id], multiplierMap[id]));
 
             return result;
         }

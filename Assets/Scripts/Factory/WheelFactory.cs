@@ -59,7 +59,15 @@ namespace WheelOfFortune.Factory
             wheelView.SetupSlices(slices);
             wheelView.SetLiveSlices(sliceInstances);
 
-            return new RuntimeWheelData(slices, bombSlotIndex, config.HasBomb);
+            var runtimeSlices = new RuntimeSlice[slices.Length];
+            for (int i = 0; i < slices.Length; i++)
+            {
+                var def = slices[i];
+                var data = def.RewardItem != null ? def.RewardItem.ToData() : default;
+                runtimeSlices[i] = new RuntimeSlice(data, def.Multiplier, def.IsBomb, def.Weight);
+            }
+
+            return new RuntimeWheelData(runtimeSlices, bombSlotIndex, config.HasBomb);
         }
 
         private void ClearExistingSlices()

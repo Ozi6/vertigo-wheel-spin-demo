@@ -18,24 +18,24 @@ namespace WheelOfFortune.Views
 
         private Tweener _punchTween;
 
-        public void Setup(RewardStack stack)
+        public void Setup(RewardStack stack, Sprite icon)
         {
             if (_icon_value != null)
             {
-                _icon_value.sprite = stack.Item != null ? stack.Item.Icon : null;
-                _icon_value.enabled = stack.Item != null && stack.Item.Icon != null;
+                _icon_value.sprite = icon;
+                _icon_value.enabled = icon != null;
             }
 
             if (_multiplierLabel_value != null)
                 _multiplierLabel_value.text = MultiplierFormatter.Format(stack.TotalMultiplier);
         }
 
-        public void InitializeEmpty(RewardStack stack)
+        public void InitializeEmpty(RewardStack stack, Sprite icon)
         {
             if (_icon_value != null)
             {
-                _icon_value.sprite = stack.Item != null ? stack.Item.Icon : null;
-                _icon_value.enabled = stack.Item != null && stack.Item.Icon != null;
+                _icon_value.sprite = icon;
+                _icon_value.enabled = icon != null;
             }
 
             if (_multiplierLabel_value != null)

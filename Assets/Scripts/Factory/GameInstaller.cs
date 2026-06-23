@@ -43,7 +43,10 @@ namespace WheelOfFortune.Installer
 
             ValidateDependencies(wheelView, hudView, dialogView, buttonView, buttonPresenter);
 
-            hudView.Initialize(eventBus);
+            var rewardRegistry = new RewardRegistry(_zoneConfigs);
+
+            hudView.Initialize(eventBus, rewardRegistry);
+            dialogView.Initialize(rewardRegistry);
 
             wheelFactory.BuildWheel(zoneService.GetCurrentZoneType(), zoneService.GetCurrentZoneNumber(), wheelView);
 
@@ -58,10 +61,9 @@ namespace WheelOfFortune.Installer
                 buttonView,
                 wheelFactory,
                 randomStrategy,
+                rewardRegistry,
                 _gameSettings,
                 eventBus);
-
-            buttonPresenter.Init(_gameController);
         }
 
         private void ValidateDependencies(

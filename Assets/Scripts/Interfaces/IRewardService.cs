@@ -5,7 +5,7 @@ namespace WheelOfFortune.Interfaces
 {
     public interface IRewardService
     {
-        void Collect(RewardItemSO item, int multiplier);
+        void Collect(RewardData item, int multiplier);
         void ClearAll();
         void Reset();
         CollectedRewards GetCurrentRewards();

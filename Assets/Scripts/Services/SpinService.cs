@@ -21,12 +21,11 @@ namespace WheelOfFortune.Services
         public SpinResult Spin(RuntimeWheelData wheelData)
         {
             int winningIndex = _currentStrategy.GetWinningIndex(wheelData);
-            SliceDefinition winningSlice = wheelData.Slices[winningIndex];
-            bool isBomb = winningSlice.IsBomb;
+            RuntimeSlice winningSlice = wheelData.Slices[winningIndex];
             var result = new SpinResult(
-                winningSlice.RewardItem,
+                winningSlice.Reward,
                 winningSlice.Multiplier,
-                isBomb,
+                winningSlice.IsBomb,
                 winningIndex
             );
             _eventBus.Publish(new OnSpinCompleted(result));

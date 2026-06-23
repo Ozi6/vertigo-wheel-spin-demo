@@ -8,10 +8,10 @@ namespace WheelOfFortune.Domain
     {
         public readonly struct Entry
         {
-            public readonly RewardItemSO Item;
+            public readonly RewardData Item;
             public readonly int Multiplier;
 
-            public Entry(RewardItemSO item, int multiplier)
+            public Entry(RewardData item, int multiplier)
             {
                 Item = item;
                 Multiplier = multiplier;
@@ -22,7 +22,7 @@ namespace WheelOfFortune.Domain
 
         public IReadOnlyList<Entry> Entries => _entries;
 
-        public void Add(RewardItemSO item, int multiplier)
+        public void Add(RewardData item, int multiplier)
         {
             _entries.Add(new Entry(item, multiplier));
         }

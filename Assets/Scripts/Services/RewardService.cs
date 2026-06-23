@@ -16,7 +16,7 @@ namespace WheelOfFortune.Services
             _rewards = new CollectedRewards();
         }
 
-        public void Collect(RewardItemSO item, int multiplier)
+        public void Collect(RewardData item, int multiplier)
         {
             _rewards.Add(item, multiplier);
             _eventBus.Publish(new OnRewardCollected(_rewards.Clone()));

@@ -27,11 +27,17 @@ namespace WheelOfFortune.Views
         private readonly List<RewardCard> _bombCards = new List<RewardCard>();
         private readonly List<RewardCard> _collectCards = new List<RewardCard>();
         private ComponentPool<RewardCard> _pool;
+        private IRewardRegistry _registry;
 
         private Action _onReviveCallback;
         private Action _onGiveUpCallback;
         private Action _onConfirmCallback;
         private Action _onCancelCallback;
+
+        public void Initialize(IRewardRegistry registry)
+        {
+            _registry = registry;
+        }
 
         private void Awake()
         {
@@ -124,7 +130,8 @@ namespace WheelOfFortune.Views
             {
                 var card = _pool.Get(grid);
                 card.name = $"ui_card_{stack.Item.Id}_value";
-                card.Setup(stack);
+                var icon = _registry?.GetReward(stack.Item.Id)?.Icon;
+                card.Setup(stack, icon);
                 cards.Add(card);
             }
         }

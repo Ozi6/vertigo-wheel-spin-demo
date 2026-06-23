@@ -17,6 +17,8 @@ namespace WheelOfFortune.Data
         public int Tier => _tier;
         public float Weight => _weight;
 
+        public Domain.RewardData ToData() => new Domain.RewardData(_id, _value, _tier, _weight);
+
         private void OnValidate()
         {
             if (_value < 1f) _value = 1f;

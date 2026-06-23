@@ -20,7 +20,7 @@ namespace WheelOfFortune.StateMachine
 
             foreach (var entry in ctx.RewardService.GetCurrentRewards().Entries)
             {
-                if (entry.Item != null &&
+                if (!string.IsNullOrEmpty(entry.Item.Id) &&
                     entry.Item.Id == _result.RewardItem.Id)
                 {
                     previousMultiplier += entry.Multiplier;
@@ -47,9 +47,12 @@ namespace WheelOfFortune.StateMachine
                     itemId,
                     previousMultiplier + _result.Multiplier);
 
-            Sprite itemIcon = _result.RewardItem != null
-                ? _result.RewardItem.Icon
-                : null;
+            Sprite itemIcon = null;
+            if (!string.IsNullOrEmpty(_result.RewardItem.Id))
+            {
+                var so = ctx.RewardRegistry.GetReward(_result.RewardItem.Id);
+                if (so != null) itemIcon = so.Icon;
+            }
 
             Transform panel = ctx.HudView.GetRewardsPanelTarget();
 

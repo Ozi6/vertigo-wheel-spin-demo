@@ -6,7 +6,7 @@ namespace WheelOfFortune.Interfaces
 {
     public interface IHudView
     {
-        void Initialize(IEventBus eventBus);
+        void Initialize(IEventBus eventBus, IRewardRegistry registry);
         void UpdateZoneDisplay(ZoneProgressModel progress);
         void UpdateRewardsDisplay(CollectedRewards rewards);
         void UpdateCurrencyDisplay(int balance);

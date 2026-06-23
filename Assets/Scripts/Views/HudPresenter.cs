@@ -37,6 +37,7 @@ namespace WheelOfFortune.Views
         private ComponentPool<RewardCard> _pool;
         private Tweener _scrollTween;
         private IEventBus _eventBus;
+        private IRewardRegistry _registry;
         private bool _isInitialized;
 
         private void Awake()
@@ -75,9 +76,10 @@ namespace WheelOfFortune.Views
 
         public Transform GetRewardsPanelTarget() => _rewardsContainer_value;
 
-        public void Initialize(IEventBus eventBus)
+        public void Initialize(IEventBus eventBus, IRewardRegistry registry)
         {
             _eventBus = eventBus;
+            _registry = registry;
             _isInitialized = true;
             _eventBus.Subscribe<OnBalanceChange>(OnBalanceChanged);
         }
@@ -104,7 +106,8 @@ namespace WheelOfFortune.Views
             {
                 var card = _pool.Get(_rewardsContainer_value);
                 card.name = $"ui_card_reward_{stack.Item.Id}_value";
-                card.Setup(stack);
+                var icon = _registry?.GetReward(stack.Item.Id)?.Icon;
+                card.Setup(stack, icon);
                 _rewardCards.Add(card);
                 _cardById[stack.Item.Id] = card;
             }
@@ -123,12 +126,13 @@ namespace WheelOfFortune.Views
             var stacks = RewardStackBuilder.Build(rewards.Entries);
             foreach (var stack in stacks)
             {
-                if (stack.Item == null || stack.Item.Id != newItemId) continue;
+                if (string.IsNullOrEmpty(stack.Item.Id) || stack.Item.Id != newItemId) continue;
                 if (_cardById.ContainsKey(newItemId)) continue;
 
                 var card = _pool.Get(_rewardsContainer_value);
                 card.name = $"ui_card_reward_{stack.Item.Id}_value";
-                card.InitializeEmpty(stack);
+                var icon = _registry?.GetReward(stack.Item.Id)?.Icon;
+                card.InitializeEmpty(stack, icon);
                 _rewardCards.Add(card);
                 _cardById[newItemId] = card;
                 break;
