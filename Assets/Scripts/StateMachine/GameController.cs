@@ -30,6 +30,7 @@ namespace WheelOfFortune.Controller
             IButtonView buttonView,
             IWheelFactory wheelFactory,
             IWheelSpinStrategy randomStrategy,
+            IRewardRegistry rewardRegistry,
             GameSettingsSO settings,
             IEventBus eventBus)
         {
@@ -43,7 +44,7 @@ namespace WheelOfFortune.Controller
             _ctx = new GameContextBuilder()
                 .WithServices(zoneService, spinService, rewardService, currencyService, _eventBus)
                 .WithViews(wheelView, hudView, dialogView, buttonView)
-                .WithInfrastructure(wheelFactory, randomStrategy, _winEffectConfig_value)
+                .WithInfrastructure(wheelFactory, randomStrategy, rewardRegistry, _winEffectConfig_value)
                 .Build(settings.StartingReviveCost);
 
             _collectCommand = commandFactory.CreateCollectCommand(_idleState, _eventBus);
@@ -52,11 +53,10 @@ namespace WheelOfFortune.Controller
 
             dialogView.UpdateReviveCost(settings.StartingReviveCost);
 
+            buttonView.SetCommands(_spinCommand, _collectCommand);
+
             TransitionTo(_idleState);
         }
-
-        public void ExecuteSpin() => _spinCommand?.Execute();
-        public void ExecuteCollect() => _collectCommand?.Execute();
 
         private void OnStateTransitionRequested(OnStateTransition evt)
         {

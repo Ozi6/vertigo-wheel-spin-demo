@@ -6,5 +6,6 @@ namespace WheelOfFortune.Interfaces
     {
         void SetSpinInteractable(bool interactable);
         void SetCollectVisible(bool visible);
+        void SetCommands(ICommand spinCommand, ICommand collectCommand);
     }
 }

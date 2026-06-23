@@ -1,7 +1,6 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using WheelOfFortune.Controller;
 using WheelOfFortune.Interfaces;
 
 namespace WheelOfFortune.Views
@@ -11,12 +10,18 @@ namespace WheelOfFortune.Views
         [SerializeField] private Button _spinButton_value;
         [SerializeField] private Button _collectButton_value;
 
-        private GameController _gameController;
+        private ICommand _spinCommand;
+        private ICommand _collectCommand;
 
-        public void Init(GameController gameController)
+        private void Start()
         {
-            _gameController = gameController;
             SetCollectVisible(false);
+        }
+
+        public void SetCommands(ICommand spinCommand, ICommand collectCommand)
+        {
+            _spinCommand = spinCommand;
+            _collectCommand = collectCommand;
         }
 
         private void OnEnable()
@@ -37,8 +42,8 @@ namespace WheelOfFortune.Views
                 _collectButton_value.onClick.RemoveListener(HandleCollectClicked);
         }
 
-        private void HandleSpinClicked() => _gameController?.ExecuteSpin();
-        private void HandleCollectClicked() => _gameController?.ExecuteCollect();
+        private void HandleSpinClicked() => _spinCommand?.Execute();
+        private void HandleCollectClicked() => _collectCommand?.Execute();
 
         public void SetSpinInteractable(bool interactable)
         {
