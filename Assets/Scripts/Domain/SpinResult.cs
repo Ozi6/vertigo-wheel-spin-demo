@@ -1,5 +1,3 @@
-using WheelOfFortune.Data;
-
 namespace WheelOfFortune.Domain
 {
     public readonly struct SpinResult
