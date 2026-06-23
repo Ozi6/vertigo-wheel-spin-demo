@@ -2,10 +2,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using Mathf = UnityEngine.Mathf;
 
-public class GridContentSizer : MonoBehaviour
+namespace WheelOfFortune.Utility
 {
-    public GridLayoutGroup grid;
-    public RectTransform content;
+    public class GridContentSizer : MonoBehaviour
+    {
+        public GridLayoutGroup grid;
+        public RectTransform content;
 
     void OnTransformChildrenChanged()
     {
@@ -31,9 +33,10 @@ public class GridContentSizer : MonoBehaviour
             grid.padding.top +
             grid.padding.bottom;
 
-        content.SetSizeWithCurrentAnchors(
-            RectTransform.Axis.Vertical,
-            height
-        );
+            content.SetSizeWithCurrentAnchors(
+                RectTransform.Axis.Vertical,
+                height
+            );
+        }
     }
 }

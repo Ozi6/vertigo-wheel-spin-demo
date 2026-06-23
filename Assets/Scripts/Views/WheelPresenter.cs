@@ -62,30 +62,21 @@ namespace WheelOfFortune.Views
                 .OnComplete(() => onComplete?.Invoke());
         }
 
-        public void PlayWinEffect(
-            int winningSliceIndex,
-            int multiplier,
-            Sprite itemIcon,
-            Transform rewardsPanelTarget,
-            WinEffectConfig cfg,
-            Action onReelBack,
-            Action onComplete,
-            Action<int> onIconArrived,
-            Action onBurstFinished)
+        public void PlayWinEffect(Domain.WinEffectPayload payload)
         {
             if (_liveSlices == null || _liveSlices.Length == 0 ||
-                winningSliceIndex < 0 || winningSliceIndex >= _liveSlices.Length)
+                payload.WinningSliceIndex < 0 || payload.WinningSliceIndex >= _liveSlices.Length)
             {
-                onReelBack?.Invoke();
-                onComplete?.Invoke();
+                payload.OnReelBack?.Invoke();
+                payload.OnComplete?.Invoke();
                 return;
             }
 
-            var winningSlice = _liveSlices[winningSliceIndex];
+            var winningSlice = _liveSlices[payload.WinningSliceIndex];
             if (winningSlice == null)
             {
-                onReelBack?.Invoke();
-                onComplete?.Invoke();
+                payload.OnReelBack?.Invoke();
+                payload.OnComplete?.Invoke();
                 return;
             }
 
@@ -95,15 +86,15 @@ namespace WheelOfFortune.Views
                 effectRoot,
                 winningSlice,
                 _liveSlices,
-                winningSliceIndex,
-                multiplier,
-                rewardsPanelTarget,
-                itemIcon,
-                cfg,
-                onReelBack,
-                onComplete,
-                onIconArrived,
-                onBurstFinished);
+                payload.WinningSliceIndex,
+                payload.Multiplier,
+                payload.RewardsPanelTarget,
+                payload.ItemIcon,
+                payload.Config,
+                payload.OnReelBack,
+                payload.OnComplete,
+                payload.OnIconArrived,
+                payload.OnBurstFinished);
         }
 
         public void SnapSlicesToFullAlpha() => SlotZoomEffect.ResetSliceAlphas(_liveSlices);

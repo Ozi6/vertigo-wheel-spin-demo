@@ -58,16 +58,18 @@ namespace WheelOfFortune.StateMachine
 
             Transform panel = _ctx.HudView.GetRewardsPanelTarget();
 
-            _ctx.WheelView.PlayWinEffect(
+            var payload = new WinEffectPayload(
                 _result.SliceIndex,
                 _result.Multiplier,
                 itemIcon,
                 panel,
                 _ctx.WinEffectConfig,
-                onReelBack: OnReelBack,
-                onComplete: OnComplete,
-                onIconArrived: onIconArrived,
-                onBurstFinished: onBurstFinished);
+                OnReelBack,
+                OnComplete,
+                onIconArrived,
+                onBurstFinished);
+
+            _ctx.WheelView.PlayWinEffect(payload);
         }
 
         public void Exit(GameContext ctx) { }
