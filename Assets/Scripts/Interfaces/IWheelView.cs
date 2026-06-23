@@ -1,6 +1,7 @@
 using UnityEngine;
 using WheelOfFortune.Data;
 using WheelOfFortune.Views;
+using WheelOfFortune.Domain;
 
 namespace WheelOfFortune.Interfaces
 {
@@ -12,6 +13,6 @@ namespace WheelOfFortune.Interfaces
         void SetZoneVisuals(Sprite wheelSprite, Sprite arrowSprite);
         void RotateToOrigin(float duration);
         void SetLiveSlices(WheelSlice[] slices);
-        void PlayWinEffect(Domain.WinEffectPayload payload);
+        void PlayWinEffect(WinEffectPayload payload);
     }
 }
