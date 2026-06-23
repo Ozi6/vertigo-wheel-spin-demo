@@ -1896,7 +1896,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -275, y: 255.00009}
+  m_AnchoredPosition: {x: -275, y: 255.00002}
   m_SizeDelta: {x: 550, y: 200}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &664661194
@@ -3298,9 +3298,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -428, y: 219}
+  m_AnchoredPosition: {x: -228, y: 219.00006}
   m_SizeDelta: {x: 400, y: 400}
-  m_Pivot: {x: 0, y: 0.5}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1162450767
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4580,11 +4580,11 @@ RectTransform:
   m_Father: {fileID: 1917194768}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -790.7455, y: 98.999985}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -228, y: 515}
   m_SizeDelta: {x: 300, y: 140}
-  m_Pivot: {x: 1, y: 0.5}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1731350301
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4993,7 +4993,7 @@ GameObject:
   - component: {fileID: 1917194768}
   - component: {fileID: 1917194769}
   m_Layer: 5
-  m_Name: ui_panel_spin
+  m_Name: ui_panel_choices
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
