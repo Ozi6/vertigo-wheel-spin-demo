@@ -12,6 +12,7 @@ namespace WheelOfFortune.Installer
     [DefaultExecutionOrder(-100)]
     public sealed class GameInstaller : MonoBehaviour
     {
+        #region Inspector Fields
         [SerializeField] private GameSettingsSO _gameSettings;
         [SerializeField] private ZoneConfigSO[] _zoneConfigs;
         [SerializeField] private WheelSlice _slicePrefab;
@@ -20,7 +21,9 @@ namespace WheelOfFortune.Installer
         [SerializeField, Min(1)] private int _slotCount = 8;
         [SerializeField] private GameController _gameController;
         [SerializeField] private Transform _uiRoot;
+        #endregion
 
+        #region Unity Lifecycle
         private void Awake()
         {
             var eventBus = new EventBus();
@@ -74,7 +77,9 @@ namespace WheelOfFortune.Installer
                 _gameSettings,
                 eventBus);
         }
+        #endregion
 
+        #region Private Methods
         private void ValidateDependencies(
             IWheelView wheelView,
             IHudView hudView,
@@ -88,10 +93,13 @@ namespace WheelOfFortune.Installer
             if (buttonView == null) Debug.LogError("[GameInstaller] IButtonView not found in scene.");
             if (buttonPresenter == null) Debug.LogError("[GameInstaller] ButtonPresenter not found in scene.");
         }
+        #endregion
 
+        #region Editor Validation
         private void OnValidate()
         {
             if (_slotCount < 1) _slotCount = 1;
         }
+        #endregion
     }
 }

@@ -5,20 +5,26 @@ using UnityEngine;
 using WheelOfFortune.Utility;
 using WheelOfFortune.Domain;
 using WheelOfFortune.Events;
+using WheelOfFortune.Interfaces;
 
 namespace WheelOfFortune.Views
 {
     public sealed class SlotZoomEffect : MonoBehaviour
     {
+        #region Constants
         private const int MaxFlyingMultipliers = 50;
+        #endregion
 
+        #region Private Fields
         private GameObject _clone;
         private SlotSpinBackground _spinBg;
         private List<CanvasGroup> _allFadeGroups = new List<CanvasGroup>();
         private WinEffectPayload _payload;
         private Sequence _zoomSequence;
         private ComponentPool<UnityEngine.UI.Image> _iconPool;
+        #endregion
 
+        #region Public Interface
         public static SlotZoomEffect Play(
             Transform uiRoot,
             WheelSlice winningSlice,
@@ -34,6 +40,19 @@ namespace WheelOfFortune.Views
             return effect;
         }
 
+        public static void ResetSliceAlphas(WheelSlice[] slices)
+        {
+            if (slices == null) return;
+            foreach (var slice in slices)
+            {
+                if (slice == null) continue;
+                var cg = slice.GetComponent<CanvasGroup>();
+                if (cg != null) cg.alpha = 1f;
+            }
+        }
+        #endregion
+
+        #region Execution
         private void Begin(
             WheelSlice winningSlice,
             WheelSlice[] allSlices,
@@ -77,7 +96,9 @@ namespace WheelOfFortune.Views
                 .AppendInterval(_payload.Config.TotalBurstDuration(cappedMultiplier))
                 .OnComplete(OnSequenceComplete);
         }
+        #endregion
 
+        #region Helpers
         private GameObject BuildClone(WheelSlice source, RectTransform srcRect, Vector3 worldCenter)
         {
             var clone = Instantiate(source.gameObject, transform);
@@ -135,24 +156,15 @@ namespace WheelOfFortune.Views
             Destroy(gameObject, 0.2f);
         }
 
-        public static void ResetSliceAlphas(WheelSlice[] slices)
-        {
-            if (slices == null) return;
-            foreach (var slice in slices)
-            {
-                if (slice == null) continue;
-                var cg = slice.GetComponent<CanvasGroup>();
-                if (cg != null) cg.alpha = 1f;
-            }
-        }
-
         private static CanvasGroup GetOrAddCanvasGroup(GameObject go)
         {
             var cg = go.GetComponent<CanvasGroup>();
             if (cg == null) cg = go.AddComponent<CanvasGroup>();
             return cg;
         }
+        #endregion
 
+        #region Unity Lifecycle
         private void OnDestroy()
         {
             if (_zoomSequence != null && _zoomSequence.IsActive())
@@ -163,5 +175,6 @@ namespace WheelOfFortune.Views
             if (!string.IsNullOrEmpty(_payload.ItemId))
                 _payload.EventBus?.Publish(new OnRewardBurstFinished(_payload.ItemId, _payload.RewardMultiplier));
         }
+        #endregion
     }
 }

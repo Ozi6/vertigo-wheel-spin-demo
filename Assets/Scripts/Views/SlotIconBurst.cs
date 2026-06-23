@@ -6,15 +6,19 @@ using WheelOfFortune.Data;
 using WheelOfFortune.Domain;
 using WheelOfFortune.Events;
 using WheelOfFortune.Utility;
+using WheelOfFortune.Interfaces;
 
 namespace WheelOfFortune.Views
 {
     public sealed class SlotIconBurst : MonoBehaviour
     {
+        #region Private Fields
         private Sequence _burstSequence;
         private WinEffectPayload _payload;
         private ComponentPool<Image> _pool;
+        #endregion
 
+        #region Public Interface
         public static SlotIconBurst Play(
             Transform parent,
             Vector3 fromWorld,
@@ -29,7 +33,9 @@ namespace WheelOfFortune.Views
             comp.Begin(fromWorld, Mathf.Max(1, count), payload, pool);
             return comp;
         }
+        #endregion
 
+        #region Execution
         private void Begin(Vector3 fromWorld, int count, WinEffectPayload payload, ComponentPool<Image> pool)
         {
             _payload = payload;
@@ -102,7 +108,9 @@ namespace WheelOfFortune.Views
 
             _burstSequence.Join(seq);
         }
+        #endregion
 
+        #region Helpers
         private static Tween BezierFly(Transform t, Vector3 p0, Vector3 p1, Vector3 p2, WinEffectConfig cfg)
         {
             return DOTween.To(
@@ -117,12 +125,15 @@ namespace WheelOfFortune.Views
                 cfg.FlyDuration)
             .SetEase(cfg.FlyEase);
         }
+        #endregion
 
+        #region Unity Lifecycle
         private void OnDestroy()
         {
             if (_burstSequence != null && _burstSequence.IsActive())
                 _burstSequence.Kill();
             _burstSequence = null;
         }
+        #endregion
     }
 }

@@ -1,6 +1,7 @@
 using UnityEngine;
 using WheelOfFortune.Domain;
 using WheelOfFortune.Events;
+using WheelOfFortune.Interfaces;
 
 namespace WheelOfFortune.StateMachine
 {
