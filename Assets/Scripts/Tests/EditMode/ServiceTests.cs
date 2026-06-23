@@ -39,14 +39,16 @@ namespace WheelOfFortune.Tests.EditMode
                   .SetValue(target, value);
         }
 
-        private static RuntimeWheelData MakeWheelData(SliceDefinition[] slices, int bombSlotIndex, bool hasBomb)
+        private static RuntimeWheelData MakeWheelData(RuntimeSlice[] slices, int bombSlotIndex, bool hasBomb)
         {
             return new RuntimeWheelData(slices, bombSlotIndex, hasBomb);
         }
 
-        private static SliceDefinition MakeSlice(RewardItemSO item, int multiplier)
+        private static RuntimeSlice MakeSlice(RewardItemSO item, int multiplier)
         {
-            return new SliceDefinition(item, multiplier);
+            var reward = item != null ? item.ToData() : default;
+            var weight = item != null ? item.Weight : 1f;
+            return new RuntimeSlice(reward, multiplier, item == null, weight);
         }
 
         private static RewardItemSO MakeReward(string id, float value)
@@ -171,7 +173,7 @@ namespace WheelOfFortune.Tests.EditMode
         {
             var service = new RewardService(_eventBus);
             var item = MakeReward("gold", 100f);
-            service.Collect(item, 1);
+            service.Collect(item.ToData(), 1);
             Assert.AreEqual(1, service.GetCurrentRewards().Entries.Count);
         }
 
@@ -180,8 +182,8 @@ namespace WheelOfFortune.Tests.EditMode
         {
             var service = new RewardService(_eventBus);
             var item = MakeReward("gold", 100f);
-            service.Collect(item, 1);
-            Assert.AreSame(item, service.GetCurrentRewards().Entries[0].Item);
+            service.Collect(item.ToData(), 1);
+            Assert.AreEqual(item.ToData(), service.GetCurrentRewards().Entries[0].Item);
         }
 
         [Test]
@@ -191,7 +193,7 @@ namespace WheelOfFortune.Tests.EditMode
             CollectedRewards received = null;
             _eventBus.Subscribe<OnRewardCollected>(e => received = e.Snapshot);
 
-            service.Collect(MakeReward("gold", 100f), 1);
+            service.Collect(MakeReward("gold", 100f).ToData(), 1);
 
             Assert.IsNotNull(received);
             Assert.AreEqual(1, received.Entries.Count);
@@ -209,8 +211,8 @@ namespace WheelOfFortune.Tests.EditMode
                     firstSnapshot = e.Snapshot;
             });
 
-            service.Collect(MakeReward("gold", 100f), 1);
-            service.Collect(MakeReward("silver", 50f), 1);
+            service.Collect(MakeReward("gold", 100f).ToData(), 1);
+            service.Collect(MakeReward("silver", 50f).ToData(), 1);
 
             Assert.IsNotNull(firstSnapshot);
             Assert.AreEqual(1, firstSnapshot.Entries.Count);
@@ -220,8 +222,8 @@ namespace WheelOfFortune.Tests.EditMode
         public void RewardService_ClearAll_EmptiesRewards()
         {
             var service = new RewardService(_eventBus);
-            service.Collect(MakeReward("gold", 100f), 1);
-            service.Collect(MakeReward("silver", 50f), 1);
+            service.Collect(MakeReward("gold", 100f).ToData(), 1);
+            service.Collect(MakeReward("silver", 50f).ToData(), 1);
             service.ClearAll();
             Assert.AreEqual(0, service.GetCurrentRewards().Entries.Count);
         }
@@ -242,9 +244,9 @@ namespace WheelOfFortune.Tests.EditMode
         public void RewardService_MultipleCollects_AccumulateCorrectly()
         {
             var service = new RewardService(_eventBus);
-            service.Collect(MakeReward("a", 10f), 1);
-            service.Collect(MakeReward("b", 20f), 1);
-            service.Collect(MakeReward("c", 30f), 1);
+            service.Collect(MakeReward("a", 10f).ToData(), 1);
+            service.Collect(MakeReward("b", 20f).ToData(), 1);
+            service.Collect(MakeReward("c", 30f).ToData(), 1);
             Assert.AreEqual(3, service.GetCurrentRewards().Entries.Count);
         }
 
@@ -252,9 +254,9 @@ namespace WheelOfFortune.Tests.EditMode
         public void RewardService_ClearThenCollect_WorksCorrectly()
         {
             var service = new RewardService(_eventBus);
-            service.Collect(MakeReward("a", 10f), 1);
+            service.Collect(MakeReward("a", 10f).ToData(), 1);
             service.ClearAll();
-            service.Collect(MakeReward("b", 20f), 1);
+            service.Collect(MakeReward("b", 20f).ToData(), 1);
             Assert.AreEqual(1, service.GetCurrentRewards().Entries.Count);
         }
 
@@ -353,7 +355,7 @@ namespace WheelOfFortune.Tests.EditMode
 
             SpinResult result = service.Spin(wheelData);
 
-            Assert.AreSame(rewardB, result.RewardItem);
+            Assert.AreEqual(rewardB.ToData(), result.RewardItem);
         }
 
         [Test]

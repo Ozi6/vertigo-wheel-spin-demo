@@ -97,6 +97,7 @@ namespace WheelOfFortune.Tests.EditMode
                 buttonView ?? new StubButtonView(),
                 null, CaptureTransition,
                 randomStrategy,
+                null,
                 revive, giveUp, null);
 
             return context;

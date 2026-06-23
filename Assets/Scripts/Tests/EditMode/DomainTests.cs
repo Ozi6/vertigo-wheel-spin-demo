@@ -17,8 +17,8 @@ namespace WheelOfFortune.Tests.EditMode
         public void CollectedRewards_Add_IncreasesCount()
         {
             var rewards = new CollectedRewards();
-            rewards.Add(null, 1);
-            rewards.Add(null, 1);
+            rewards.Add(default(RewardData), 1);
+            rewards.Add(default(RewardData), 1);
 
             Assert.AreEqual(2, rewards.Entries.Count);
         }
@@ -27,8 +27,8 @@ namespace WheelOfFortune.Tests.EditMode
         public void CollectedRewards_Clear_EmptiesInventory()
         {
             var rewards = new CollectedRewards();
-            rewards.Add(null, 1);
-            rewards.Add(null, 1);
+            rewards.Add(default(RewardData), 1);
+            rewards.Add(default(RewardData), 1);
             rewards.Clear();
 
             Assert.AreEqual(0, rewards.Entries.Count);
@@ -38,10 +38,10 @@ namespace WheelOfFortune.Tests.EditMode
         public void CollectedRewards_Clone_IsIndependent()
         {
             var original = new CollectedRewards();
-            original.Add(null, 1);
+            original.Add(default(RewardData), 1);
 
             var clone = original.Clone();
-            clone.Add(null, 1);
+            clone.Add(default(RewardData), 1);
 
             Assert.AreEqual(1, original.Entries.Count);
             Assert.AreEqual(2, clone.Entries.Count);
@@ -51,8 +51,8 @@ namespace WheelOfFortune.Tests.EditMode
         public void CollectedRewards_Clone_ContainsSameItems()
         {
             var original = new CollectedRewards();
-            original.Add(null, 1);
-            original.Add(null, 1);
+            original.Add(default(RewardData), 1);
+            original.Add(default(RewardData), 1);
 
             var clone = original.Clone();
 
@@ -71,8 +71,8 @@ namespace WheelOfFortune.Tests.EditMode
         [Test]
         public void SpinResult_IsBombFlag_ReflectsCorrectly()
         {
-            var bombResult = new SpinResult(null, 1, true, 2);
-            var rewardResult = new SpinResult(null, 1, false, 4);
+            var bombResult = new SpinResult(default(RewardData), 1, true, 2);
+            var rewardResult = new SpinResult(default(RewardData), 1, false, 4);
 
             Assert.IsTrue(bombResult.IsBomb);
             Assert.IsFalse(rewardResult.IsBomb);
@@ -81,7 +81,7 @@ namespace WheelOfFortune.Tests.EditMode
         [Test]
         public void SpinResult_SliceIndex_StoredCorrectly()
         {
-            var result = new SpinResult(null, 1, false, 7);
+            var result = new SpinResult(default(RewardData), 1, false, 7);
             Assert.AreEqual(7, result.SliceIndex);
         }
 

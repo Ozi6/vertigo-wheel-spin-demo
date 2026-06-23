@@ -108,6 +108,7 @@ namespace WheelOfFortune.Tests.EditMode
                 _wheelFactory,
                 TransitionTo,
                 _randomStrategy,
+                null,
                 revive,
                 giveUp,
                 null);

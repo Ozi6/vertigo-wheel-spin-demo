@@ -57,11 +57,14 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
 
     internal sealed class StubRewardService : IRewardService
     {
-        public readonly List<RewardItemSO> CollectedItems = new List<RewardItemSO>();
+        public readonly List<RewardData> CollectedItems = new List<RewardData>();
         public int ClearAllCallCount;
         public int ResetCallCount;
 
-        public void Collect(RewardItemSO item) => CollectedItems.Add(item);
+        public void Collect(RewardData item) => Collect(item, 1);
+
+        public void Collect(RewardData item, int multiplier)
+            => CollectedItems.Add(item);
 
         public void ClearAll()
         {
@@ -82,9 +85,6 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
                 r.Add(item, 5);
             return r;
         }
-
-        void IRewardService.Collect(RewardItemSO item, int multiplier)
-            => Collect(item);
     }
 
     internal sealed class StubWheelView : IWheelView
@@ -159,7 +159,7 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
             throw new NotImplementedException();
         }
 
-        void IHudView.Initialize(IEventBus eventBus)
+        void IHudView.Initialize(IEventBus eventBus, IRewardRegistry registry)
         {
             throw new NotImplementedException();
         }
@@ -200,6 +200,11 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         public void SimulateConfirmCollect() => _onConfirm?.Invoke();
         public void SimulateCancelCollect() => _onCancel?.Invoke();
 
+        void IDialogView.Initialize(IRewardRegistry registry)
+        {
+            throw new NotImplementedException();
+        }
+
         void IDialogView.UpdateReviveCost(int cost)
         {
             throw new NotImplementedException();
@@ -217,10 +222,21 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         public bool CollectVisible = false;
         public bool ReviveInteractable = true;
         public int LastReviveCost;
+
         public int SetSpinInteractableCallCount;
         public int SetCollectVisibleCallCount;
         public int SetReviveInteractableCallCount;
         public int UpdateReviveCostCallCount;
+
+        public ICommand SpinCommand { get; private set; }
+        public ICommand CollectCommand { get; private set; }
+        public int SetCommandsCallCount { get; private set; }
+
+        public event Action OnSpinClicked;
+        public event Action OnCollectClicked;
+
+        public void SimulateSpinClicked() => OnSpinClicked?.Invoke();
+        public void SimulateCollectClicked() => OnCollectClicked?.Invoke();
 
         public void SetSpinInteractable(bool interactable)
         {
@@ -244,6 +260,13 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         {
             LastReviveCost = cost;
             UpdateReviveCostCallCount++;
+        }
+
+        public void SetCommands(ICommand spinCommand, ICommand collectCommand)
+        {
+            SpinCommand = spinCommand;
+            CollectCommand = collectCommand;
+            SetCommandsCallCount++;
         }
     }
 
