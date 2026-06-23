@@ -13,6 +13,7 @@ namespace WheelOfFortune.Views
 {
     public sealed class HudPresenter : MonoBehaviour, IHudView
     {
+        #region Inspector Fields
         [SerializeField] private RectTransform _zoneStrip_value;
         [SerializeField] private TextMeshProUGUI _zoneCellPrefab_value;
         [SerializeField] private Transform _rewardsContainer_value;
@@ -30,7 +31,9 @@ namespace WheelOfFortune.Views
         [SerializeField] private Color _colorSafe = new Color(0.75f, 0.75f, 0.75f);
         [SerializeField] private Color _colorSuper = new Color(1.00f, 0.84f, 0.20f);
         [SerializeField] private Color _colorCurrent = new Color(0.20f, 0.85f, 0.25f);
+        #endregion
 
+        #region Private Fields
         private readonly List<TextMeshProUGUI> _cells = new List<TextMeshProUGUI>();
         private readonly List<RewardCard> _rewardCards = new List<RewardCard>();
         private readonly Dictionary<string, RewardCard> _cardById = new Dictionary<string, RewardCard>();
@@ -39,7 +42,9 @@ namespace WheelOfFortune.Views
         private IEventBus _eventBus;
         private IRewardRegistry _registry;
         private bool _isInitialized;
+        #endregion
 
+        #region Unity Lifecycle
         private void Awake()
         {
             if (_rewardCardPrefab_value != null)
@@ -69,13 +74,16 @@ namespace WheelOfFortune.Views
                 _eventBus.Unsubscribe<OnBalanceChange>(OnBalanceChanged);
         }
 
-        private void OnBalanceChanged(OnBalanceChange evt)
+        private void OnDestroy()
         {
-            UpdateCurrencyDisplay(evt.NewBalance);
+            _scrollTween?.Kill();
+            _pool?.Clear();
+            if (_eventBus != null)
+                _eventBus.Unsubscribe<OnBalanceChange>(OnBalanceChanged);
         }
+        #endregion
 
-        public Transform GetRewardsPanelTarget() => _rewardsContainer_value;
-
+        #region Public Interface
         public void Initialize(IEventBus eventBus, IRewardRegistry registry)
         {
             _eventBus = eventBus;
@@ -83,6 +91,8 @@ namespace WheelOfFortune.Views
             _isInitialized = true;
             _eventBus.Subscribe<OnBalanceChange>(OnBalanceChanged);
         }
+
+        public Transform GetRewardsPanelTarget() => _rewardsContainer_value;
 
         public void UpdateZoneDisplay(ZoneProgressModel progress)
         {
@@ -160,6 +170,13 @@ namespace WheelOfFortune.Views
                 card.SetMultiplier(finalValue);
             };
         }
+        #endregion
+
+        #region Private Methods
+        private void OnBalanceChanged(OnBalanceChange evt)
+        {
+            UpdateCurrencyDisplay(evt.NewBalance);
+        }
 
         private void BuildStrip()
         {
@@ -221,14 +238,6 @@ namespace WheelOfFortune.Views
             return _colorNormal;
         }
 
-        private void OnDestroy()
-        {
-            _scrollTween?.Kill();
-            _pool?.Clear();
-            if (_eventBus != null)
-                _eventBus.Unsubscribe<OnBalanceChange>(OnBalanceChanged);
-        }
-
         private void OnValidate()
         {
             if (_safeZoneInterval < 1) _safeZoneInterval = 1;
@@ -255,5 +264,6 @@ namespace WheelOfFortune.Views
                     _currencyDisplay_value = txt;
             }
         }
+        #endregion
     }
 }

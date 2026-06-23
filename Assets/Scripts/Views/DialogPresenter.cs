@@ -11,6 +11,7 @@ namespace WheelOfFortune.Views
 {
     public sealed class DialogPresenter : MonoBehaviour, IDialogView
     {
+        #region Inspector Fields
         [SerializeField] private GameObject _bombScreen;
         [SerializeField] private Transform _bombRewardsGrid_value;
         [SerializeField] private Button _reviveButton_value;
@@ -23,7 +24,9 @@ namespace WheelOfFortune.Views
         [SerializeField] private Button _cancelButton_value;
 
         [SerializeField] private RewardCard _rewardCardPrefab_value;
+        #endregion
 
+        #region Private Fields
         private readonly List<RewardCard> _bombCards = new List<RewardCard>();
         private readonly List<RewardCard> _collectCards = new List<RewardCard>();
         private ComponentPool<RewardCard> _pool;
@@ -36,7 +39,9 @@ namespace WheelOfFortune.Views
         private Action _onGiveUpCallback;
         private Action _onConfirmCallback;
         private Action _onCancelCallback;
+        #endregion
 
+        #region Initialization & Lifecycle
         public void Initialize(IEventBus eventBus, IRewardRegistry registry)
         {
             _eventBus = eventBus;
@@ -82,11 +87,20 @@ namespace WheelOfFortune.Views
             }
         }
 
+        private void OnDestroy()
+        {
+            _pool?.Clear();
+        }
+        #endregion
+
+        #region UI Event Handlers
         private void HandleReviveClicked() => _onReviveCallback?.Invoke();
         private void HandleGiveUpClicked() => _onGiveUpCallback?.Invoke();
         private void HandleConfirmClicked() => _onConfirmCallback?.Invoke();
         private void HandleCancelClicked() => _onCancelCallback?.Invoke();
+        #endregion
 
+        #region Public Interface
         public void ShowBombScreen(CollectedRewards lostRewards, Action onRevive, Action onGiveUp)
         {
             PopulateGrid(_bombRewardsGrid_value, _bombCards, lostRewards);
@@ -107,6 +121,22 @@ namespace WheelOfFortune.Views
             if (_collectScreen != null) _collectScreen.SetActive(true);
         }
 
+        public void Hide()
+        {
+            if (_bombScreen != null) _bombScreen.SetActive(false);
+            if (_collectScreen != null) _collectScreen.SetActive(false);
+
+            _onReviveCallback = null;
+            _onGiveUpCallback = null;
+            _onConfirmCallback = null;
+            _onCancelCallback = null;
+
+            ClearGrid(_bombCards);
+            ClearGrid(_collectCards);
+        }
+        #endregion
+
+        #region Private Methods
         private void OnBalanceChanged(Events.OnBalanceChange evt)
         {
             _currentBalance = evt.NewBalance;
@@ -125,20 +155,6 @@ namespace WheelOfFortune.Views
         {
             if (_reviveButton_value != null)
                 _reviveButton_value.interactable = _currentBalance >= _currentCost;
-        }
-
-        public void Hide()
-        {
-            if (_bombScreen != null) _bombScreen.SetActive(false);
-            if (_collectScreen != null) _collectScreen.SetActive(false);
-
-            _onReviveCallback = null;
-            _onGiveUpCallback = null;
-            _onConfirmCallback = null;
-            _onCancelCallback = null;
-
-            ClearGrid(_bombCards);
-            ClearGrid(_collectCards);
         }
 
         private void PopulateGrid(Transform grid, List<RewardCard> cards, CollectedRewards rewards)
@@ -163,11 +179,6 @@ namespace WheelOfFortune.Views
             foreach (var card in cards)
                 if (card != null) _pool.Release(card);
             cards.Clear();
-        }
-
-        private void OnDestroy()
-        {
-            _pool?.Clear();
         }
 
         private void OnValidate()
@@ -204,5 +215,6 @@ namespace WheelOfFortune.Views
                     _reviveCostDisplay_value = txt;
             }
         }
+        #endregion
     }
 }
