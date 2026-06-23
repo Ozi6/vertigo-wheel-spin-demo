@@ -10,15 +10,28 @@ namespace WheelOfFortune.Controller
 {
     public sealed class GameController : MonoBehaviour
     {
+        #region Inspector Fields
         [SerializeField] private WinEffectConfig _winEffectConfig_value;
+        #endregion
 
+        #region Private Fields
         private GameContext _ctx;
         private IGameState _currentState;
         private IdleState _idleState;
         private ICommand _spinCommand;
         private ICommand _collectCommand;
         private IEventBus _eventBus;
+        #endregion
 
+        #region Unity Lifecycle
+        private void OnDestroy()
+        {
+            if (_eventBus != null)
+                _eventBus.Unsubscribe<OnStateTransition>(OnStateTransitionRequested);
+        }
+        #endregion
+
+        #region Public Interface
         public void Init(
             IZoneService zoneService,
             ISpinService spinService,
@@ -59,6 +72,12 @@ namespace WheelOfFortune.Controller
             TransitionTo(_idleState);
         }
 
+#if UNITY_EDITOR
+        public IGameState CurrentStateForTesting => _currentState;
+#endif
+        #endregion
+
+        #region Private Methods
         private void OnStateTransitionRequested(OnStateTransition evt)
         {
             TransitionTo(evt.NewState);
@@ -70,15 +89,6 @@ namespace WheelOfFortune.Controller
             _currentState = next;
             _currentState.Enter(_ctx);
         }
-
-        private void OnDestroy()
-        {
-            if (_eventBus != null)
-                _eventBus.Unsubscribe<OnStateTransition>(OnStateTransitionRequested);
-        }
-
-#if UNITY_EDITOR
-        public IGameState CurrentStateForTesting => _currentState;
-#endif
+        #endregion
     }
 }

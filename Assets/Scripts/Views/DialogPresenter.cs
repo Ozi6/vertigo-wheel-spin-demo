@@ -12,6 +12,7 @@ namespace WheelOfFortune.Views
 {
     public sealed class DialogPresenter : MonoBehaviour, IDialogView
     {
+        #region Inspector Fields
         [SerializeField] private GameObject _bombScreen;
         [SerializeField] private Transform _bombRewardsGrid_value;
         [SerializeField] private Button _reviveButton_value;
@@ -24,7 +25,9 @@ namespace WheelOfFortune.Views
         [SerializeField] private Button _cancelButton_value;
 
         [SerializeField] private RewardCard _rewardCardPrefab_value;
+        #endregion
 
+        #region Private Fields
         private readonly List<RewardCard> _bombCards = new List<RewardCard>();
         private readonly List<RewardCard> _collectCards = new List<RewardCard>();
         private ComponentPool<RewardCard> _pool;
@@ -34,17 +37,9 @@ namespace WheelOfFortune.Views
         private int _currentBalance;
         private bool _isInitialized;
         private bool _isSubscribed;
+        #endregion
 
-        public void Initialize(IEventBus eventBus, IRewardRegistry registry)
-        {
-            _eventBus = eventBus;
-            _registry = registry;
-            _isInitialized = true;
-            
-            if (isActiveAndEnabled)
-                SubscribeEvents();
-        }
-
+        #region Unity Lifecycle
         private void Awake()
         {
             if (_rewardCardPrefab_value != null)
@@ -85,103 +80,6 @@ namespace WheelOfFortune.Views
             UnsubscribeEvents();
         }
 
-        private void SubscribeEvents()
-        {
-            if (_isSubscribed || _eventBus == null) return;
-            _eventBus.Subscribe<OnBalanceChange>(OnBalanceChanged);
-            _eventBus.Subscribe<OnReviveCostChanged>(OnReviveCostChanged);
-            _isSubscribed = true;
-        }
-
-        private void UnsubscribeEvents()
-        {
-            if (!_isSubscribed || _eventBus == null) return;
-            _eventBus.Unsubscribe<OnBalanceChange>(OnBalanceChanged);
-            _eventBus.Unsubscribe<OnReviveCostChanged>(OnReviveCostChanged);
-            _isSubscribed = false;
-        }
-
-        private void HandleReviveClicked() => _eventBus?.Publish(new OnReviveRequested());
-        private void HandleGiveUpClicked() => _eventBus?.Publish(new OnGiveUpRequested());
-        private void HandleConfirmClicked() => _eventBus?.Publish(new OnCollectConfirmed());
-        private void HandleCancelClicked() => _eventBus?.Publish(new OnCollectCanceled());
-
-        public void ShowBombScreen(CollectedRewards lostRewards, int currentReviveCost, bool canAfford)
-        {
-            _currentCost = currentReviveCost;
-            if (_reviveCostDisplay_value != null)
-                _reviveCostDisplay_value.text = _currentCost.ToString();
-
-            if (_reviveButton_value != null)
-                _reviveButton_value.interactable = canAfford;
-
-            PopulateGrid(_bombRewardsGrid_value, _bombCards, lostRewards);
-
-            if (_bombScreen != null) _bombScreen.SetActive(true);
-            if (_collectScreen != null) _collectScreen.SetActive(false);
-        }
-
-        public void ShowCollectConfirmScreen(CollectedRewards rewards)
-        {
-            PopulateGrid(_collectRewardsGrid_value, _collectCards, rewards);
-
-            if (_bombScreen != null) _bombScreen.SetActive(false);
-            if (_collectScreen != null) _collectScreen.SetActive(true);
-        }
-
-        public void Hide()
-        {
-            if (_bombScreen != null) _bombScreen.SetActive(false);
-            if (_collectScreen != null) _collectScreen.SetActive(false);
-
-            ClearGrid(_bombCards);
-            ClearGrid(_collectCards);
-        }
-
-        private void OnBalanceChanged(OnBalanceChange evt)
-        {
-            _currentBalance = evt.NewBalance;
-            UpdateInteractable();
-        }
-
-        private void OnReviveCostChanged(OnReviveCostChanged evt)
-        {
-            _currentCost = evt.NextCost;
-            if (_reviveCostDisplay_value != null)
-                _reviveCostDisplay_value.text = _currentCost.ToString();
-            UpdateInteractable();
-        }
-
-        private void UpdateInteractable()
-        {
-            if (_reviveButton_value != null)
-                _reviveButton_value.interactable = _currentBalance >= _currentCost;
-        }
-
-        private void PopulateGrid(Transform grid, List<RewardCard> cards, CollectedRewards rewards)
-        {
-            ClearGrid(cards);
-            if (grid == null || _pool == null) return;
-
-            var stacks = RewardStackBuilder.Build(rewards.Entries);
-            foreach (var stack in stacks)
-            {
-                var card = _pool.Get(grid);
-                card.name = $"ui_card_{stack.Item.Id}_value";
-                var icon = _registry?.GetReward(stack.Item.Id)?.Icon;
-                card.Setup(stack, icon);
-                cards.Add(card);
-            }
-        }
-
-        private void ClearGrid(List<RewardCard> cards)
-        {
-            if (_pool == null) return;
-            foreach (var card in cards)
-                if (card != null) _pool.Release(card);
-            cards.Clear();
-        }
-
         private void OnValidate()
         {
             var buttons = GetComponentsInChildren<Button>(true);
@@ -216,5 +114,119 @@ namespace WheelOfFortune.Views
                     _reviveCostDisplay_value = txt;
             }
         }
+        #endregion
+
+        #region Public Interface
+        public void Initialize(IEventBus eventBus, IRewardRegistry registry)
+        {
+            _eventBus = eventBus;
+            _registry = registry;
+            _isInitialized = true;
+            
+            if (isActiveAndEnabled)
+                SubscribeEvents();
+        }
+
+        public void ShowBombScreen(CollectedRewards lostRewards, int currentReviveCost, bool canAfford)
+        {
+            _currentCost = currentReviveCost;
+            if (_reviveCostDisplay_value != null)
+                _reviveCostDisplay_value.text = _currentCost.ToString();
+
+            if (_reviveButton_value != null)
+                _reviveButton_value.interactable = canAfford;
+
+            PopulateGrid(_bombRewardsGrid_value, _bombCards, lostRewards);
+
+            if (_bombScreen != null) _bombScreen.SetActive(true);
+            if (_collectScreen != null) _collectScreen.SetActive(false);
+        }
+
+        public void ShowCollectConfirmScreen(CollectedRewards rewards)
+        {
+            PopulateGrid(_collectRewardsGrid_value, _collectCards, rewards);
+
+            if (_bombScreen != null) _bombScreen.SetActive(false);
+            if (_collectScreen != null) _collectScreen.SetActive(true);
+        }
+
+        public void Hide()
+        {
+            if (_bombScreen != null) _bombScreen.SetActive(false);
+            if (_collectScreen != null) _collectScreen.SetActive(false);
+
+            ClearGrid(_bombCards);
+            ClearGrid(_collectCards);
+        }
+        #endregion
+
+        #region Event Handlers
+        private void HandleReviveClicked() => _eventBus?.Publish(new OnReviveRequested());
+        private void HandleGiveUpClicked() => _eventBus?.Publish(new OnGiveUpRequested());
+        private void HandleConfirmClicked() => _eventBus?.Publish(new OnCollectConfirmed());
+        private void HandleCancelClicked() => _eventBus?.Publish(new OnCollectCanceled());
+
+        private void OnBalanceChanged(OnBalanceChange evt)
+        {
+            _currentBalance = evt.NewBalance;
+            UpdateInteractable();
+        }
+
+        private void OnReviveCostChanged(OnReviveCostChanged evt)
+        {
+            _currentCost = evt.NextCost;
+            if (_reviveCostDisplay_value != null)
+                _reviveCostDisplay_value.text = _currentCost.ToString();
+            UpdateInteractable();
+        }
+        #endregion
+
+        #region Private Methods
+        private void SubscribeEvents()
+        {
+            if (_isSubscribed || _eventBus == null) return;
+            _eventBus.Subscribe<OnBalanceChange>(OnBalanceChanged);
+            _eventBus.Subscribe<OnReviveCostChanged>(OnReviveCostChanged);
+            _isSubscribed = true;
+        }
+
+        private void UnsubscribeEvents()
+        {
+            if (!_isSubscribed || _eventBus == null) return;
+            _eventBus.Unsubscribe<OnBalanceChange>(OnBalanceChanged);
+            _eventBus.Unsubscribe<OnReviveCostChanged>(OnReviveCostChanged);
+            _isSubscribed = false;
+        }
+
+        private void UpdateInteractable()
+        {
+            if (_reviveButton_value != null)
+                _reviveButton_value.interactable = _currentBalance >= _currentCost;
+        }
+
+        private void PopulateGrid(Transform grid, List<RewardCard> cards, CollectedRewards rewards)
+        {
+            ClearGrid(cards);
+            if (grid == null || _pool == null) return;
+
+            var stacks = RewardStackBuilder.Build(rewards.Entries);
+            foreach (var stack in stacks)
+            {
+                var card = _pool.Get(grid);
+                card.name = $"ui_card_{stack.Item.Id}_value";
+                var icon = _registry?.GetReward(stack.Item.Id)?.Icon;
+                card.Setup(stack, icon);
+                cards.Add(card);
+            }
+        }
+
+        private void ClearGrid(List<RewardCard> cards)
+        {
+            if (_pool == null) return;
+            foreach (var card in cards)
+                if (card != null) _pool.Release(card);
+            cards.Clear();
+        }
+        #endregion
     }
 }
