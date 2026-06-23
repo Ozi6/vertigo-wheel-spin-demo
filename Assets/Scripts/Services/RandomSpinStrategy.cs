@@ -1,14 +1,16 @@
+using System;
 using WheelOfFortune.Domain;
 using WheelOfFortune.Interfaces;
-using Random = UnityEngine.Random;
 
 namespace WheelOfFortune.Services
 {
     public class RandomSpinStrategy : IWheelSpinStrategy
     {
+        private readonly Random _rng = new Random();
+
         public int GetWinningIndex(RuntimeWheelData wheelData)
         {
-            return Random.Range(0, wheelData.Slices.Length);
+            return _rng.Next(0, wheelData.Slices.Length);
         }
     }
 }
