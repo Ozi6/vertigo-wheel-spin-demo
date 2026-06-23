@@ -13,8 +13,12 @@ namespace WheelOfFortune.StateMachine
             _lostRewards = _ctx.RewardService.GetCurrentRewards().Clone();
             _ctx.RewardService.ClearAll();
 
+            bool canAfford = _ctx.CurrencyService.CanAfford(_ctx.ReviveCommand.CurrentCost);
+
             _ctx.DialogView.ShowBombScreen(
                 _lostRewards,
+                _ctx.ReviveCommand.CurrentCost,
+                canAfford,
                 onRevive: OnReviveClicked,
                 onGiveUp: OnGiveUpClicked);
         }

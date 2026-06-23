@@ -300,7 +300,7 @@ namespace WheelOfFortune.Tests.EditMode
             var wheelData = MakeWheelData(new[]
             {
                 MakeSlice(reward, 1),
-                MakeSlice(reward, 1)
+                MakeSlice(null, 0)
             }, 1, true);
 
             SpinResult result = service.Spin(wheelData);
@@ -317,7 +317,7 @@ namespace WheelOfFortune.Tests.EditMode
             var wheelData = MakeWheelData(new[]
             {
                 MakeSlice(reward, 1),
-                MakeSlice(reward, 1)
+                MakeSlice(null, 0)
             }, 1, true);
 
             SpinResult result = service.Spin(wheelData);

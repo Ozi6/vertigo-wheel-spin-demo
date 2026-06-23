@@ -119,8 +119,15 @@ namespace WheelOfFortune.Views
         #endregion
 
         #region Public Interface
-        public void ShowBombScreen(CollectedRewards lostRewards, Action onRevive, Action onGiveUp)
+        public void ShowBombScreen(CollectedRewards lostRewards, int currentReviveCost, bool canAfford, Action onRevive, Action onGiveUp)
         {
+            _currentCost = currentReviveCost;
+            if (_reviveCostDisplay_value != null)
+                _reviveCostDisplay_value.text = _currentCost.ToString();
+
+            if (_reviveButton_value != null)
+                _reviveButton_value.interactable = canAfford;
+
             PopulateGrid(_bombRewardsGrid_value, _bombCards, lostRewards);
             _onReviveCallback = onRevive;
             _onGiveUpCallback = onGiveUp;
@@ -205,13 +212,13 @@ namespace WheelOfFortune.Views
             foreach (var btn in buttons)
             {
                 string nameLower = btn.name.ToLower();
-                if (nameLower.Contains("revive"))
+                if (nameLower.Contains("revive") && nameLower.EndsWith("_value"))
                     _reviveButton_value = btn;
-                else if (nameLower.Contains("give") || nameLower.Contains("up"))
+                else if ((nameLower.Contains("give") || nameLower.Contains("up")) && nameLower.EndsWith("_value"))
                     _giveUpButton_value = btn;
-                else if (nameLower.Contains("confirm") || nameLower.Contains("accept"))
+                else if ((nameLower.Contains("confirm") || nameLower.Contains("accept")) && nameLower.EndsWith("_value"))
                     _confirmButton_value = btn;
-                else if (nameLower.Contains("cancel") || nameLower.Contains("close"))
+                else if ((nameLower.Contains("cancel") || nameLower.Contains("close")) && nameLower.EndsWith("_value"))
                     _cancelButton_value = btn;
             }
 
@@ -219,9 +226,9 @@ namespace WheelOfFortune.Views
             foreach (var t in transforms)
             {
                 string nameLower = t.name.ToLower();
-                if (nameLower.Contains("bomb") && (nameLower.Contains("grid") || nameLower.Contains("container")))
+                if (nameLower.Contains("bomb") && (nameLower.Contains("grid") || nameLower.Contains("container")) && nameLower.EndsWith("_value"))
                     _bombRewardsGrid_value = t;
-                else if (nameLower.Contains("collect") && (nameLower.Contains("grid") || nameLower.Contains("container")))
+                else if (nameLower.Contains("collect") && (nameLower.Contains("grid") || nameLower.Contains("container")) && nameLower.EndsWith("_value"))
                     _collectRewardsGrid_value = t;
             }
 
@@ -229,7 +236,7 @@ namespace WheelOfFortune.Views
             foreach (var txt in texts)
             {
                 string nameLower = txt.name.ToLower();
-                if (nameLower.Contains("cost") || nameLower.Contains("revive"))
+                if ((nameLower.Contains("cost") || nameLower.Contains("revive")) && nameLower.EndsWith("_value"))
                     _reviveCostDisplay_value = txt;
             }
         }

@@ -63,9 +63,9 @@ namespace WheelOfFortune.Views
             foreach (var btn in buttons)
             {
                 string nameLower = btn.name.ToLower();
-                if (nameLower.Contains("spin"))
+                if (nameLower.Contains("spin") && nameLower.EndsWith("_value"))
                     _spinButton_value = btn;
-                else if (nameLower.Contains("collect"))
+                else if (nameLower.Contains("collect") && nameLower.EndsWith("_value"))
                     _collectButton_value = btn;
             }
         }

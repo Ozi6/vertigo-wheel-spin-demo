@@ -178,10 +178,12 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         private Action _onCancel;
         private IEventBus _eventBus;
 
-        public void ShowBombScreen(CollectedRewards lostRewards, Action onRevive, Action onGiveUp)
+        public void ShowBombScreen(CollectedRewards lostRewards, int currentReviveCost, bool canAfford, Action onRevive, Action onGiveUp)
         {
             BombScreenShown = true;
             LastLostRewards = lostRewards;
+            LastReviveCost = currentReviveCost;
+            ReviveInteractable = canAfford;
             _onRevive = onRevive;
             _onGiveUp = onGiveUp;
         }

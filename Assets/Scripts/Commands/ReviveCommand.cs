@@ -12,6 +12,8 @@ namespace WheelOfFortune.Commands
         private readonly int _startingCost;
         private int _nextCost;
 
+        public int CurrentCost => _nextCost;
+
         public ReviveCommand(
             ICurrencyService currencyService,
             IEventBus eventBus,
