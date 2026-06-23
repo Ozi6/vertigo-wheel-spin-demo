@@ -178,3 +178,5 @@ Views are exposed through interfaces (IWheelView, IHudView, etc.) and coordinate
 ### Test Runner
 
 A Test Runner for different services and mechanism of the project is implemented using built-in Unity systems. Can be run using Window > General > Test Runner in Unity topbar. All prepared tests give a success as of 23/06/2026.
+
+A spinning test editor is also included in the Tools > Wheel of Fortune > Developer Window section.
