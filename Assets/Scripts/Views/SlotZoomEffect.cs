@@ -184,11 +184,11 @@ namespace WheelOfFortune.Views
 
         private void OnDestroy()
         {
-            if (_zoomSequence != null)
+            if (_zoomSequence != null && _zoomSequence.IsActive())
             {
                 _zoomSequence.Kill();
-                _zoomSequence = null;
             }
+            _zoomSequence = null;
             _onBurstFinished?.Invoke();
         }
     }

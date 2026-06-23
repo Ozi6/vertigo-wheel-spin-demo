@@ -68,7 +68,7 @@ namespace WheelOfFortune.Data
         public Ease FlyEase => _flyEase;
 
         public float TotalBurstDuration(int count) =>
-            _popDuration + _burstMoveDuration + _flyDuration + _flyStagger * (Mathf.Max(1, count) - 1) + 0.05f;
+            _popDuration + _burstMoveDuration + _flyDuration + _flyStagger * (Mathf.Max(1, count) - 1) + 0.3f;
 
         private void OnValidate()
         {

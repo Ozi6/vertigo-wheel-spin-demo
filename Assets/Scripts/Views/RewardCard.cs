@@ -16,8 +16,6 @@ namespace WheelOfFortune.Views
         [SerializeField, Min(0.01f)] private float _punchDuration = 0.22f;
         [SerializeField, Min(1)] private int _punchVibrato = 1;
 
-        private Tweener _punchTween;
-
         public void Setup(RewardStack stack, Sprite icon)
         {
             if (_icon_value != null)
@@ -53,11 +51,17 @@ namespace WheelOfFortune.Views
 
         private void PunchScale()
         {
-            _punchTween?.Kill(true);
+            transform.DOComplete();
             transform.localScale = Vector3.one;
-            _punchTween = transform
+            transform
                 .DOPunchScale(Vector3.one * _punchScaleAmount, _punchDuration, _punchVibrato, 0.5f)
                 .SetEase(Ease.OutQuad);
+        }
+
+        private void OnDisable()
+        {
+            transform.DOKill();
+            transform.localScale = Vector3.one;
         }
 
         private void OnValidate()

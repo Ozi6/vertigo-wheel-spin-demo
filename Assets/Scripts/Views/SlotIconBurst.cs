@@ -119,11 +119,11 @@ namespace WheelOfFortune.Views
 
         private void OnDestroy()
         {
-            if (_burstSequence != null)
+            if (_burstSequence != null && _burstSequence.IsActive())
             {
                 _burstSequence.Kill();
-                _burstSequence = null;
             }
+            _burstSequence = null;
         }
     }
 }
