@@ -6,5 +6,6 @@ namespace WheelOfFortune.Interfaces
     public interface IWheelFactory
     {
         RuntimeWheelData BuildWheel(ZoneType zoneType, int zoneNumber, IWheelView wheelView);
+        RuntimeWheelData CurrentWheelData { get; }
     }
 }

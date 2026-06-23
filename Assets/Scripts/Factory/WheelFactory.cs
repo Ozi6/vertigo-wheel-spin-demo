@@ -14,6 +14,9 @@ namespace WheelOfFortune.Factory
         private readonly SliceDrawer _sliceDrawer;
         private readonly BombInjector _bombInjector;
         private WheelSlice[] _currentSlices;
+        private RuntimeWheelData _currentWheelData;
+
+        public RuntimeWheelData CurrentWheelData => _currentWheelData;
 
         public WheelFactory(
             ISliceFactory sliceFactory,
@@ -69,7 +72,8 @@ namespace WheelOfFortune.Factory
                 runtimeSlices[i] = new RuntimeSlice(data, def.Multiplier, def.IsBomb, def.Weight);
             }
 
-            return new RuntimeWheelData(runtimeSlices, bombSlotIndex, config.HasBomb, config.IsWeighted);
+            _currentWheelData = new RuntimeWheelData(runtimeSlices, bombSlotIndex, config.HasBomb, config.IsWeighted);
+            return _currentWheelData;
         }
 
         private void ClearExistingSlices()

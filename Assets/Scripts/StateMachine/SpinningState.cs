@@ -16,10 +16,7 @@ namespace WheelOfFortune.StateMachine
             _ctx.ButtonView.SetSpinInteractable(false);
             _ctx.ButtonView.SetCollectVisible(false);
 
-            var zoneType = _ctx.ZoneService.GetCurrentZoneType();
-            var zoneNumber = _ctx.ZoneService.GetCurrentZoneNumber();
-
-            var wheelData = _ctx.WheelFactory.BuildWheel(zoneType, zoneNumber, _ctx.WheelView);
+            var wheelData = _ctx.WheelFactory.CurrentWheelData;
 
             IWheelSpinStrategy strategy = wheelData.IsWeighted
                 ? _ctx.WeightedStrategy

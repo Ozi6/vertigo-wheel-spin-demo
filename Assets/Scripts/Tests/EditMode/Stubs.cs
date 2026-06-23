@@ -262,6 +262,8 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         public ZoneType LastZoneType;
         public int LastZoneNumber;
 
+        public RuntimeWheelData CurrentWheelData => DataToReturn;
+
         public RuntimeWheelData BuildWheel(ZoneType zoneType, int zoneNumber, IWheelView wheelView)
         {
             BuildCallCount++;
