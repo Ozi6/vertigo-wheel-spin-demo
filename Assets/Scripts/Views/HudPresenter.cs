@@ -181,7 +181,7 @@ namespace WheelOfFortune.Views
                 if (!_cardById.TryGetValue(itemId, out var card) || card == null)
                     return;
 
-                card.SetMultiplier(finalValue);
+                card.SetMultiplier(finalValue, false);
             };
         }
         #endregion

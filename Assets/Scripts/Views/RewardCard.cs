@@ -42,12 +42,13 @@ namespace WheelOfFortune.Views
                 _multiplierLabel_value.text = MultiplierFormatter.Format(0);
         }
 
-        public void SetMultiplier(int value)
+        public void SetMultiplier(int value, bool punch = true)
         {
             if (_multiplierLabel_value != null)
                 _multiplierLabel_value.text = MultiplierFormatter.Format(value);
 
-            PunchScale();
+            if (punch)
+                PunchScale();
         }
 
         private void PunchScale()
