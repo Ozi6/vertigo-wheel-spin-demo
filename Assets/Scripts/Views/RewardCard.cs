@@ -18,6 +18,8 @@ namespace WheelOfFortune.Views
 
         public void Setup(RewardStack stack, Sprite icon)
         {
+            _currentMultiplier = stack.TotalMultiplier;
+
             if (_icon_value != null)
             {
                 _icon_value.sprite = icon;
@@ -25,11 +27,13 @@ namespace WheelOfFortune.Views
             }
 
             if (_multiplierLabel_value != null)
-                _multiplierLabel_value.text = MultiplierFormatter.Format(stack.TotalMultiplier);
+                _multiplierLabel_value.text = MultiplierFormatter.Format(_currentMultiplier);
         }
 
         public void InitializeEmpty(RewardStack stack, Sprite icon)
         {
+            _currentMultiplier = 0;
+
             if (_icon_value != null)
             {
                 _icon_value.sprite = icon;
@@ -37,7 +41,7 @@ namespace WheelOfFortune.Views
             }
 
             if (_multiplierLabel_value != null)
-                _multiplierLabel_value.text = MultiplierFormatter.Format(0);
+                _multiplierLabel_value.text = MultiplierFormatter.Format(_currentMultiplier);
         }
 
         private int _currentMultiplier;
