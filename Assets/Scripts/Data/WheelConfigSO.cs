@@ -8,12 +8,14 @@ namespace WheelOfFortune.Data
         [SerializeField] private RewardPoolEntry[] _rewardPool;
         [SerializeField, Min(1)] private int _sliceCount = 8;
         [SerializeField] private bool _hasBomb = true;
+        [SerializeField] private bool _isWeighted = false;
         [SerializeField, Min(1)] private int _minMultiplier = 1;
         [SerializeField, Min(1)] private int _maxMultiplier = 10;
 
         public RewardPoolEntry[] RewardPool => _rewardPool;
         public int SliceCount => _sliceCount;
         public bool HasBomb => _hasBomb;
+        public bool IsWeighted => _isWeighted;
         public int MinMultiplier => _minMultiplier;
         public int MaxMultiplier => _maxMultiplier;
 

@@ -67,7 +67,7 @@ namespace WheelOfFortune.Factory
                 runtimeSlices[i] = new RuntimeSlice(data, def.Multiplier, def.IsBomb, def.Weight);
             }
 
-            return new RuntimeWheelData(runtimeSlices, bombSlotIndex, config.HasBomb);
+            return new RuntimeWheelData(runtimeSlices, bombSlotIndex, config.HasBomb, config.IsWeighted);
         }
 
         private void ClearExistingSlices()

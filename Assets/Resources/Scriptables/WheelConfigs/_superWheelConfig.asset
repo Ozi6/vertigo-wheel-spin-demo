@@ -14,48 +14,70 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rewardPool:
   - _rewardItem: {fileID: 11400000, guid: 58c591be832430348b904d0ad09bee3f, type: 2}
+    _overrideWeight: 0
     _weight: 1
   - _rewardItem: {fileID: 11400000, guid: 075a029822807814cbf8830347bd9cdf, type: 2}
+    _overrideWeight: 0
     _weight: 1
   - _rewardItem: {fileID: 11400000, guid: 3d7e80d3ca2193344bfa9c52d0d363dc, type: 2}
+    _overrideWeight: 0
     _weight: 1
   - _rewardItem: {fileID: 11400000, guid: ac7725d3cd0adb34da5aa0c259527119, type: 2}
+    _overrideWeight: 0
     _weight: 1
   - _rewardItem: {fileID: 11400000, guid: 5d86e8f55ee38264cad044e76165a5a9, type: 2}
+    _overrideWeight: 0
     _weight: 1
   - _rewardItem: {fileID: 11400000, guid: 2caaf03acbcf6ed40b6de106022c6dc3, type: 2}
+    _overrideWeight: 0
     _weight: 1
   - _rewardItem: {fileID: 11400000, guid: 01bb0c6adedd6fc4bb8825a605f12ecc, type: 2}
+    _overrideWeight: 0
     _weight: 1
   - _rewardItem: {fileID: 11400000, guid: 10f5789f43c3fe24091992a96f122b06, type: 2}
+    _overrideWeight: 0
     _weight: 1
   - _rewardItem: {fileID: 11400000, guid: 8db51621ee7a54543bda982f630fcde6, type: 2}
+    _overrideWeight: 0
     _weight: 1
   - _rewardItem: {fileID: 11400000, guid: 56d523de04d1a4947a131a3359febb36, type: 2}
+    _overrideWeight: 0
     _weight: 1
   - _rewardItem: {fileID: 11400000, guid: cbdb23541cec49c49bc6176d2361823a, type: 2}
+    _overrideWeight: 0
     _weight: 1
   - _rewardItem: {fileID: 11400000, guid: 4636767dbfe09ca4b84408bff3494614, type: 2}
+    _overrideWeight: 0
     _weight: 1
   - _rewardItem: {fileID: 11400000, guid: f52047b9ddcdc334690a18484ea69bbd, type: 2}
+    _overrideWeight: 0
     _weight: 1
   - _rewardItem: {fileID: 11400000, guid: 3a713f8a11f48d643b6633698c71c9c9, type: 2}
+    _overrideWeight: 0
     _weight: 1
   - _rewardItem: {fileID: 11400000, guid: 470ed3fb075edaa4ab2d06230a3ce7bd, type: 2}
+    _overrideWeight: 0
     _weight: 1
   - _rewardItem: {fileID: 11400000, guid: 5aa253bf984f0ae49863258727f8168f, type: 2}
+    _overrideWeight: 0
     _weight: 1
   - _rewardItem: {fileID: 11400000, guid: 3eea309db68affb4f8108106f6efaa3c, type: 2}
+    _overrideWeight: 0
     _weight: 1
   - _rewardItem: {fileID: 11400000, guid: 68318b3c25c64174f9aaf4c6e7d4ca85, type: 2}
+    _overrideWeight: 0
     _weight: 1
   - _rewardItem: {fileID: 11400000, guid: 42e8f6da268539141b2fa5334236d0c3, type: 2}
+    _overrideWeight: 0
     _weight: 1
   - _rewardItem: {fileID: 11400000, guid: ef2e0c1a2821a6946a10c4ca5e83b8fb, type: 2}
+    _overrideWeight: 0
     _weight: 1
   - _rewardItem: {fileID: 11400000, guid: 4a61bd8014fc1f045b5b2a4d053b640a, type: 2}
+    _overrideWeight: 0
     _weight: 1
   _sliceCount: 8
   _hasBomb: 0
+  _isWeighted: 1
   _minMultiplier: 100
   _maxMultiplier: 1000

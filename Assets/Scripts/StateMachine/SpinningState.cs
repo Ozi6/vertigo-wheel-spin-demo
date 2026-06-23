@@ -18,13 +18,13 @@ namespace WheelOfFortune.StateMachine
             var zoneType = _ctx.ZoneService.GetCurrentZoneType();
             var zoneNumber = _ctx.ZoneService.GetCurrentZoneNumber();
 
-            IWheelSpinStrategy strategy = zoneType == ZoneType.Super
+            var wheelData = _ctx.WheelFactory.BuildWheel(zoneType, zoneNumber, _ctx.WheelView);
+
+            IWheelSpinStrategy strategy = wheelData.IsWeighted
                 ? new WeightedSpinStrategy()
                 : _ctx.RandomStrategy;
 
             _ctx.SpinService.SetStrategy(strategy);
-
-            var wheelData = _ctx.WheelFactory.BuildWheel(zoneType, zoneNumber, _ctx.WheelView);
             _pendingResult = _ctx.SpinService.Spin(wheelData);
 
             _ctx.WheelView.SpinTo(_pendingResult.SliceIndex, OnSpinAnimationComplete);

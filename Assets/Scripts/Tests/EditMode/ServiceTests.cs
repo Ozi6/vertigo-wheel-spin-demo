@@ -39,9 +39,9 @@ namespace WheelOfFortune.Tests.EditMode
                   .SetValue(target, value);
         }
 
-        private static RuntimeWheelData MakeWheelData(RuntimeSlice[] slices, int bombSlotIndex, bool hasBomb)
+        private static RuntimeWheelData MakeWheelData(RuntimeSlice[] slices, int bombSlotIndex, bool hasBomb, bool isWeighted = false)
         {
-            return new RuntimeWheelData(slices, bombSlotIndex, hasBomb);
+            return new RuntimeWheelData(slices, bombSlotIndex, hasBomb, isWeighted);
         }
 
         private static RuntimeSlice MakeSlice(RewardItemSO item, int multiplier)
