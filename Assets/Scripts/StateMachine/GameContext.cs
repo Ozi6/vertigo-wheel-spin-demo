@@ -17,7 +17,7 @@ namespace WheelOfFortune.StateMachine
         public readonly IDialogView DialogView;
         public readonly IButtonView ButtonView;
         public readonly IWheelFactory WheelFactory;
-        public readonly Action<IGameState> TransitionTo;
+        public readonly IEventBus EventBus;
         public readonly IWheelSpinStrategy RandomStrategy;
         public readonly IRewardRegistry RewardRegistry;
         public readonly ReviveCommand ReviveCommand;
@@ -34,7 +34,7 @@ namespace WheelOfFortune.StateMachine
             IDialogView dialogView,
             IButtonView buttonView,
             IWheelFactory wheelFactory,
-            Action<IGameState> transitionTo,
+            IEventBus eventBus,
             IWheelSpinStrategy randomStrategy,
             IRewardRegistry rewardRegistry,
             ReviveCommand reviveCommand,
@@ -50,7 +50,7 @@ namespace WheelOfFortune.StateMachine
             DialogView = dialogView;
             ButtonView = buttonView;
             WheelFactory = wheelFactory;
-            TransitionTo = transitionTo;
+            EventBus = eventBus;
             RandomStrategy = randomStrategy;
             RewardRegistry = rewardRegistry;
             ReviveCommand = reviveCommand;

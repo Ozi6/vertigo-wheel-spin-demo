@@ -7,6 +7,7 @@ using WheelOfFortune.Domain;
 using WheelOfFortune.Factory;
 using WheelOfFortune.Interfaces;
 using WheelOfFortune.Views;
+using WheelOfFortune.Events;
 
 namespace WheelOfFortune.Tests.EditMode.Stubs
 {
@@ -159,10 +160,7 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
             throw new NotImplementedException();
         }
 
-        void IHudView.Initialize(IEventBus eventBus, IRewardRegistry registry)
-        {
-            throw new NotImplementedException();
-        }
+        public void Initialize(IEventBus eventBus, IRewardRegistry registry) { }
     }
 
     internal sealed class StubDialogView : IDialogView
@@ -172,10 +170,13 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         public bool CollectScreenShown;
         public bool HideCallCount;
         public CollectedRewards LastRewardsPassedToCollect;
+        public int LastReviveCost;
+        public bool ReviveInteractable;
         private Action _onRevive;
         private Action _onGiveUp;
         private Action _onConfirm;
         private Action _onCancel;
+        private IEventBus _eventBus;
 
         public void ShowBombScreen(CollectedRewards lostRewards, Action onRevive, Action onGiveUp)
         {
@@ -200,19 +201,21 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         public void SimulateConfirmCollect() => _onConfirm?.Invoke();
         public void SimulateCancelCollect() => _onCancel?.Invoke();
 
-        void IDialogView.Initialize(IRewardRegistry registry)
+        public void Initialize(IEventBus eventBus, IRewardRegistry registry)
         {
-            throw new NotImplementedException();
+            _eventBus = eventBus;
+            _eventBus.Subscribe<OnReviveCostChanged>(OnReviveCostChanged);
+            _eventBus.Subscribe<OnBalanceChange>(OnBalanceChange);
         }
 
-        void IDialogView.UpdateReviveCost(int cost)
+        private void OnReviveCostChanged(OnReviveCostChanged evt)
         {
-            throw new NotImplementedException();
+            LastReviveCost = evt.NextCost;
         }
 
-        void IDialogView.SetReviveInteractable(bool interactable)
+        private void OnBalanceChange(OnBalanceChange evt)
         {
-            throw new NotImplementedException();
+            ReviveInteractable = evt.NewBalance >= LastReviveCost;
         }
     }
 
@@ -220,23 +223,13 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
     {
         public bool SpinInteractable = true;
         public bool CollectVisible = false;
-        public bool ReviveInteractable = true;
-        public int LastReviveCost;
 
         public int SetSpinInteractableCallCount;
         public int SetCollectVisibleCallCount;
-        public int SetReviveInteractableCallCount;
-        public int UpdateReviveCostCallCount;
 
         public ICommand SpinCommand { get; private set; }
         public ICommand CollectCommand { get; private set; }
         public int SetCommandsCallCount { get; private set; }
-
-        public event Action OnSpinClicked;
-        public event Action OnCollectClicked;
-
-        public void SimulateSpinClicked() => OnSpinClicked?.Invoke();
-        public void SimulateCollectClicked() => OnCollectClicked?.Invoke();
 
         public void SetSpinInteractable(bool interactable)
         {
@@ -248,18 +241,6 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         {
             CollectVisible = visible;
             SetCollectVisibleCallCount++;
-        }
-
-        public void SetReviveInteractable(bool interactable)
-        {
-            ReviveInteractable = interactable;
-            SetReviveInteractableCallCount++;
-        }
-
-        public void UpdateReviveCost(int cost)
-        {
-            LastReviveCost = cost;
-            UpdateReviveCostCallCount++;
         }
 
         public void SetCommands(ICommand spinCommand, ICommand collectCommand)
@@ -306,6 +287,7 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         public StubCurrencyService(int initialBalance = 10000)
         {
             _balance = initialBalance;
+            OnBalanceChanged?.Invoke(_balance);
         }
 
         public int GetBalance() => _balance;

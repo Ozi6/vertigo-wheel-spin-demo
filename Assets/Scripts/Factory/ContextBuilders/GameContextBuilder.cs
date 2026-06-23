@@ -42,31 +42,13 @@ namespace WheelOfFortune.Factory
             return this;
         }
 
-        public GameContextBuilder WithInfrastructure(IWheelFactory factory, IWheelSpinStrategy strategy, IRewardRegistry registry, WinEffectConfig config)
+        public GameContext Build(IWheelFactory factory, IWheelSpinStrategy strategy, IRewardRegistry registry, WinEffectConfig config, ReviveCommand revive, GiveUpCommand giveUp)
         {
-            _wheelFactory = factory;
-            _randomStrategy = strategy;
-            _rewardRegistry = registry;
-            _winEffectConfig = config;
-            return this;
-        }
-
-        public GameContext Build(int reviveStartingCost)
-        {
-            GameContext context = null;
-
-            var revive = new ReviveCommand(() => context!, reviveStartingCost);
-            var giveUp = new GiveUpCommand(_zoneService, _rewardService, _eventBus, revive.Reset);
-
-            Action<IGameState> stateTransitionBridge = state => _eventBus.Publish(new OnStateTransition(state));
-
-            context = new GameContext(
+            return new GameContext(
                 _zoneService, _spinService, _rewardService, _currencyService,
-                _wheelView, _hudView, _dialogView, _buttonView, _wheelFactory,
-                stateTransitionBridge, _randomStrategy, _rewardRegistry,
-                revive, giveUp, _winEffectConfig);
-
-            return context;
+                _wheelView, _hudView, _dialogView, _buttonView, factory,
+                _eventBus, strategy, registry,
+                revive, giveUp, config);
         }
     }
 }

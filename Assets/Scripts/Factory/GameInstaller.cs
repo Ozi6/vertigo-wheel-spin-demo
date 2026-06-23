@@ -46,7 +46,7 @@ namespace WheelOfFortune.Installer
             var rewardRegistry = new RewardRegistry(_zoneConfigs);
 
             hudView.Initialize(eventBus, rewardRegistry);
-            dialogView.Initialize(rewardRegistry);
+            dialogView.Initialize(eventBus, rewardRegistry);
 
             wheelFactory.BuildWheel(zoneService.GetCurrentZoneType(), zoneService.GetCurrentZoneNumber(), wheelView);
 

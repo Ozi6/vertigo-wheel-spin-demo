@@ -28,15 +28,22 @@ namespace WheelOfFortune.Views
         private readonly List<RewardCard> _collectCards = new List<RewardCard>();
         private ComponentPool<RewardCard> _pool;
         private IRewardRegistry _registry;
+        private IEventBus _eventBus;
+        private int _currentCost;
+        private int _currentBalance;
 
         private Action _onReviveCallback;
         private Action _onGiveUpCallback;
         private Action _onConfirmCallback;
         private Action _onCancelCallback;
 
-        public void Initialize(IRewardRegistry registry)
+        public void Initialize(IEventBus eventBus, IRewardRegistry registry)
         {
+            _eventBus = eventBus;
             _registry = registry;
+            
+            _eventBus.Subscribe<Events.OnBalanceChange>(OnBalanceChanged);
+            _eventBus.Subscribe<Events.OnReviveCostChanged>(OnReviveCostChanged);
         }
 
         private void Awake()
@@ -67,6 +74,12 @@ namespace WheelOfFortune.Views
                 _confirmButton_value.onClick.RemoveListener(HandleConfirmClicked);
             if (_cancelButton_value != null)
                 _cancelButton_value.onClick.RemoveListener(HandleCancelClicked);
+
+            if (_eventBus != null)
+            {
+                _eventBus.Unsubscribe<Events.OnBalanceChange>(OnBalanceChanged);
+                _eventBus.Unsubscribe<Events.OnReviveCostChanged>(OnReviveCostChanged);
+            }
         }
 
         private void HandleReviveClicked() => _onReviveCallback?.Invoke();
@@ -94,16 +107,24 @@ namespace WheelOfFortune.Views
             if (_collectScreen != null) _collectScreen.SetActive(true);
         }
 
-        public void UpdateReviveCost(int cost)
+        private void OnBalanceChanged(Events.OnBalanceChange evt)
         {
-            if (_reviveCostDisplay_value != null)
-                _reviveCostDisplay_value.text = cost.ToString();
+            _currentBalance = evt.NewBalance;
+            UpdateInteractable();
         }
 
-        public void SetReviveInteractable(bool interactable)
+        private void OnReviveCostChanged(Events.OnReviveCostChanged evt)
+        {
+            _currentCost = evt.NextCost;
+            if (_reviveCostDisplay_value != null)
+                _reviveCostDisplay_value.text = _currentCost.ToString();
+            UpdateInteractable();
+        }
+
+        private void UpdateInteractable()
         {
             if (_reviveButton_value != null)
-                _reviveButton_value.interactable = interactable;
+                _reviveButton_value.interactable = _currentBalance >= _currentCost;
         }
 
         public void Hide()

@@ -76,7 +76,7 @@ namespace WheelOfFortune.StateMachine
                 ctx.ZoneService.GetCurrentZoneType(),
                 ctx.ZoneService.GetCurrentZoneNumber(),
                 ctx.WheelView);
-            ctx.TransitionTo(new IdleState());
+            ctx.EventBus.Publish(new Events.OnStateTransition(new IdleState()));
         }
     }
 }

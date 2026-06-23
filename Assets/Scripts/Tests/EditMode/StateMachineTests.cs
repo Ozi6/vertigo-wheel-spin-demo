@@ -91,12 +91,10 @@ namespace WheelOfFortune.Tests.EditMode
 
         private GameContext CreateGameContext()
         {
-            GameContext context = null;
+            var revive = new ReviveCommand(_currency, _eventBus, 25);
+            var giveUp = new GiveUpCommand(_eventBus);
 
-            var revive = new ReviveCommand(() => context, 25);
-            var giveUp = new GiveUpCommand(_zone, _reward, _eventBus, () => { });
-
-            return context = new GameContext(
+            return _ctx = new GameContext(
                 _zone,
                 _spin,
                 _reward,
@@ -106,7 +104,7 @@ namespace WheelOfFortune.Tests.EditMode
                 _dialog,
                 _button,
                 _wheelFactory,
-                TransitionTo,
+                _eventBus,
                 _randomStrategy,
                 null,
                 revive,

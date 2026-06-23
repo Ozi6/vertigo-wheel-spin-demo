@@ -86,16 +86,17 @@ namespace WheelOfFortune.Tests.EditMode
             StubSpinStrategy randomStrategy,
             StubButtonView buttonView = null)
         {
-            GameContext context = null;
+            var wheelFactory = new StubWheelFactory();
+            var wheelView = new StubWheelView();
 
-            var revive = new ReviveCommand(() => context, 25);
-            var giveUp = new GiveUpCommand(zone, reward, _eventBus, revive.Reset);
+            var revive = new ReviveCommand(currency, _eventBus, 25);
+            var giveUp = new GiveUpCommand(_eventBus);
 
-            context = new GameContext(
+            var context = new GameContext(
                 zone, new StubSpinService(), reward, currency,
-                new StubWheelView(), hud, dialog,
+                wheelView, hud, dialog,
                 buttonView ?? new StubButtonView(),
-                null, CaptureTransition,
+                wheelFactory, _eventBus,
                 randomStrategy,
                 null,
                 revive, giveUp, null);
@@ -235,54 +236,23 @@ namespace WheelOfFortune.Tests.EditMode
         [Test]
         public void ReviveCommand_Execute_DoublesCostForNextRevive()
         {
-            var buttonView = new StubButtonView();
-            var ctx = CreateGameContext(_zone, _reward, _currency, new StubHudView(), new StubDialogView(), new StubSpinStrategy(), buttonView);
+            var dialogView = new StubDialogView();
+            var ctx = CreateGameContext(_zone, _reward, _currency, new StubHudView(), dialogView, new StubSpinStrategy());
+            dialogView.Initialize(_eventBus, null);
 
             ctx.ReviveCommand.Execute();
 
-            Assert.AreEqual(50, buttonView.LastReviveCost);
+            Assert.AreEqual(50, dialogView.LastReviveCost);
         }
 
         [Test]
-        public void GiveUpCommand_Execute_TransitionsToIdle()
+        public void GiveUpCommand_Execute_TransitionsToResetState()
         {
-            var cmd = new GiveUpCommand(_zone, _reward, _eventBus, () => { });
+            var cmd = new GiveUpCommand(_eventBus);
 
             cmd.Execute();
 
-            Assert.IsInstanceOf<IdleState>(_lastTransitionTarget);
-        }
-
-        [Test]
-        public void GiveUpCommand_Execute_ResetsZoneService()
-        {
-            var cmd = new GiveUpCommand(_zone, _reward, _eventBus, () => { });
-
-            cmd.Execute();
-
-            Assert.AreEqual(1, _zone.ResetCallCount);
-        }
-
-        [Test]
-        public void GiveUpCommand_Execute_ResetsRewardService()
-        {
-            var cmd = new GiveUpCommand(_zone, _reward, _eventBus, () => { });
-
-            cmd.Execute();
-
-            Assert.AreEqual(1, _reward.ResetCallCount);
-        }
-
-        [Test]
-        public void GiveUpCommand_Execute_HasNoGuard_AlwaysRuns()
-        {
-            var cmd = new GiveUpCommand(_zone, _reward, _eventBus, () => { });
-
-            cmd.Execute();
-            cmd.Execute();
-
-            Assert.AreEqual(2, _transitionCount);
-            Assert.AreEqual(2, _zone.ResetCallCount);
+            Assert.IsInstanceOf<ResetState>(_lastTransitionTarget);
         }
 
         [Test]
