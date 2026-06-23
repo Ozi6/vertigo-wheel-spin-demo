@@ -162,6 +162,32 @@ namespace WheelOfFortune.Tests.EditMode
         }
 
         [Test]
+        public void ZoneService_CustomIntervals_CorrectlyCalculatesTypes()
+        {
+            var customSettings = ScriptableObject.CreateInstance<GameSettingsSO>();
+            SetField(customSettings, "_safeZoneInterval", 3);
+            SetField(customSettings, "_superZoneInterval", 6);
+
+            var service = new ZoneService(customSettings, _eventBus);
+            
+            // Zone 1: Normal
+            Assert.AreEqual(ZoneType.Normal, service.GetCurrentZoneType());
+
+            // Zone 3: Safe
+            service.Advance(); // 2
+            service.Advance(); // 3
+            Assert.AreEqual(ZoneType.Safe, service.GetCurrentZoneType());
+
+            // Zone 6: Super
+            service.Advance(); // 4
+            service.Advance(); // 5
+            service.Advance(); // 6
+            Assert.AreEqual(ZoneType.Super, service.GetCurrentZoneType());
+
+            UnityEngine.Object.DestroyImmediate(customSettings);
+        }
+
+        [Test]
         public void RewardService_InitialRewards_AreEmpty()
         {
             var service = new RewardService(_eventBus);
@@ -258,6 +284,63 @@ namespace WheelOfFortune.Tests.EditMode
             service.ClearAll();
             service.Collect(MakeReward("b", 20f).ToData(), 1);
             Assert.AreEqual(1, service.GetCurrentRewards().Entries.Count);
+        }
+
+        [Test]
+        public void CurrencyService_InitialBalance_IsCorrect()
+        {
+            var service = new CurrencyService(_eventBus, 500);
+            Assert.AreEqual(500, service.GetBalance());
+        }
+
+        [Test]
+        public void CurrencyService_CanAfford_ReturnsTrueWhenSufficient()
+        {
+            var service = new CurrencyService(_eventBus, 500);
+            Assert.IsTrue(service.CanAfford(300));
+            Assert.IsTrue(service.CanAfford(500));
+            Assert.IsFalse(service.CanAfford(501));
+        }
+
+        [Test]
+        public void CurrencyService_TryDeduct_DeductsAmountAndPublishesEvent()
+        {
+            var service = new CurrencyService(_eventBus, 500);
+            int receivedBalance = -1;
+            _eventBus.Subscribe<OnBalanceChange>(e => receivedBalance = e.NewBalance);
+
+            bool success = service.TryDeduct(200);
+
+            Assert.IsTrue(success);
+            Assert.AreEqual(300, service.GetBalance());
+            Assert.AreEqual(300, receivedBalance);
+        }
+
+        [Test]
+        public void CurrencyService_TryDeduct_FailsWhenInsufficient()
+        {
+            var service = new CurrencyService(_eventBus, 100);
+            bool fired = false;
+            _eventBus.Subscribe<OnBalanceChange>(_ => fired = true);
+
+            bool success = service.TryDeduct(150);
+
+            Assert.IsFalse(success);
+            Assert.AreEqual(100, service.GetBalance());
+            Assert.IsFalse(fired);
+        }
+
+        [Test]
+        public void CurrencyService_Add_IncreasesBalanceAndPublishesEvent()
+        {
+            var service = new CurrencyService(_eventBus, 100);
+            int receivedBalance = -1;
+            _eventBus.Subscribe<OnBalanceChange>(e => receivedBalance = e.NewBalance);
+
+            service.Add(50);
+
+            Assert.AreEqual(150, service.GetBalance());
+            Assert.AreEqual(150, receivedBalance);
         }
 
         [Test]
@@ -422,6 +505,52 @@ namespace WheelOfFortune.Tests.EditMode
                 hit[strategy.GetWinningIndex(wheelData)] = true;
 
             Assert.IsTrue(hit[0] && hit[1] && hit[2]);
+        }
+
+        [Test]
+        public void WeightedSpinStrategy_SingleWeightedSlice_AlwaysWins()
+        {
+            var strategy = new WeightedSpinStrategy();
+            var reward = MakeReward("item", 10f);
+            
+            var slices = new[]
+            {
+                new RuntimeSlice(reward.ToData(), 1, false, 0f),
+                new RuntimeSlice(reward.ToData(), 1, false, 100f)
+            };
+            var wheelData = MakeWheelData(slices, -1, false, true);
+
+            for (int i = 0; i < 50; i++)
+            {
+                Assert.AreEqual(1, strategy.GetWinningIndex(wheelData));
+            }
+        }
+
+        [Test]
+        public void WeightedSpinStrategy_RespectsWeightsOverManyRolls()
+        {
+            var strategy = new WeightedSpinStrategy();
+            var reward = MakeReward("item", 10f);
+            
+            var slices = new[]
+            {
+                new RuntimeSlice(reward.ToData(), 1, false, 10f),
+                new RuntimeSlice(reward.ToData(), 1, false, 90f)
+            };
+            var wheelData = MakeWheelData(slices, -1, false, true);
+
+            int slice0Count = 0;
+            int slice1Count = 0;
+
+            for (int i = 0; i < 500; i++)
+            {
+                int win = strategy.GetWinningIndex(wheelData);
+                if (win == 0) slice0Count++;
+                else slice1Count++;
+            }
+
+            Assert.IsTrue(slice1Count > slice0Count);
+            Assert.IsTrue(slice0Count > 0);
         }
 
         private class FixedIndexStrategy : IWheelSpinStrategy

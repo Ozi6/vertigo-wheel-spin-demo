@@ -7,6 +7,7 @@ using WheelOfFortune.Interfaces;
 using WheelOfFortune.StateMachine;
 using WheelOfFortune.Tests.EditMode.Stubs;
 using WheelOfFortune.Events;
+using WheelOfFortune.Services;
 
 namespace WheelOfFortune.Tests.EditMode
 {
@@ -56,6 +57,7 @@ namespace WheelOfFortune.Tests.EditMode
         private StubSpinStrategy _randomStrategy;
         private StubWheelFactory _wheelFactory;
         private StubEventBus _eventBus;
+        private StubRewardRegistry _rewardRegistry;
 
         private IGameState _currentState;
         private GameContext _ctx;
@@ -75,6 +77,7 @@ namespace WheelOfFortune.Tests.EditMode
             _button = new StubButtonView();
             _randomStrategy = new StubSpinStrategy();
             _wheelFactory = new StubWheelFactory();
+            _rewardRegistry = new StubRewardRegistry();
 
             _eventBus = new StubEventBus();
             _eventBus.Subscribe<OnStateTransition>(OnStateTransitionEvent);
@@ -106,7 +109,7 @@ namespace WheelOfFortune.Tests.EditMode
                 _wheelFactory,
                 _eventBus,
                 _randomStrategy,
-                null,
+                _rewardRegistry,
                 revive,
                 giveUp,
                 null);
@@ -241,6 +244,108 @@ namespace WheelOfFortune.Tests.EditMode
             _giveUpCommand.Execute();
             Assert.AreEqual(1, _zone.ResetCallCount);
             Assert.AreEqual(1, _reward.ResetCallCount);
+        }
+
+        // --- Mechanics Tests ---
+
+        [Test]
+        public void ResetState_ResetsServicesAndTransitionsToIdle()
+        {
+            _zone.CurrentZone = 10;
+            _reward.CollectedItems.Add(new RewardData("gold", 10f, 1, 1f));
+
+            TransitionTo(new ResetState());
+
+            Assert.AreEqual(1, _zone.ResetCallCount);
+            Assert.AreEqual(1, _reward.ResetCallCount);
+            Assert.IsInstanceOf<IdleState>(_currentState);
+        }
+
+        [Test]
+        public void SpinningState_SelectsWeightedStrategy_WhenWheelIsWeighted()
+        {
+            var slices = new[] { new RuntimeSlice(new RewardData("gold", 10f, 1, 1f), 1, false, 1f) };
+            var wheelData = new RuntimeWheelData(slices, -1, false, true);
+            _wheelFactory.DataToReturn = wheelData;
+
+            TransitionTo(new SpinningState());
+
+            Assert.IsInstanceOf<WeightedSpinStrategy>(_spin.LastStrategySet);
+        }
+
+        [Test]
+        public void SpinningState_SelectsRandomStrategy_WhenWheelIsNotWeighted()
+        {
+            var slices = new[] { new RuntimeSlice(new RewardData("gold", 10f, 1, 1f), 1, false, 1f) };
+            var wheelData = new RuntimeWheelData(slices, -1, false, false);
+            _wheelFactory.DataToReturn = wheelData;
+
+            TransitionTo(new SpinningState());
+
+            Assert.AreSame(_randomStrategy, _spin.LastStrategySet);
+        }
+
+        [Test]
+        public void SpinningState_TransitionsToBombState_OnBombResult()
+        {
+            var slices = new[] { new RuntimeSlice(default, 0, true, 1f) };
+            var wheelData = new RuntimeWheelData(slices, 0, true, false);
+            _wheelFactory.DataToReturn = wheelData;
+            _spin.ResultToReturn = new SpinResult(default, 0, true, 0);
+
+            TransitionTo(new SpinningState());
+
+            Assert.IsInstanceOf<BombState>(_currentState);
+        }
+
+        [Test]
+        public void SpinningState_TransitionsToRewardState_OnRewardResult()
+        {
+            var slices = new[] { new RuntimeSlice(new RewardData("gold", 10f, 1, 1f), 1, false, 1f) };
+            var wheelData = new RuntimeWheelData(slices, -1, false, false);
+            _wheelFactory.DataToReturn = wheelData;
+            _spin.ResultToReturn = new SpinResult(new RewardData("gold", 10f, 1, 1f), 1, false, 0);
+
+            TransitionTo(new SpinningState());
+
+            Assert.IsInstanceOf<RewardState>(_currentState);
+        }
+
+        [Test]
+        public void RewardState_CollectsRewardAndAdvancesZone()
+        {
+            var reward = new RewardData("gold", 10f, 1, 1f);
+            var result = new SpinResult(reward, 2, false, 0);
+
+            TransitionTo(new RewardState(result));
+
+            Assert.AreEqual(1, _reward.CollectedItems.Count);
+            Assert.AreEqual(1, _zone.AdvanceCallCount);
+            Assert.AreEqual(1, _wheel.PlayWinEffectCallCount);
+        }
+
+        [Test]
+        public void BombState_Entering_ClearsActiveRewards_ButStoresBackup()
+        {
+            _reward.CollectedItems.Add(new RewardData("gold", 10f, 1, 1f));
+
+            TransitionTo(new BombState());
+
+            Assert.AreEqual(0, _reward.CollectedItems.Count);
+            Assert.IsTrue(_dialog.BombScreenShown);
+        }
+
+        [Test]
+        public void BombState_Revive_RestoresBackupAndExecutesDeduction()
+        {
+            var rewardItem = new RewardData("gold", 10f, 1, 1f);
+            _reward.CollectedItems.Add(rewardItem);
+
+            TransitionTo(new BombState());
+            _dialog.SimulateRevive();
+
+            Assert.AreEqual(1, _reward.CollectedItems.Count);
+            Assert.IsInstanceOf<IdleState>(_currentState);
         }
     }
 }

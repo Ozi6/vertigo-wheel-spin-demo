@@ -96,6 +96,12 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         private Action _pendingCallback;
         public bool AutoInvokeCallback = true;
 
+        public WinEffectPayload LastWinEffectPayload;
+        public int PlayWinEffectCallCount;
+        public int RotateToOriginCallCount;
+        public float LastRotateToOriginDuration;
+        public WheelSlice[] LiveSlices;
+
         public void SetupSlices(SliceDefinition[] slices) { }
 
         public void SetZoneVisuals(Sprite wheelSprite, Sprite arrowSprite)
@@ -114,19 +120,21 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
 
         public void InvokeCallback() => _pendingCallback?.Invoke();
 
-        void IWheelView.RotateToOrigin(float duration)
+        public void RotateToOrigin(float duration)
         {
-            throw new NotImplementedException();
+            RotateToOriginCallCount++;
+            LastRotateToOriginDuration = duration;
         }
 
-        void IWheelView.SetLiveSlices(WheelSlice[] slices)
+        public void SetLiveSlices(WheelSlice[] slices)
         {
-            throw new NotImplementedException();
+            LiveSlices = slices;
         }
 
         public void PlayWinEffect(WinEffectPayload payload)
         {
-            throw new NotImplementedException();
+            PlayWinEffectCallCount++;
+            LastWinEffectPayload = payload;
         }
     }
 
@@ -135,29 +143,27 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         public ZoneProgressModel LastZoneProgress;
         public CollectedRewards LastRewards;
         public int LastCurrencyBalance;
+        public string LastInitializedNewRewardCardId;
 
         public void UpdateZoneDisplay(ZoneProgressModel progress) => LastZoneProgress = progress;
         public void UpdateRewardsDisplay(CollectedRewards rewards) => LastRewards = rewards;
         public void UpdateCurrencyDisplay(int balance) => LastCurrencyBalance = balance;
 
-        Transform IHudView.GetRewardsPanelTarget()
+        public Transform GetRewardsPanelTarget() => null;
+
+        public void InitializeNewRewardCard(CollectedRewards rewards, string newItemId)
         {
-            throw new NotImplementedException();
+            LastInitializedNewRewardCardId = newItemId;
         }
 
-        void IHudView.InitializeNewRewardCard(CollectedRewards rewards, string newItemId)
+        public Action<int> BuildIconArrivedCallback(string itemId, int previousMultiplier, int rewardMultiplier)
         {
-            throw new NotImplementedException();
+            return arrived => { };
         }
 
-        Action<int> IHudView.BuildIconArrivedCallback(string itemId, int previousMultiplier, int rewardMultiplier)
+        public Action BuildFinalMultiplierCallback(string itemId, int finalValue)
         {
-            throw new NotImplementedException();
-        }
-
-        Action IHudView.BuildFinalMultiplierCallback(string itemId, int finalValue)
-        {
-            throw new NotImplementedException();
+            return () => { };
         }
 
         public void Initialize(IEventBus eventBus, IRewardRegistry registry) { }
@@ -309,5 +315,11 @@ namespace WheelOfFortune.Tests.EditMode.Stubs
         }
 
         public bool CanAfford(int amount) => _balance >= amount;
+    }
+
+    internal sealed class StubRewardRegistry : IRewardRegistry
+    {
+        public RewardItemSO RewardToReturn;
+        public RewardItemSO GetReward(string id) => RewardToReturn;
     }
 }
