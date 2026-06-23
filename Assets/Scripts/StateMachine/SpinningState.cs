@@ -6,36 +6,38 @@ namespace WheelOfFortune.StateMachine
 {
     public sealed class SpinningState : IGameState
     {
+        private GameContext _ctx;
         private SpinResult _pendingResult;
 
         public void Enter(GameContext ctx)
         {
-            ctx.ButtonView.SetSpinInteractable(false);
-            ctx.ButtonView.SetCollectVisible(false);
+            _ctx = ctx;
+            _ctx.ButtonView.SetSpinInteractable(false);
+            _ctx.ButtonView.SetCollectVisible(false);
 
-            var zoneType = ctx.ZoneService.GetCurrentZoneType();
-            var zoneNumber = ctx.ZoneService.GetCurrentZoneNumber();
+            var zoneType = _ctx.ZoneService.GetCurrentZoneType();
+            var zoneNumber = _ctx.ZoneService.GetCurrentZoneNumber();
 
             IWheelSpinStrategy strategy = zoneType == ZoneType.Super
                 ? new WeightedSpinStrategy()
-                : ctx.RandomStrategy;
+                : _ctx.RandomStrategy;
 
-            ctx.SpinService.SetStrategy(strategy);
+            _ctx.SpinService.SetStrategy(strategy);
 
-            var wheelData = ctx.WheelFactory.BuildWheel(zoneType, zoneNumber, ctx.WheelView);
-            _pendingResult = ctx.SpinService.Spin(wheelData);
+            var wheelData = _ctx.WheelFactory.BuildWheel(zoneType, zoneNumber, _ctx.WheelView);
+            _pendingResult = _ctx.SpinService.Spin(wheelData);
 
-            ctx.WheelView.SpinTo(_pendingResult.SliceIndex, () => OnSpinAnimationComplete(ctx));
+            _ctx.WheelView.SpinTo(_pendingResult.SliceIndex, OnSpinAnimationComplete);
         }
 
         public void Exit(GameContext ctx) { }
 
-        private void OnSpinAnimationComplete(GameContext ctx)
+        private void OnSpinAnimationComplete()
         {
             if (_pendingResult.IsBomb)
-                ctx.EventBus.Publish(new Events.OnStateTransition(new BombState()));
+                _ctx.EventBus.Publish(new Events.OnStateTransition(new BombState()));
             else
-                ctx.EventBus.Publish(new Events.OnStateTransition(new RewardState(_pendingResult)));
+                _ctx.EventBus.Publish(new Events.OnStateTransition(new RewardState(_pendingResult)));
         }
     }
 }

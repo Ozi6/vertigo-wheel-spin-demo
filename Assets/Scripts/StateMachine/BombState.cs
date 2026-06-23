@@ -4,17 +4,19 @@ namespace WheelOfFortune.StateMachine
 {
     public sealed class BombState : IGameState
     {
+        private GameContext _ctx;
         private CollectedRewards _lostRewards;
 
         public void Enter(GameContext ctx)
         {
-            _lostRewards = ctx.RewardService.GetCurrentRewards().Clone();
-            ctx.RewardService.ClearAll();
+            _ctx = ctx;
+            _lostRewards = _ctx.RewardService.GetCurrentRewards().Clone();
+            _ctx.RewardService.ClearAll();
 
-            ctx.DialogView.ShowBombScreen(
+            _ctx.DialogView.ShowBombScreen(
                 _lostRewards,
-                onRevive: () => OnRevive(ctx),
-                onGiveUp: () => ctx.GiveUpCommand.Execute());
+                onRevive: OnReviveClicked,
+                onGiveUp: OnGiveUpClicked);
         }
 
         public void Exit(GameContext ctx)
@@ -22,11 +24,16 @@ namespace WheelOfFortune.StateMachine
             ctx.DialogView.Hide();
         }
 
-        private void OnRevive(GameContext ctx)
+        private void OnReviveClicked()
         {
             foreach (var entry in _lostRewards.Entries)
-                ctx.RewardService.Collect(entry.Item, entry.Multiplier);
-            ctx.ReviveCommand.Execute();
+                _ctx.RewardService.Collect(entry.Item, entry.Multiplier);
+            _ctx.ReviveCommand.Execute();
+        }
+
+        private void OnGiveUpClicked()
+        {
+            _ctx.GiveUpCommand.Execute();
         }
     }
 }

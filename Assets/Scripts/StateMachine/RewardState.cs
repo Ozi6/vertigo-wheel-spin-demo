@@ -8,6 +8,7 @@ namespace WheelOfFortune.StateMachine
         private const float ReelBackDuration = 1.125f;
 
         private readonly SpinResult _result;
+        private GameContext _ctx;
 
         public RewardState(SpinResult result)
         {
@@ -16,9 +17,10 @@ namespace WheelOfFortune.StateMachine
 
         public void Enter(GameContext ctx)
         {
+            _ctx = ctx;
             int previousMultiplier = 0;
 
-            foreach (var entry in ctx.RewardService.GetCurrentRewards().Entries)
+            foreach (var entry in _ctx.RewardService.GetCurrentRewards().Entries)
             {
                 if (!string.IsNullOrEmpty(entry.Item.Id) &&
                     entry.Item.Id == _result.RewardItem.Id)
@@ -27,56 +29,61 @@ namespace WheelOfFortune.StateMachine
                 }
             }
 
-            ctx.RewardService.Collect(_result.RewardItem, _result.Multiplier);
-            ctx.ZoneService.Advance();
+            _ctx.RewardService.Collect(_result.RewardItem, _result.Multiplier);
+            _ctx.ZoneService.Advance();
 
             string itemId = _result.RewardItem.Id;
 
-            ctx.HudView.InitializeNewRewardCard(
-                ctx.RewardService.GetCurrentRewards(),
+            _ctx.HudView.InitializeNewRewardCard(
+                _ctx.RewardService.GetCurrentRewards(),
                 itemId);
 
             var onIconArrived =
-                ctx.HudView.BuildIconArrivedCallback(
+                _ctx.HudView.BuildIconArrivedCallback(
                     itemId,
                     previousMultiplier,
                     _result.Multiplier);
 
             var onBurstFinished =
-                ctx.HudView.BuildFinalMultiplierCallback(
+                _ctx.HudView.BuildFinalMultiplierCallback(
                     itemId,
                     previousMultiplier + _result.Multiplier);
 
             Sprite itemIcon = null;
             if (!string.IsNullOrEmpty(_result.RewardItem.Id))
             {
-                var so = ctx.RewardRegistry.GetReward(_result.RewardItem.Id);
+                var so = _ctx.RewardRegistry.GetReward(_result.RewardItem.Id);
                 if (so != null) itemIcon = so.Icon;
             }
 
-            Transform panel = ctx.HudView.GetRewardsPanelTarget();
+            Transform panel = _ctx.HudView.GetRewardsPanelTarget();
 
-            ctx.WheelView.PlayWinEffect(
+            _ctx.WheelView.PlayWinEffect(
                 _result.SliceIndex,
                 _result.Multiplier,
                 itemIcon,
                 panel,
-                ctx.WinEffectConfig,
-                onReelBack: () => ctx.WheelView.RotateToOrigin(ReelBackDuration),
-                onComplete: () => RebuildAndIdle(ctx),
+                _ctx.WinEffectConfig,
+                onReelBack: OnReelBack,
+                onComplete: OnComplete,
                 onIconArrived: onIconArrived,
                 onBurstFinished: onBurstFinished);
         }
 
         public void Exit(GameContext ctx) { }
 
-        private static void RebuildAndIdle(GameContext ctx)
+        private void OnReelBack()
         {
-            ctx.WheelFactory.BuildWheel(
-                ctx.ZoneService.GetCurrentZoneType(),
-                ctx.ZoneService.GetCurrentZoneNumber(),
-                ctx.WheelView);
-            ctx.EventBus.Publish(new Events.OnStateTransition(new IdleState()));
+            _ctx.WheelView.RotateToOrigin(ReelBackDuration);
+        }
+
+        private void OnComplete()
+        {
+            _ctx.WheelFactory.BuildWheel(
+                _ctx.ZoneService.GetCurrentZoneType(),
+                _ctx.ZoneService.GetCurrentZoneNumber(),
+                _ctx.WheelView);
+            _ctx.EventBus.Publish(new Events.OnStateTransition(new IdleState()));
         }
     }
 }

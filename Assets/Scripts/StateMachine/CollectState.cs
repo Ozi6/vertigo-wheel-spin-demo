@@ -4,15 +4,18 @@ namespace WheelOfFortune.StateMachine
 {
     public sealed class CollectState : IGameState
     {
+        private GameContext _ctx;
+
         public void Enter(GameContext ctx)
         {
-            var finalRewards = ctx.RewardService.GetCurrentRewards().Clone();
-            ctx.EventBus.Publish(new OnPlayerLeft(finalRewards));
+            _ctx = ctx;
+            var finalRewards = _ctx.RewardService.GetCurrentRewards().Clone();
+            _ctx.EventBus.Publish(new OnPlayerLeft(finalRewards));
 
-            ctx.DialogView.ShowCollectConfirmScreen(
+            _ctx.DialogView.ShowCollectConfirmScreen(
                 finalRewards,
-                onConfirm: () => OnConfirm(ctx),
-                onCancel: () => OnCancel(ctx));
+                onConfirm: OnConfirmClicked,
+                onCancel: OnCancelClicked);
         }
 
         public void Exit(GameContext ctx)
@@ -20,14 +23,14 @@ namespace WheelOfFortune.StateMachine
             ctx.DialogView.Hide();
         }
 
-        private void OnConfirm(GameContext ctx)
+        private void OnConfirmClicked()
         {
-            ctx.EventBus.Publish(new Events.OnStateTransition(new ResetState()));
+            _ctx.EventBus.Publish(new Events.OnStateTransition(new ResetState()));
         }
 
-        private void OnCancel(GameContext ctx)
+        private void OnCancelClicked()
         {
-            ctx.EventBus.Publish(new Events.OnStateTransition(new IdleState()));
+            _ctx.EventBus.Publish(new Events.OnStateTransition(new IdleState()));
         }
     }
 }
