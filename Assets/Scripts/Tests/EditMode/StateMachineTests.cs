@@ -62,8 +62,8 @@ namespace WheelOfFortune.Tests.EditMode
 
         private IGameState _currentState;
         private GameContext _ctx;
-        private ReviveCommand _reviveCommand;
-        private GiveUpCommand _giveUpCommand;
+        private IReviveCommand _reviveCommand;
+        private ICommand _giveUpCommand;
 
         [SetUp]
         public void SetUp()

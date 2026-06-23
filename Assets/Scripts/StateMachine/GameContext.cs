@@ -20,8 +20,8 @@ namespace WheelOfFortune.StateMachine
         public readonly IWheelSpinStrategy RandomStrategy;
         public readonly IWheelSpinStrategy WeightedStrategy;
         public readonly IRewardRegistry RewardRegistry;
-        public readonly ReviveCommand ReviveCommand;
-        public readonly GiveUpCommand GiveUpCommand;
+        public readonly IReviveCommand ReviveCommand;
+        public readonly ICommand GiveUpCommand;
         public readonly WinEffectConfig WinEffectConfig;
 
         public GameContext(
@@ -38,8 +38,8 @@ namespace WheelOfFortune.StateMachine
             IWheelSpinStrategy randomStrategy,
             IWheelSpinStrategy weightedStrategy,
             IRewardRegistry rewardRegistry,
-            ReviveCommand reviveCommand,
-            GiveUpCommand giveUpCommand,
+            IReviveCommand reviveCommand,
+            ICommand giveUpCommand,
             WinEffectConfig winEffectConfig)
         {
             ZoneService = zoneService;

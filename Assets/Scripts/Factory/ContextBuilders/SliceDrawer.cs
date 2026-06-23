@@ -1,9 +1,11 @@
 using UnityEngine;
 using WheelOfFortune.Data;
 
+using WheelOfFortune.Interfaces;
+
 namespace WheelOfFortune.Factory
 {
-    public sealed class SliceDrawer
+    public sealed class SliceDrawer : ISliceDrawer
     {
         public SliceDefinition[] DrawSlices(WheelConfigSO config)
         {

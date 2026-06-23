@@ -9,24 +9,26 @@ namespace WheelOfFortune.Factory
     public sealed class WheelFactory : IWheelFactory
     {
         private readonly SlotDefinition[] _slots;
-        private readonly SliceFactory _sliceFactory;
-        private readonly ZoneConfigSelector _configSelector;
-        private readonly SliceDrawer _sliceDrawer;
-        private readonly BombInjector _bombInjector;
+        private readonly ISliceFactory _sliceFactory;
+        private readonly IZoneConfigSelector _configSelector;
+        private readonly ISliceDrawer _sliceDrawer;
+        private readonly IBombInjector _bombInjector;
         private WheelSlice[] _currentSlices;
 
         public WheelFactory(
-            ZoneConfigSO[] zoneConfigs,
-            SliceFactory sliceFactory,
+            ISliceFactory sliceFactory,
             ISlotFactory slotFactory,
             Transform slotParent,
-            int slotCount)
+            int slotCount,
+            IZoneConfigSelector configSelector,
+            ISliceDrawer sliceDrawer,
+            IBombInjector bombInjector)
         {
             _sliceFactory = sliceFactory;
             _slots = slotFactory.CreateSlots(slotParent, slotCount);
-            _configSelector = new ZoneConfigSelector(zoneConfigs);
-            _sliceDrawer = new SliceDrawer();
-            _bombInjector = new BombInjector();
+            _configSelector = configSelector;
+            _sliceDrawer = sliceDrawer;
+            _bombInjector = bombInjector;
         }
 
         public RuntimeWheelData BuildWheel(ZoneType zoneType, int zoneNumber, IWheelView wheelView)

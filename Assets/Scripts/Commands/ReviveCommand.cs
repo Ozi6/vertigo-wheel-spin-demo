@@ -5,7 +5,7 @@ using WheelOfFortune.Events;
 
 namespace WheelOfFortune.Commands
 {
-    public sealed class ReviveCommand : ICommand
+    public sealed class ReviveCommand : IReviveCommand
     {
         private readonly ICurrencyService _currencyService;
         private readonly IEventBus _eventBus;

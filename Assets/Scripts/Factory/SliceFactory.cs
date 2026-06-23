@@ -3,9 +3,11 @@ using WheelOfFortune.Data;
 using WheelOfFortune.Utility;
 using WheelOfFortune.Views;
 
+using WheelOfFortune.Interfaces;
+
 namespace WheelOfFortune.Factory
 {
-    public sealed class SliceFactory
+    public sealed class SliceFactory : ISliceFactory
     {
         private readonly ComponentPool<WheelSlice> _pool;
         private readonly Sprite _bombIcon;

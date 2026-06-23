@@ -37,7 +37,7 @@ namespace WheelOfFortune.Factory
             return this;
         }
 
-        public GameContext Build(IWheelFactory factory, IWheelSpinStrategy randomStrategy, IWheelSpinStrategy weightedStrategy, IRewardRegistry registry, WinEffectConfig config, ReviveCommand revive, GiveUpCommand giveUp)
+        public GameContext Build(IWheelFactory factory, IWheelSpinStrategy randomStrategy, IWheelSpinStrategy weightedStrategy, IRewardRegistry registry, WinEffectConfig config, IReviveCommand revive, ICommand giveUp)
         {
             return new GameContext(
                 _zoneService, _spinService, _rewardService, _currencyService,

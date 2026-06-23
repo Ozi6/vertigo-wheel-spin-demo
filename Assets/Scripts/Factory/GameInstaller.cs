@@ -32,9 +32,14 @@ namespace WheelOfFortune.Installer
             var rewardService = new RewardService(eventBus);
             var currencyService = new CurrencyService(eventBus, _gameSettings.StartingCurrencyBalance);
 
+            var configSelector = new ZoneConfigSelector(_zoneConfigs);
+            var sliceDrawer = new SliceDrawer();
+            var bombInjector = new BombInjector();
+            var commandFactory = new CommandFactory();
+
             var sliceFactory = new SliceFactory(_slicePrefab, _bombIcon);
             var slotFactory = new SlotFactory();
-            var wheelFactory = new WheelFactory(_zoneConfigs, sliceFactory, slotFactory, _slotParent, _slotCount);
+            var wheelFactory = new WheelFactory(sliceFactory, slotFactory, _slotParent, _slotCount, configSelector, sliceDrawer, bombInjector);
 
             var wheelView = _uiRoot.GetComponentInChildren<IWheelView>(true);
             var hudView = _uiRoot.GetComponentInChildren<IHudView>(true);
@@ -62,6 +67,7 @@ namespace WheelOfFortune.Installer
                 dialogView,
                 buttonView,
                 wheelFactory,
+                commandFactory,
                 randomStrategy,
                 weightedStrategy,
                 rewardRegistry,

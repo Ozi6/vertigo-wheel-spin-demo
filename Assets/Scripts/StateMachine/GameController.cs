@@ -15,8 +15,8 @@ namespace WheelOfFortune.Controller
         private GameContext _ctx;
         private IGameState _currentState;
         private IdleState _idleState;
-        private SpinCommand _spinCommand;
-        private CollectCommand _collectCommand;
+        private ICommand _spinCommand;
+        private ICommand _collectCommand;
         private IEventBus _eventBus;
 
         public void Init(
@@ -29,6 +29,7 @@ namespace WheelOfFortune.Controller
             IDialogView dialogView,
             IButtonView buttonView,
             IWheelFactory wheelFactory,
+            ICommandFactory commandFactory,
             IWheelSpinStrategy randomStrategy,
             IWheelSpinStrategy weightedStrategy,
             IRewardRegistry rewardRegistry,
@@ -39,7 +40,6 @@ namespace WheelOfFortune.Controller
             _eventBus.Subscribe<OnStateTransition>(OnStateTransitionRequested);
 
             _idleState = new IdleState();
-            var commandFactory = new CommandFactory();
             _spinCommand = commandFactory.CreateSpinCommand(_idleState, _eventBus);
             _collectCommand = commandFactory.CreateCollectCommand(_idleState, _eventBus);
 

@@ -1,9 +1,11 @@
 using WheelOfFortune.Data;
 using WheelOfFortune.Domain;
 
+using WheelOfFortune.Interfaces;
+
 namespace WheelOfFortune.Factory
 {
-    public sealed class ZoneConfigSelector
+    public sealed class ZoneConfigSelector : IZoneConfigSelector
     {
         private readonly ZoneConfigSO[] _zoneConfigs;
 

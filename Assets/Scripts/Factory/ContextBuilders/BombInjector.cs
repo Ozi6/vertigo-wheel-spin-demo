@@ -1,9 +1,11 @@
 using UnityEngine;
 using WheelOfFortune.Data;
 
+using WheelOfFortune.Interfaces;
+
 namespace WheelOfFortune.Factory
 {
-    public sealed class BombInjector
+    public sealed class BombInjector : IBombInjector
     {
         public int InjectBomb(SliceDefinition[] slices)
         {
