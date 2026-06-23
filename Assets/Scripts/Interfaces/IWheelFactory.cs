@@ -1,7 +1,7 @@
 using WheelOfFortune.Domain;
 using WheelOfFortune.Interfaces;
 
-namespace WheelOfFortune.Factory
+namespace WheelOfFortune.Interfaces
 {
     public interface IWheelFactory
     {

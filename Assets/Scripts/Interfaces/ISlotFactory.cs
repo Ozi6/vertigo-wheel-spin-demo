@@ -1,7 +1,7 @@
 using UnityEngine;
 using WheelOfFortune.Data;
 
-namespace WheelOfFortune.Factory
+namespace WheelOfFortune.Interfaces
 {
     public interface ISlotFactory
     {

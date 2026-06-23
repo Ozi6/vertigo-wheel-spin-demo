@@ -1,5 +1,6 @@
 using UnityEngine;
 using WheelOfFortune.Data;
+using WheelOfFortune.Interfaces;
 
 namespace WheelOfFortune.Factory
 {
